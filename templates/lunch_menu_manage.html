@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مدیریت منوی ناهار</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold text-center mb-8">مدیریت منوی ناهار هفته</h1>
+
+  <!-- فرم انتخاب هفته -->
+  <form action="/lunch/admin/menu" method="get" class="mb-6 max-w-md mx-auto">
+    <label for="week_start_date" class="block text-sm font-medium text-gray-700">انتخاب هفته</label>
+    <input type="date" name="week_start_date" id="week_start_date" value="{{ week_start_date }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+    <button type="submit" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">نمایش منو</button>
+  </form>
+
+  <!-- جدول منوی هفته -->
+  <table class="w-full bg-white rounded-lg shadow-lg mb-6">
+    <thead>
+    <tr class="bg-gray-200">
+      <th class="p-4 text-right">روز</th>
+      <th class="p-4 text-right">تاریخ</th>
+      <th class="p-4 text-right">غذاها</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for day, date in week_dates|zip(['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه']) %}
+    <tr>
+      <td class="p-4 text-right">{{ date }}</td>
+      <td class="p-4 text-right">{{ day }}</td>
+      <td class="p-4 text-right">
+        {% if menu[date] %}
+        {{ menu[date]|join(", ") }}
+        {% else %}
+        بدون غذا
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- فرم ویرایش/افزودن منو -->
+  <form action="/lunch/admin/menu" method="post" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <input type="hidden" name="week_start_date" value="{{ week_start_date }}">
+    {% for day in ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه'] %}
+    <div class="mb-4">
+      <label for="{{ day }}" class="block text-sm font-medium text-gray-700">{{ day }}</label>
+      <input type="text" name="{{ day }}" id="{{ day }}" value="{{ menu[day]|join(', ') if menu[day] else '' }}" placeholder="غذاها را با کاما جدا کنید" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+    </div>
+    {% endfor %}
+    <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">ذخیره تغییرات</button>
+  </form>
+
+  <a href="/admin/dashboard" class="mt-6 inline-block bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600">بازگشت به داشبورد</a>
+</div>
+</body>
+</html>

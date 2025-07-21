@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>گزارش سفارشات ناهار</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold text-center mb-8">گزارش سفارشات ناهار - {{ report_date }}</h1>
+  {% if orders %}
+  <table class="w-full bg-white rounded-lg shadow-lg">
+    <thead>
+    <tr class="bg-gray-200">
+      <th class="p-4 text-right">کد پرسنلی</th>
+      <th class="p-4 text-right">آیتم غذایی</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for order in orders %}
+    <tr>
+      <td class="p-4 text-right">{{ order.user_code }}</td>
+      <td class="p-4 text-right">{{ order.food_item }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="text-center text-gray-600">هیچ سفارشی برای این تاریخ ثبت نشده است.</p>
+  {% endif %}
+  <a href="/admin/dashboard" class="mt-6 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">بازگشت به داشبورد</a>
+</div>
+</body>
+</html>

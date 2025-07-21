@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منوی ناهار</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold text-center mb-8">منوی ناهار هفته</h1>
+  {% if menu %}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for day, items in menu.items() %}
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-semibold mb-4">{{ day }}</h2>
+      <ul class="list-disc pr-4">
+        {% for item in items %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+  <a href="/lunch/order" class="mt-6 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">ثبت سفارش</a>
+  {% else %}
+  <p class="text-center text-gray-600">منوی هفته جاری موجود نیست.</p>
+  {% endif %}
+</div>
+</body>
+</html>

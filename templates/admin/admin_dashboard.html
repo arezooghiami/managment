@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد ادمین - چرم مشهد</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f9f5f0 0%, #f1eae3 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .leather-accent {
+            background-color: #c5a880;
+            color: #fff;
+        }
+
+        .leather-accent:hover {
+            background-color: #b08e67;
+        }
+
+        .card-bg {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(210, 180, 140, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-bg:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .card-icon {
+            background: #e8d9c5;
+            color: #8a6d46;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+        }
+
+        .header-shadow {
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo-bg {
+            background: linear-gradient(45deg, #d4a373, #b08e67);
+            border-radius: 12px;
+            padding: 5px;
+        }
+
+        .admin-name {
+            color: #8a6d46;
+            font-weight: 600;
+        }
+
+        .footer-border {
+            border-top: 1px solid rgba(210, 180, 140, 0.3);
+        }
+    </style>
+</head>
+<body class="flex flex-col">
+<header class="bg-white header-shadow py-4 px-6">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <div class="logo-bg">
+                <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+            </div>
+            <div>
+
+                <p class="text-gray-600 mt-1"></p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <div class="text-right hidden md:block">
+
+            </div>
+<!--            <div class="w-12 h-12 bg-gray-200 border-2 border-dashed rounded-full" />-->
+<!--            <a href="/logout" class="leather-accent px-5 py-2.5 rounded-xl font-medium flex items-center space-x-2">-->
+<!--                <i class="fas fa-sign-out-alt"></i>-->
+<!--                <span>خروج</span>-->
+<!--            </a>-->
+<!--        </div>-->
+    </div>
+</header>
+
+<main class="flex-1 max-w-7xl mx-auto w-full p-6">
+    <div class="mb-10 text-center">
+        <h2 class="text-3xl font-bold text-gray-800">مدیریت سیستم</h2>
+        <p class="text-gray-600 mt-3 max-w-2xl mx-auto">به پنل مدیریت شرکت چرم مشهد خوش آمدید. از طریق گزینه‌های زیر می‌توانید بخش‌های مختلف سیستم را مدیریت کنید.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- گزارش سفارشات -->
+        <a href="/lunch/admin/report" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
+            <div class="card-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">گزارش سفارشات</h3>
+            <p class="text-gray-600 mt-3">مشاهده و تحلیل سفارشات روزانه ناهار کارکنان</p>
+            <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">مشاهده گزارشات</div>
+        </a>
+
+        <!-- مدیریت منوی ناهار -->
+        <a href="/lunch/admin/menu" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
+            <div class="card-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">مدیریت منوی ناهار</h3>
+            <p class="text-gray-600 mt-3">تعریف، ویرایش و حذف آیتم‌های منوی روزانه</p>
+            <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">مدیریت منو</div>
+        </a>
+
+        <!-- مدیریت کاربران -->
+        <a href="/admin/users" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
+            <div class="card-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">مدیریت کاربران</h3>
+            <p class="text-gray-600 mt-3">مدیریت حساب‌های کاربری و سطوح دسترسی</p>
+            <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">مدیریت کاربران</div>
+        </a>
+
+        <!-- رزرو اتاق جلسه -->
+        <a href="/admin/meetingroom" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
+            <div class="card-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">رزرو اتاق جلسه</h3>
+            <p class="text-gray-600 mt-3">مدیریت زمان‌بندی و رزرو اتاق‌های جلسه</p>
+            <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">رزرو جلسه</div>
+        </a>
+    </div>
+
+
+</main>
+
+<footer class="py-6 footer-border bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10" />
+
+            </div>
+            <p class="mt-4 md:mt-0 text-gray-600">شرکت چرم مشهد</p>
+            <p class="mt-4 md:mt-0 text-gray-600"></p>
+            <div class="mt-4 md:mt-0 flex space-x-4 text-gray-600">
+                <a href="#" class="hover:text-amber-800"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-amber-800"><i class="fab fa-telegram"></i></a>
+                <a href="#" class="hover:text-amber-800"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

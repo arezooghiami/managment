@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم مدیریت رزرو اتاق جلسات</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+
+        :root {
+            --leather-primary: #5D4037;
+            --leather-secondary: #795548;
+            --leather-light: #D7CCC8;
+            --leather-accent: #8D6E63;
+            --leather-text: #3E2723;
+            --leather-bg: #EFEBE9;
+            --leather-card: #FFFFFF;
+
+        }
+
+        body {
+          background: linear-gradient(135deg, var(--leather-bg) 0%, #e8e2dc 100%);
+          background-attachment: fixed;
+          color: var(--leather-text);
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          padding-bottom: 50px;
+        }
+
+        .header {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%235D4037" opacity="0.8"/><path d="M0,50 Q25,30 50,50 T100,50" fill="none" stroke="%238D6E63" stroke-width="2" opacity="0.3"/></svg>');
+            background-size: cover;
+            border-bottom: 3px solid var(--leather-accent);
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            background-color: var(--leather-light);
+            border: 2px solid var(--leather-accent);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo i {
+            font-size: 40px;
+            color: var(--leather-primary);
+        }
+
+        .page-title {
+            color: white;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .page-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--leather-light), transparent);
+        }
+
+        .subtitle {
+            color: var(--leather-light);
+            text-align: center;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 25px;
+            background-color: var(--leather-card);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, var(--leather-primary), var(--leather-secondary));
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--leather-accent);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header i {
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+
+        .table {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table thead th {
+            background-color: var(--leather-light);
+            color: var(--leather-text);
+            font-weight: 600;
+            border-bottom: 2px solid var(--leather-accent);
+            padding: 12px 15px;
+        }
+
+        .table tbody td {
+            padding: 12px 15px;
+            vertical-align: middle;
+            border-top: 1px solid rgba(93, 64, 55, 0.1);
+        }
+
+        .table-success {
+          background-color: rgba(200, 230, 201, 0.6) !important;
+        }
+
+        .table-danger {
+            background-color: rgba(255, 204, 188, 0.6) !important;
+        }
+
+        .btn-leather {
+            background-color: var(--leather-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+
+        .btn-leather:hover {
+            background-color: var(--leather-secondary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badge {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+
+        .available-badge {
+            background-color: #4CAF50;
+        }
+
+        .reserved-badge {
+            background-color: #F44336;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: var(--leather-card);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--leather-text);
+            font-size: 0.9rem;
+            margin-top: 30px;
+            border-top: 1px solid rgba(93, 64, 55, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--leather-accent);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .date-badge {
+            background-color: var(--leather-accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+
+
+<div class="header">
+
+    <div class="container">
+        <div class="logo-container">
+            <div class="logo">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+        </div>
+        <h1 class="page-title">سیستم مدیریت رزرو اتاق جلسات</h1>
+        <p class="subtitle">برنامه رزرو هفت روز آینده - اتاق کنفرانس اصلی</p>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="legend">
+
+        <div class="legend-item">
+            <span class="status-badge available-badge"></span>
+            <span>زمان‌های آزاد</span>
+        </div>
+        <div class="legend-item">
+            <span class="status-badge reserved-badge"></span>
+            <span>زمان‌های رزرو شده</span>
+        </div>
+    </div>
+
+    {% for day, reservations in grouped_reservations.items() %}
+    <div class="card">
+        <div class="card-header">
+            <i class="bi bi-calendar-event"></i>
+            <span>برنامه رزرو: {{ day.strftime("%Y/%m/%d") }}</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>وضعیت</th>
+                        <th>کاربر</th>
+                        <th>از ساعت</th>
+                        <th>تا ساعت</th>
+                        <th>موضوع جلسه</th>
+                        <th>تعداد افراد</th>
+                        <th>عملیات</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set day_start = '08:00' %}
+                    {% set day_end = '17:00' %}
+                    {% set current_time = day_start %}
+
+                    {% if not reservations %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="bi bi-calendar-x"></i>
+                                <h5>هیچ رزروی برای این تاریخ ثبت نشده است</h5>
+                                <p class="text-muted">تمام زمان‌های این روز برای رزرو آزاد می‌باشد</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% for res in reservations %}
+                    {% if loop.index0 > 0 %}
+                    {% set previous_res = reservations[loop.index0 - 1] %}
+                    {% set current_time = previous_res.end_time.strftime("%H:%M") %}
+                    {% endif %}
+
+
+
+                    {% if current_time < res.start_time.strftime("%H:%M") %}
+
+                    <tr>
+                        <td><span class="status-badge available-badge"></span> آزاد</td>
+                        <td colspan="5">از {{ current_time }} تا {{ res.start_time.strftime("%H:%M") }}</td>
+                        <!--            <td>-->
+                        <!--              <button class="btn btn-leather btn-sm">-->
+                        <!--                <i class="bi bi-plus-lg"></i> رزرو-->
+                        <!--              </button>-->
+                        <!--            </td>-->
+                    </tr>
+
+                    {% endif %}
+                    <tr>
+                        <td><span class="status-badge reserved-badge"></span> رزرو شده</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2">
+                                    <i class="bi bi-person-circle"></i>
+                                </div>
+                                <div>{{ res.user.name }}</div>
+                            </div>
+                        </td>
+                        <td>{{ res.start_time.strftime("%H:%M") }}</td>
+                        <td>{{ res.end_time.strftime("%H:%M") }}</td>
+                        <td>{{ res.subject or '---' }}</td>
+
+                        <td>
+                            <span class="badge bg-secondary rounded-pill">{{ res.participants }} نفر</span>
+                        </td>
+                        <td>
+                            <form method="post" action="/admin/meetingroom/delete/{{ res.id }}"
+                                  onsubmit="return confirm('آیا از حذف این رزرو اطمینان دارید؟')">
+                                <button class="btn btn-leather btn-sm">
+                                    <i class="bi bi-trash"></i> حذف
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    {% set current_time = res.end_time.strftime("%H:%M") %}
+                    {% if loop.last and current_time < day_end %}
+                    <tr>
+                        <td><span class="status-badge available-badge"></span> آزاد</td>
+                        <td colspan="5">از {{ current_time }} تا {{ day_end }}</td>
+                        <td>
+                            <button class="btn btn-leather btn-sm">
+                                <i class="bi bi-plus-lg"></i> رزرو
+                            </button>
+                        </td>
+                    </tr>
+
+                    {% endif %}
+
+                    {% endfor %}
+
+
+
+
+
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <div class="card-footer text-muted">
+            <i class="bi bi-info-circle"></i>
+            ساعت کاری: ۸:۰۰ تا ۱۷:۰۰ | ظرفیت اتاق: ۲۰ نفر
+        </div>
+
+    </div>
+    {% endfor %}
+    <button class="btn btn-leather btn-sm">
+
+        <a href="/admin_dashboard" class="btn btn-back px-6 py-3 text-sm">بازگشت</a>
+    </button>
+</div>
+
+<div class="footer">
+    <div class="container">
+        <p>سیستم مدیریت رزرو اتاق جلسات | نسخه ۲.۱</p>
+        <p class="text-muted">© ۱۴۰۳ کلیه حقوق برای شرکت چرم مشهد محفوظ است</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

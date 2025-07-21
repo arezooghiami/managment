@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مدیریت منوی ناهار</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Vazir', sans-serif;
+      background-color: #f5f0e6;
+      background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23a68a64" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30v4h-4v2h4v4h2v-4h4v-2h-4v-4h-2zM6 34v4h4v2h-4v4h-2v-4h-4v-2h4v-4h2zm0-30v4h-4v2h4v4h2v-4h4v-2h-4v-4h-2z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+    }
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin-top: 2rem;
+      border: 1px solid #d4c2a6;
+    }
+    h1 {
+      color: #4a3728;
+      border-bottom: 2px solid #a68a64;
+      padding-bottom: 0.75rem;
+      font-weight: 700;
+    }
+    .btn {
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background-color: #a68a64;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #8a6f47;
+    }
+    .btn-secondary {
+      background-color: #d4c2a6;
+      color: #4a3728;
+    }
+    .btn-secondary:hover {
+      background-color: #bca98c;
+    }
+    .btn-success {
+      background-color: #2e7d32;
+    }
+    .btn-success:hover {
+      background-color: #26632a;
+    }
+    .btn-back {
+      background-color: #6b4e31;
+      color: white;
+    }
+    .btn-back:hover {
+      background-color: #5a3f27;
+    }
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #d4c2a6;
+    }
+    th {
+      background-color: #a68a64;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f9f6f0;
+    }
+    input[type="text"], input[type="file"] {
+      border: 1px solid #d4c2a6;
+      border-radius: 8px;
+      padding: 0.5rem;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus, input[type="file"]:focus {
+      outline: none;
+      border-color: #a68a64;
+      box-shadow: 0 0 0 3px rgba(166, 138, 100, 0.2);
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Vazir:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="max-w-6xl mx-auto py-12 px-6">
+  <div class="container">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-4xl font-bold">مدیریت منوی ناهار هفته</h1>
+      <a href="/admin_dashboard" class="btn btn-back px-6 py-3 text-sm">بازگشت</a>
+    </div>
+
+    <!-- فرم آپلود اکسل -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <form id="upload-form" enctype="multipart/form-data" class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+        <input type="file" id="excel-file" accept=".xlsx,.xls" class="border p-3 rounded-lg text-sm w-full sm:w-auto">
+        <button type="button" onclick="uploadExcel()" class="btn btn-primary px-6 py-3 text-sm">
+          آپلود فایل اکسل
+        </button>
+      </form>
+      <p id="upload-message" class="text-sm text-green-600 hidden mt-3"></p>
+      <p id="upload-error" class="text-sm text-red-600 hidden mt-3"></p>
+    </div>
+
+    <!-- جدول نمایش منو -->
+    <div class="overflow-x-auto bg-white rounded-lg shadow-lg">
+      <table class="min-w-full text-sm text-right">
+        <thead>
+        <tr>
+          <th class="p-4">روز</th>
+          <th class="p-4">تاریخ</th>
+          <th class="p-4">غذاها</th>
+          <th class="p-4">عملیات</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for menu in menus %}
+        <tr class="transition-all duration-200">
+          <td class="p-4">{{ menu.weekday }}</td>
+          <td class="p-4" id="jalali-date-{{ loop.index }}">{{ menu.jalali_date }}</td>
+          <td class="p-4 align-top">
+            {% if menu.menu %}
+            <div id="dish-display-{{ menu.menu.id }}">
+              {% set dishes = menu.menu.main_dish.split(' / ') %}
+              {% for dish in dishes %}
+              <div class="text-gray-800 mb-2">{{ dish }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- فرم ویرایش -->
+            <div id="edit-input-{{ menu.menu.id }}" class="mt-3 hidden space-y-3">
+              <input type="text" id="input1-{{ menu.menu.id }}" value="{{ dishes[0] }}" class="border p-3 rounded-lg w-full text-sm" placeholder="غذای اول (مثلاً قیمه)">
+              <input type="text" id="input2-{{ menu.menu.id }}" value="{{ dishes[1] if dishes|length > 1 else '' }}" class="border p-3 rounded-lg w-full text-sm" placeholder="غذای دوم (اختیاری)">
+              <button onclick="submitEdit({{ menu.menu.id }})" class="btn btn-success px-4 py-2 text-sm">ثبت تغییرات</button>
+            </div>
+            {% else %}
+            <form method="post" action="/lunch/admin/add_lunch_menu_single" class="space-y-3">
+              {% if request.session.get("messages") %}
+              {% endif %}
+              <input type="hidden" name="date" value="{{ menu.date }}">
+              <input type="text" name="main_dish" placeholder="غذای اصلی را وارد کنید" class="border p-3 rounded-lg w-full text-sm" required>
+              <button type="submit" class="btn btn-primary px-4 py-2 text-sm">ثبت غذا</button>
+            </form>
+            {% endif %}
+          </td>
+          <td class="p-4">
+            {% if menu.menu %}
+            <button onclick="toggleEditInput({{ menu.menu.id }})" class="btn btn-secondary px-4 py-2 text-sm">
+              ویرایش
+            </button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  // تابع برای تبدیل تاریخ به فرمت «۲۹ تیر»
+  function formatJalaliDate(dateString) {
+    const parts = dateString.split(' ');
+    if (parts.length >= 3) {
+      return `${parts[1]} ${parts[2]}`;
+    }
+    return dateString;
+  }
+
+  // اعمال فرمت به تمام تاریخ‌ها در جدول
+  document.querySelectorAll('[id^="jalali-date-"]').forEach(element => {
+    const originalDate = element.textContent;
+    element.textContent = formatJalaliDate(originalDate);
+  });
+
+  function toggleEditInput(id) {
+    document.getElementById(`edit-input-${id}`).classList.toggle("hidden");
+  }
+
+  async function submitEdit(id) {
+    const input1 = document.getElementById(`input1-${id}`);
+    const input2 = document.getElementById(`input2-${id}`);
+    const dish1 = input1.value.trim();
+    const dish2 = input2.value.trim();
+    const newValue = dish2 ? `${dish1} / ${dish2}` : dish1;
+
+    if (!dish1) {
+      alert("حداقل یک غذا باید وارد شود.");
+      return;
+    }
+
+    try {
+      const oldDataRes = await fetch(`/lunch/admin/menu/${id}`);
+      const oldData = await oldDataRes.json();
+
+      const result = await fetch(`/lunch/admin/menu/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          main_dish: newValue,
+          date: oldData.date,
+          weekday: oldData.weekday
+        })
+      });
+
+      if (result.ok) {
+        location.reload();
+      } else {
+        alert("خطا در ثبت ویرایش.");
+      }
+    } catch (err) {
+      alert("ارتباط با سرور برقرار نشد.");
+    }
+  }
+
+  async function uploadExcel() {
+    const fileInput = document.getElementById('excel-file');
+    const uploadMessage = document.getElementById('upload-message');
+    const uploadError = document.getElementById('upload-error');
+
+    if (!fileInput.files.length) {
+      uploadError.textContent = "لطفاً یک فایل انتخاب کنید.";
+      uploadError.classList.remove('hidden');
+      uploadMessage.classList.add('hidden');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    try {
+      const response = await fetch('/upload-lunch-menu/', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        uploadMessage.textContent = result.message || "فایل با موفقیت آپلود شد.";
+        uploadMessage.classList.remove('hidden');
+        uploadError.classList.add('hidden');
+        fileInput.value = '';
+        setTimeout(() => location.reload(), 2000);
+      } else {
+        uploadError.textContent = result.detail || "خطا در آپلود فایل.";
+        uploadError.classList.remove('hidden');
+        uploadMessage.classList.add('hidden');
+      }
+    } catch (err) {
+      uploadError.textContent = "خطا در ارتباط با سرور.";
+      uploadError.classList.remove('hidden');
+      uploadMessage.classList.add('hidden');
+    }
+  }
+</script>
+</body>
+</html>

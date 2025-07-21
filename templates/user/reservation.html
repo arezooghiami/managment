@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>سیستم رزرواسیون اتاق جلسات | چرم مشهد</title>
+
+  <!-- Bootstrap RTL CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Persian Datepicker CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css" />
+
+  <style>
+    :root {
+      --primary-color: #3d0c02;
+      --secondary-color: #6b1f12;
+      --accent-color: #d4a017;
+      --light-bg: #f8f5f2;
+      --card-bg: #ffffff;
+    }
+
+    body {
+      font-family: "IRANSans", "Segoe UI", Tahoma, sans-serif;
+      background-color: var(--light-bg);
+      color: #333;
+      padding-bottom: 50px;
+    }
+
+    .navbar {
+      background-color: var(--primary-color);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand, .nav-link, .navbar-text {
+      color: #fff !important;
+      font-weight: 500;
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar-brand i {
+      color: var(--accent-color);
+    }
+
+    .card {
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      background: var(--card-bg);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      padding: 15px 20px;
+      border-radius: 12px 12px 0 0 !important;
+      font-size: 1.2rem;
+    }
+
+    .btn-custom {
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      font-weight: 500;
+      transition: all 0.3s;
+      border-radius: 8px;
+    }
+
+    .btn-custom:hover {
+      background-color: #51170e;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(107, 31, 18, 0.3);
+    }
+
+    .section-title {
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: var(--primary-color);
+      font-size: 1.3rem;
+    }
+
+    .time-selector {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #eee;
+    }
+
+    .time-input {
+      flex: 1;
+      position: relative;
+    }
+
+    .time-input input {
+      padding-left: 40px;
+    }
+
+    .time-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--secondary-color);
+      font-size: 18px;
+    }
+
+    .time-separator {
+      font-size: 1.5rem;
+      color: #777;
+      font-weight: bold;
+    }
+
+    .calendar-container {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      border: 1px solid #eee;
+    }
+
+    .calendar-header {
+      background: var(--secondary-color);
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .today-meeting {
+      border-left: 4px solid var(--accent-color);
+      transition: all 0.3s;
+    }
+
+    .today-meeting:hover {
+      transform: translateX(-5px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: #777;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #ddd;
+    }
+
+    .date-display {
+      background: var(--primary-color);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .persian-datepicker {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px 15px;
+      width: 100%;
+      text-align: center;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .persian-datepicker:hover {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(107, 31, 18, 0.1);
+    }
+
+    .calendar-icon {
+      margin-left: 10px;
+      color: var(--secondary-color);
+    }
+
+    .time-slot {
+      display: inline-block;
+      padding: 6px 12px;
+      margin: 5px;
+      background: #f0f0f0;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+      border: 1px solid #ddd;
+    }
+
+    .time-slot:hover {
+      background: #e0e0e0;
+    }
+
+    .time-slot.selected {
+      background: var(--secondary-color);
+      color: white;
+      border-color: var(--secondary-color);
+    }
+
+    .time-slots-container {
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      margin-top: 15px;
+      border: 1px solid #eee;
+    }
+
+    .footer {
+      background: var(--primary-color);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .time-picker-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      border: 1px solid #eee;
+    }
+
+    .time-range-display {
+      background: var(--secondary-color);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .time-selector {
+        flex-direction: column;
+      }
+
+      .time-separator {
+        transform: rotate(90deg);
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <i class="fas fa-calendar-alt"></i>
+      سیستم رزرواسیون اتاق جلسات
+    </a>
+    <div class="navbar-text">
+      <div class="date-display">
+        <i class="fas fa-clock"></i>
+        <span id="current-date">1403/04/01 - 12:45</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-lg-7">
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-calendar-plus me-2"></i>
+          رزرو اتاق جلسه
+        </div>
+        <div class="card-body">
+          <form method="post" action="/reserve_meeting" class="row g-4">
+            <div class="col-md-12">
+              <label class="form-label fw-bold">تاریخ جلسه</label>
+              <div class="calendar-container">
+                <div class="calendar-header">انتخاب تاریخ</div>
+                <div class="p-3">
+                  <div class="persian-datepicker" id="jalali-datepicker">
+                    برای انتخاب تاریخ کلیک کنید
+                  </div>
+                  <input type="hidden" name="reservation_date" id="reservation_date">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label fw-bold">زمان جلسه</label>
+              <div class="time-picker-container">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="form-label">زمان شروع</label>
+                    <div class="time-input">
+                      <i class="fas fa-clock time-icon"></i>
+                      <input type="time" name="start_time" class="form-control" value="08:30" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">زمان پایان</label>
+                    <div class="time-input">
+                      <i class="fas fa-clock time-icon"></i>
+                      <input type="time" name="end_time" class="form-control" value="10:00" required>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-4">
+                  <label class="form-label fw-bold">زمان‌های پیشنهادی</label>
+                  <div class="time-slots-container">
+                    <span class="time-slot">۸:۰۰ - ۹:۰۰</span>
+                    <span class="time-slot">۹:۰۰ - ۱۰:۰۰</span>
+                    <span class="time-slot selected">۹:۳۰ - ۱۰:۳۰</span>
+                    <span class="time-slot">۱۰:۰۰ - ۱۱:۰۰</span>
+                    <span class="time-slot">۱۱:۰۰ - ۱۲:۰۰</span>
+                    <span class="time-slot">۱۳:۰۰ - ۱۴:۰۰</span>
+                    <span class="time-slot">۱۴:۰۰ - ۱۵:۰۰</span>
+                    <span class="time-slot">۱۵:۰۰ - ۱۶:۰۰</span>
+                  </div>
+                </div>
+
+                <div class="time-range-display mt-3">
+                  مدت زمان جلسه: <span id="duration">۱ ساعت و ۳۰ دقیقه</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">تعداد شرکت‌کنندگان</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-users"></i></span>
+                <input type="number" name="participants" class="form-control" value="5" min="1" max="30" required>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">اتاق جلسه</label>
+              <select class="form-select" name="room">
+                <option>اتاق جلسات اصلی (ظرفیت 30 نفر)</option>
+                <option>اتاق کنفرانس A (ظرفیت 15 نفر)</option>
+                <option>اتاق کنفرانس B (ظرفیت 10 نفر)</option>
+                <option>اتاق مدیریت (ظرفیت 8 نفر)</option>
+              </select>
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label fw-bold">موضوع جلسه</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                <input type="text" name="subject" class="form-control" placeholder="موضوع جلسه را وارد کنید" required>
+              </div>
+            </div>
+
+            <div class="col-12 text-end mt-4">
+              <button class="btn btn-custom btn-lg">
+                <i class="fas fa-check-circle me-2"></i>
+                ثبت رزرو جلسه
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-calendar-day me-2"></i>
+          جلسات امروز
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold">دوشنبه 1 مرداد 1403</h6>
+            <span class="badge bg-secondary">4 جلسه</span>
+          </div>
+
+          <div class="list-group">
+            <div class="list-group-item today-meeting">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">جلسه برنامه‌ریزی فصل پاییز</h6>
+                <small class="text-danger">۸:۳۰ - ۱۰:۰۰</small>
+              </div>
+              <div class="d-flex justify-content-between mt-2">
+                <small><i class="fas fa-users me-1"></i> ۱۲ نفر</small>
+                <small><i class="fas fa-door-open me-1"></i> اتاق اصلی</small>
+                <small><i class="fas fa-user me-1"></i> آقای احمدی</small>
+              </div>
+            </div>
+
+            <div class="list-group-item today-meeting">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">بررسی مشکلات تولید</h6>
+                <small class="text-danger">۱۱:۰۰ - ۱۲:۳۰</small>
+              </div>
+              <div class="d-flex justify-content-between mt-2">
+                <small><i class="fas fa-users me-1"></i> ۸ نفر</small>
+                <small><i class="fas fa-door-open me-1"></i> اتاق کنفرانس A</small>
+                <small><i class="fas fa-user me-1"></i> سرکار خانم رضایی</small>
+              </div>
+            </div>
+
+            <div class="list-group-item today-meeting">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">آموزش نرم‌افزار جدید</h6>
+                <small class="text-danger">۱۴:۰۰ - ۱۶:۰۰</small>
+              </div>
+              <div class="d-flex justify-content-between mt-2">
+                <small><i class="fas fa-users me-1"></i> ۲۵ نفر</small>
+                <small><i class="fas fa-door-open me-1"></i> اتاق اصلی</small>
+                <small><i class="fas fa-user me-1"></i> آقای موسوی</small>
+              </div>
+            </div>
+
+            <div class="list-group-item today-meeting">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">بررسی عملکرد ماهانه</h6>
+                <small class="text-danger">۱۶:۳۰ - ۱۷:۳۰</small>
+              </div>
+              <div class="d-flex justify-content-between mt-2">
+                <small><i class="fas fa-users me-1"></i> ۵ نفر</small>
+                <small><i class="fas fa-door-open me-1"></i> اتاق مدیریت</small>
+                <small><i class="fas fa-user me-1"></i> مدیرعامل</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 text-center">
+            <button class="btn btn-outline-secondary">
+              <i class="fas fa-calendar-week me-2"></i>
+              مشاهده برنامه هفتگی
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-chart-pie me-2"></i>
+          آمار رزرواسیون
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-md-4 mb-3">
+              <div class="bg-light p-3 rounded">
+                <h3 class="text-primary">۲۴</h3>
+                <small>جلسات این هفته</small>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="bg-light p-3 rounded">
+                <h3 class="text-success">۸۷%</h3>
+                <small>اتاق‌های اشغال شده</small>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="bg-light p-3 rounded">
+                <h3 class="text-warning">۳</h3>
+                <small>اتاق‌های آزاد</small>
+              </div>
+            </div>
+          </div>
+          <div class="progress mt-3" style="height: 10px;">
+            <div class="progress-bar bg-primary" style="width: 25%"></div>
+            <div class="progress-bar bg-success" style="width: 35%"></div>
+            <div class="progress-bar bg-info" style="width: 20%"></div>
+            <div class="progress-bar bg-warning" style="width: 20%"></div>
+          </div>
+          <div class="mt-2 text-center small">
+            <span><i class="fas fa-square text-primary me-1"></i> برنامه‌ریزی</span>
+            <span class="ms-3"><i class="fas fa-square text-success me-1"></i> فنی</span>
+            <span class="ms-3"><i class="fas fa-square text-info me-1"></i> بازاریابی</span>
+            <span class="ms-3"><i class="fas fa-square text-warning me-1"></i> سایر</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="container">
+    سیستم رزرواسیون اتاق جلسات - چرم مشهد © ۱۴۰۳
+  </div>
+</div>
+
+<!-- اضافه کردن اسکریپت های مورد نیاز -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // فعال سازی تقویم شمسی
+    $("#jalali-datepicker").persianDatepicker({
+      format: 'YYYY/MM/DD',
+      observer: true,
+      initialValue: true,
+      initialValueType: 'persian',
+      autoClose: true,
+      onSelect: function(unixDate) {
+        // تبدیل به تاریخ شمسی و ذخیره در فیلد مخفی
+        var dateObj = new persianDate(unixDate);
+        $('#reservation_date').val(dateObj.format('YYYY/MM/DD'));
+        $('#jalali-datepicker').text(dateObj.format('YYYY/MM/DD'));
+      }
+    });
+
+    // به‌روزرسانی تاریخ و زمان فعلی
+    function updateDateTime() {
+      var now = new Date();
+      var pDate = new persianDate(now).format('YYYY/MM/DD');
+      var time = now.toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
+      $('#current-date').text(pDate + ' - ' + time);
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+
+    // تنظیم تاریخ امروز به صورت پیش‌فرض
+    var today = new persianDate().format('YYYY/MM/DD');
+    $('#jalali-datepicker').text(today);
+    $('#reservation_date').val(today);
+
+    // مدیریت انتخاب زمان‌ها
+    $('.time-slot').click(function() {
+      $('.time-slot').removeClass('selected');
+      $(this).addClass('selected');
+
+      // استخراج زمان‌ها از متن
+      var times = $(this).text().split(' - ');
+      $('input[name="start_time"]').val(times[0].replace(':', '') + ':00');
+      $('input[name="end_time"]').val(times[1].replace(':', '') + ':00');
+
+      // محاسبه مدت زمان
+      calculateDuration();
+    });
+
+    // محاسبه مدت زمان جلسه
+    function calculateDuration() {
+      var start = $('input[name="start_time"]').val();
+      var end = $('input[name="end_time"]').val();
+
+      if (start && end) {
+        var startTime = new Date('2000-01-01T' + start);
+        var endTime = new Date('2000-01-01T' + end);
+
+        if (endTime < startTime) {
+          endTime.setDate(endTime.getDate() + 1);
+        }
+
+        var diff = endTime - startTime;
+        var hours = Math.floor(diff / 3600000);
+        var minutes = Math.floor((diff % 3600000) / 60000);
+
+        var durationText = '';
+        if (hours > 0) durationText += hours + ' ساعت';
+        if (minutes > 0) {
+          if (hours > 0) durationText += ' و ';
+          durationText += minutes + ' دقیقه';
+        }
+
+        $('#duration').text(durationText);
+      }
+    }
+
+    // رویداد تغییر زمان
+    $('input[name="start_time"], input[name="end_time"]').change(function() {
+      calculateDuration();
+    });
+
+    // مقداردهی اولیه
+    calculateDuration();
+  });
+</script>
+</body>
+</html>
