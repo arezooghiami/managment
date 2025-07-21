@@ -33,6 +33,7 @@ class LunchOrder(Base):
     lunch_menu_id = Column(Integer, ForeignKey("lunch_menus.id"), nullable=False)
     order_date = Column(Date, nullable=False)
     selected_dish = Column(String, nullable=True)
+    guest_name = Column(String, nullable=True)
 
     user = relationship("User")
     lunch_menu = relationship("LunchMenu")
