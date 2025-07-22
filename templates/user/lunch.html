@@ -295,16 +295,7 @@
       سفارش ناهار برای خودم
     </div>
     <div class="card-body">
-      {% if request.session.get("messages") %}
-      {% for msg in request.session.get("messages") %}
-      <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
-        <i class="fas fa-check-circle me-2"></i>
-        {{ msg }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="بستن"></button>
-      </div>
-      {% endfor %}
-      {% set _ = request.session.pop("messages") %}
-      {% endif %}
+
 
       {% if lunch_menu %}
       <form method="post" action="/order_lunch" aria-label="فرم سفارش ناهار">
@@ -333,7 +324,7 @@
         </div>
 
         <div class="text-center mt-4">
-          <button class="btn btn-custom" type="submit" {% if now.time() > cutoff_time %}disabled{% endif %} aria-label="ثبت سفارش ناهار">
+          <button class="btn btn-custom" type="submit" aria-label="ثبت سفارش ناهار">
             <i class="fas fa-paper-plane me-2"></i>
             ثبت سفارش من
           </button>
@@ -354,7 +345,7 @@
     <div class="card-body">
       <div id="guest-forms-container" class="mb-4"></div>
       <div class="text-center">
-        <button type="button" class="btn btn-outline-custom" onclick="addGuestForm()" {% if now.time() > cutoff_time %}disabled{% endif %} aria-label="افزودن مهمان جدید">
+        <button type="button" class="btn btn-outline-custom" onclick="addGuestForm()" aria-label="افزودن مهمان جدید">
           <i class="fas fa-user-plus me-2"></i>
           افزودن مهمان جدید
         </button>
@@ -376,6 +367,7 @@
           <tr>
             <th scope="col">نام</th>
             <th scope="col">غذا</th>
+            <th scope="col">تاریخ</th>
             <th scope="col">وضعیت</th>
           </tr>
           </thead>
@@ -392,9 +384,11 @@
               {% endif %}
             </td>
             <td>{{ item.selected_dish }}</td>
+            <td>{{ item.order_date }}</td>
             <td>
               <span class="badge bg-success">ثبت شده</span>
             </td>
+
           </tr>
           {% endfor %}
           </tbody>
@@ -416,7 +410,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6 text-md-start">
-        <p>تمامی حقوق برای شرکت چرم مشهد محفوظ است © ۱۴۰۳</p>
+        <p>تمامی حقوق برای شرکت چرم مشهد محفوظ است ©۱۴۰۴</p>
       </div>
       <div class="col-md-6 text-md-end">
         <p>پشتیبانی: داخلی ۱۱۱ | <i class="fas fa-phone me-1"></i> ۰۵۱-۳۸۴۵۱۲۳۴</p>
