@@ -5,13 +5,6 @@ from DB.database import Base
 from datetime import date
 
 
-class Lunch(Base):
-    __tablename__ = "lunches"
-
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, nullable=False)
-    description = Column(String, nullable=True)
-    date = Column(Date, nullable=False)
 
 
 
@@ -19,9 +12,12 @@ class LunchMenu(Base):
     __tablename__ = 'lunch_menus'
 
     id = Column(Integer, primary_key=True, index=True)
-    weekday = Column(String, nullable=False)  # مثل: یکشنبه، دوشنبه
-    date = Column(Date, nullable=False, unique=True)
+    weekday = Column(String, nullable=False)
+    date = Column(Date, nullable=False, unique=False)
     main_dish = Column(String, nullable=False)
+    office_id = Column(Integer, ForeignKey("offices.id"), nullable=False)
+
+    office = relationship("Office")
 
 
 

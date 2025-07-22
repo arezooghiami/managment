@@ -13,3 +13,6 @@ class User(Base):
     family =Column(String(50), nullable=False)
     code = Column(String, unique=True, index=True)
     role = Column(Enum(UserRole), nullable=False)   #admin, user
+    office_id = Column(Integer, ForeignKey("offices.id"), nullable=False)
+
+    office = relationship("Office", back_populates="users")

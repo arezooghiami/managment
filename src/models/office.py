@@ -10,3 +10,4 @@ class Office(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, nullable=False)  # مثلاً "دفتر مشهد"، "دفتر تهران"
     meeting_rooms = relationship("MeetingRoom", back_populates="office")
+    users = relationship("User", back_populates="office")

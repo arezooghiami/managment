@@ -7,7 +7,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
-
+from models import office
 
 from DB.database import Base, engine
 from routers.Athentication.api import login, admin_register
@@ -23,7 +23,7 @@ app = FastAPI()
 host = "0.0.0.0"
 port = 5300
 
-app.add_middleware(SessionMiddleware, secret_key="e455a74e1805ab61e6c1a9c57ee4e5c2a6d64dfe6e97c3753fe5723dc7a8f670")
+app.add_middleware(SessionMiddleware, secret_key="e455a74e1805ab61e6c1a9c57ee4e5c2a6d64dfe6e97c3753fe5723dc7a8f670",session_cookie="session")
 
 app.include_router(login.router_login)
 # app.include_router(admin_login.router_admin)
