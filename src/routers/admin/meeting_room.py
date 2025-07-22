@@ -5,7 +5,8 @@ from starlette.templating import Jinja2Templates
 from starlette.responses import RedirectResponse
 
 from DB.database import get_db
-from models.meet import MeetingRoomReservation
+from models.meet import MeetingRoomReservation, MeetingRoom
+from models.user import User
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -14,10 +15,12 @@ templates = Jinja2Templates(directory="templates")
 def admin_meetingroom(request: Request, db: Session = Depends(get_db)):
     today = date.today()
     end_day = today + timedelta(days=7)
-
+    user_id = request.session.get("user_id")
+    user = db.query(User).filter(User.id == user_id).first()
     reservations = db.query(MeetingRoomReservation).filter(
         MeetingRoomReservation.reservation_date >= today,
-        MeetingRoomReservation.reservation_date <= end_day
+        MeetingRoomReservation.reservation_date <= end_day,
+        MeetingRoomReservation.office_id==user.office_id
     ).order_by(
         MeetingRoomReservation.reservation_date,
         MeetingRoomReservation.start_time
