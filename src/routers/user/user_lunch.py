@@ -1,6 +1,10 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Request, Form, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from datetime import date, timedelta
+
+from starlette.responses import RedirectResponse
 
 from DB.database import get_db
 from models.user import User
@@ -85,3 +89,71 @@ async def user_lunch(request: Request, user_id: int, db: Session = Depends(get_d
         "now": now,
         "cutoff_time": cutoff_time
     })
+
+@router_user_lunch.post("/order_lunch")
+def order_lunch(
+        request: Request,
+        user_id: int = Form(...),
+        menu_id: int = Form(...),
+        selected_dish: str = Form(...),
+        for_guest: Optional[str] = Form(None),
+        guest_name: Optional[str] = Form(None),
+        db: Session = Depends(get_db)
+):
+    # order_date = date.today() + timedelta(days=1)
+    now = datetime.now()
+    cutoff_time = time(10, 0)
+
+    # منطق بررسی زمان برای سفارش امروز یا فردا
+    if now.time() < cutoff_time:
+        order_date = date.today()
+    else:
+        order_date = date.today() + timedelta(days=1)
+
+
+    if for_guest == "on" and guest_name:
+        # سفارش جدید برای مهمان
+        new_order = LunchOrder(
+            user_id=user_id,
+            lunch_menu_id=menu_id,
+            selected_dish=selected_dish,
+            order_date=order_date,
+            guest_name=guest_name
+        )
+        db.add(new_order)
+        message = f"سفارش برای مهمان {guest_name} ثبت شد."
+    else:
+        # فقط یک سفارش در روز برای خود شخص قابل ویرایش است
+        existing_order = db.query(LunchOrder).filter(
+            LunchOrder.user_id == user_id,
+            LunchOrder.order_date == order_date,
+            LunchOrder.guest_name == None
+        ).first()
+
+        if existing_order:
+            existing_order.lunch_menu_id = menu_id
+            existing_order.selected_dish = selected_dish
+            message = "سفارش ناهار شما ویرایش شد."
+        else:
+            new_order = LunchOrder(
+                user_id=user_id,
+                lunch_menu_id=menu_id,
+                selected_dish=selected_dish,
+                order_date=order_date
+            )
+            db.add(new_order)
+            message = "سفارش ناهار شما ثبت شد."
+
+    db.commit()
+    if for_guest == "on" and guest_name:
+
+        message = f"سفارش ناهار برای مهمان «{guest_name}» با موفقیت ثبت شد."
+    else:
+
+        message = "سفارش ناهار شما با موفقیت ثبت شد."
+
+    if "messages" not in request.session:
+        request.session["messages"] = []
+
+    request.session["messages"].append(message)
+    return RedirectResponse(url=f"/user_dashboard/lunch?user_id={user_id}", status_code=302)
