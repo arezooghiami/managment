@@ -10,7 +10,7 @@ from datetime import datetime, date, timedelta
 import json
 import jdatetime
 from datetime import date, timedelta
-
+from khayyam import JalaliDate
 from fastapi import APIRouter, Request, Depends, HTTPException, status
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -37,12 +37,10 @@ def get_week_dates(start_date: date) -> list[date]:
     return [week_start + timedelta(days=i) for i in range(6)]  # شنبه تا پنج‌شنبه
 
 
-
-
 def get_current_week_dates() -> List[date]:
     today = date.today()
     weekday = today.weekday()  # 0=Monday, ..., 6=Sunday
-    start_delta = (weekday + 1) % 7  # فاصله تا شنبه
+    start_delta = (weekday + 2) % 7  # فاصله تا شنبه
     saturday = today - timedelta(days=start_delta)
     return [saturday + timedelta(days=i) for i in range(6)]  # شنبه تا پنج‌شنبه
 
@@ -51,7 +49,9 @@ def get_current_week_dates() -> List[date]:
 async def manage_lunch_menu(request: Request, db: Session = Depends(get_db)):
     week_dates = get_current_week_dates()  # [شنبه تا پنجشنبه]
 
-    menus = db.query(LunchMenu).all()
+    user_id = request.session.get("user_id")
+    user = db.query(User).filter(User.id == user_id).first()
+    menus = db.query(LunchMenu).filter(LunchMenu.office_id == user.office_id)
 
     persian_weekdays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه"]
 
@@ -62,6 +62,15 @@ async def manage_lunch_menu(request: Request, db: Session = Depends(get_db)):
             "id": menu.id,
             "weekday": menu.weekday,
             "main_dish": menu.main_dish,
+
+        }
+
+    for menu in menus:
+        menu_data[menu.date.strftime("%Y-%m-%d")] = {
+            "id": menu.id,
+            "weekday": menu.weekday,
+            "main_dish": menu.main_dish,
+            "office_id": user.office_id
 
         }
 
@@ -95,12 +104,22 @@ def add_lunch_menu_single(
 ):
     date_obj = datetime.strptime(date, "%Y-%m-%d").date()
 
-    weekday_num = date_obj.weekday() +1 # 0=Monday, ..., 6=Sunday
-    persian_weekdays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه"]
+    # weekday_num = date_obj.weekday()  # 0=Monday, ..., 6=Sunday
+    # persian_weekdays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه"]
+    # weekday_fa = persian_weekdays[weekday_num]
+    # persian_weekdays = ["دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه", "یکشنبه"]
+    # weekday_fa = persian_weekdays[date_obj.weekday()]
+    persian_weekdays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه"]
+
+    weekday_num = (date_obj.weekday() + 2) % 7
     weekday_fa = persian_weekdays[weekday_num]
+    user_id = request.session.get("user_id")
+    menus = db.query(LunchMenu).filter(LunchMenu.office_id == user_id)
+    user = db.query(User).filter(User.id == user_id).first()
 
+    # existing = db.query(LunchMenu).filter(LunchMenu.date == date_obj).first()
+    existing = db.query(LunchMenu).filter(LunchMenu.date == date_obj, LunchMenu.office_id == user.office_id).first()
 
-    existing = db.query(LunchMenu).filter(LunchMenu.date == date_obj).first()
     if existing:
         request.session.setdefault("messages", []).append("برای این روز قبلاً منو ثبت شده است.")
         return RedirectResponse("/admin/add_lunch_menu", status_code=302)
@@ -108,14 +127,14 @@ def add_lunch_menu_single(
     new_menu = LunchMenu(
         date=date_obj,
         weekday=weekday_fa,
-        main_dish=main_dish
+        main_dish=main_dish,
+        office_id=user.office_id
     )
     db.add(new_menu)
     db.commit()
 
     db.refresh(new_menu)
     return RedirectResponse(url=f"/lunch/admin/menu", status_code=302)
-
 
 
 class UpdateMenuSchema(BaseModel):
