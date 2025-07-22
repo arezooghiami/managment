@@ -38,6 +38,9 @@ def login(
             {"request": request, "error": "نام یا کد پرسنلی اشتباه است"},
             status_code=401,
         )
+    request.session["user_id"] = user.id
+    request.session["role"] = user.role
+    request.session["office_id"] = user.office_id  # اگر داری
 
     if user.role == 'admin':
         return RedirectResponse(url="/admin_dashboard", status_code=302)
