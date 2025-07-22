@@ -366,6 +366,12 @@
             <label class="form-label">تا ساعت</label>
             <input type="time" name="end_time" class="form-control" required>
           </div>
+          <label for="meeting_room_id">انتخاب اتاق جلسه:</label>
+          <select name="selected_room" id="meeting_room_id">
+            {% for room in meeting_rooms %}
+            <option value="{{ room.id }}">{{ room.name }}</option>
+            {% endfor %}
+          </select>
           <div class="col-md-6">
             <label class="form-label">تعداد شرکت‌کنندگان</label>
             <input type="number" name="participants" class="form-control" required min="1">
@@ -437,46 +443,6 @@
   </div>
 </div>
 
-{% if order %}
-<div class="card mt-4">
-  <div class="card-header">
-    <i class="fas fa-clipboard-list me-2"></i>
-    گزارش سفارش‌های ناهار فردا
-  </div>
-  <div class="card-body">
-    <div class="table-responsive">
-      <table class="table table-hover">
-        <thead>
-        <tr>
-          <th>نام</th>
-          <th>غذا</th>
-          <th>وضعیت</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for item in order %}
-        <tr>
-          <td>
-            {% if item.guest_name %}
-            <span class="badge bg-secondary me-2">مهمان</span>
-            {{ item.guest_name }}
-            {% else %}
-            <span class="badge bg-primary me-2">پرسنل</span>
-            خودم
-            {% endif %}
-          </td>
-          <td>{{ item.selected_dish }}</td>
-          <td>
-            <span class="badge bg-success">ثبت شده</span>
-          </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-{% endif %}
   <form action="/user_dashboard" method="GET" class="d-inline">
     <input type="hidden" name="user_id" value="{{ user.id }}">
     <button type="submit" class="btn btn-custom btn-sm" aria-label="بازگشت به داشبورد">

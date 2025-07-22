@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session, joinedload
 from datetime import date, timedelta
 
 from DB.database import get_db
-from models.meet import MeetingRoomReservation
+from models.meet import MeetingRoomReservation, MeetingRoom
 from models.user import User
 
 from starlette.templating import Jinja2Templates
@@ -18,13 +18,15 @@ from datetime import datetime, time
 def user_meetingroom(request: Request, user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     tomorrow = date.today() + timedelta(days=1)
+    user = db.query(User).filter(User.id == user_id).first()
+    meeting_rooms = db.query(MeetingRoom).filter(MeetingRoom.office_id == user.office_id).all()
 
     meetings = db.query(MeetingRoomReservation).options(joinedload(MeetingRoomReservation.user)).all()
 
     return templates.TemplateResponse("user/user_meetingroom.html", {
         "request": request,
         "user": user,
-
+        "meeting_rooms": meeting_rooms,
         "meetings": meetings,
         "today": date.today()
     })
@@ -33,30 +35,41 @@ def user_meetingroom(request: Request, user_id: int, db: Session = Depends(get_d
 @router_user.post("/reserve_meeting")
 def reserve_meeting(
         request: Request,
-        reservation_date: date = Form(...),
         user_id: int = Form(...),
+        reservation_date: date = Form(...),
         start_time: str = Form(...),
         end_time: str = Form(...),
         participants: int = Form(...),
         subject: str = Form(...),
+        selected_room: int = Form(...),
+
         db: Session = Depends(get_db)
 ):
     start_time_obj = datetime.strptime(start_time, "%H:%M").time()
     end_time_obj = datetime.strptime(end_time, "%H:%M").time()
+    user = db.query(User).filter(User.id == user_id).first()
 
-    # بررسی تداخل زمانی
+    # Fetch the selected meeting room
+    meeting_room = db.query(MeetingRoom).filter(MeetingRoom.id == selected_room).first()
+
+    if meeting_room.capacity < participants:
+        request.session["error_message"] = "ظرفیت اتاق کمتر از تعداد افراد جلسه است."
+        return RedirectResponse(url=f"/user_meetingroom?user_id={user_id}", status_code=302)
+
+    # Check for overlapping reservations
     overlapping = db.query(MeetingRoomReservation).filter(
         MeetingRoomReservation.reservation_date == reservation_date,
         MeetingRoomReservation.start_time < end_time_obj,
-        MeetingRoomReservation.end_time > start_time_obj
+        MeetingRoomReservation.end_time > start_time_obj,
+        MeetingRoomReservation.meeting_room_id == selected_room
     ).first()
     if reservation_date < date.today():
-        request.session["error_message"] = "تاریخ نا معتبر"
-        return RedirectResponse(url=f"/user_dashboard?user_id={user_id}", status_code=302)
+        request.session["error_message"] = "تاریخ نامعتبر"
+        return RedirectResponse(url=f"/user_meetingroom?user_id={user_id}", status_code=302)
 
     if overlapping:
         request.session["error_message"] = "این بازه زمانی قبلاً رزرو شده است."
-        return RedirectResponse(url=f"/user_dashboard?user_id={user_id}", status_code=302)
+        return RedirectResponse(url=f"/user_meetingroom?user_id={user_id}", status_code=302)
 
     reservation = MeetingRoomReservation(
         user_id=user_id,
@@ -64,13 +77,17 @@ def reserve_meeting(
         start_time=start_time,
         end_time=end_time,
         participants=participants,
-        subject=subject
+        subject=subject,
+        office_id=user.office_id,
+        meeting_room_id=selected_room  # Correct field name
     )
     db.add(reservation)
     db.commit()
 
-    request.session["message"] = "  با موفقیت ثبت شد."
+    request.session["message"] = "با موفقیت ثبت شد."
     return RedirectResponse(url=f"/user_meetingroom?user_id={user_id}", status_code=302)
+
+
 
 
 @router_user.post("/delete_meeting")
