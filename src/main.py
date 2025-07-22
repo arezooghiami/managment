@@ -14,7 +14,7 @@ from routers.Athentication.api import login, admin_register
 from jinja2 import Environment, FileSystemLoader
 
 from routers.admin import admin_dashboard, lunch,excel,meeting_room, report
-from routers.user import user_dashboard
+from routers.user import user_dashboard,user_lunch
 
 env = Environment(loader=FileSystemLoader('templates'))
 import secrets
@@ -33,6 +33,7 @@ app.include_router(excel.router_excel)
 app.include_router(user_dashboard.router_user)
 app.include_router(meeting_room.router)
 app.include_router(report.router)
+app.include_router(user_lunch.router_user_lunch)
 
 def initialize_database():
     Base.metadata.create_all(bind=engine)
