@@ -1,23 +1,18 @@
-from fastapi import APIRouter, Depends, Request, Form, HTTPException
-from sqlalchemy.orm import Session
-from starlette.templating import Jinja2Templates
-from starlette.responses import RedirectResponse
-from DB.database import get_db
-from models.user import User
-from models.lunch import LunchMenu, LunchOrder
-from schemas.user import UserRole
-from datetime import datetime, date, timedelta
-import json
-import jdatetime
 from datetime import date, timedelta
-from khayyam import JalaliDate
-from fastapi import APIRouter, Request, Depends, HTTPException, status
-from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
-from datetime import date, timedelta
+from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel
+
 import jdatetime
+from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import Form
+from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from starlette.responses import RedirectResponse
+
+from DB.database import get_db
+from models.lunch import LunchMenu
+from models.user import User
 
 router_lunch = APIRouter(prefix="/lunch", tags=["lunch"])
 
