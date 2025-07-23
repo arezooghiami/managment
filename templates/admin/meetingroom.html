@@ -276,6 +276,7 @@
                         <th>تا ساعت</th>
                         <th>موضوع جلسه</th>
                         <th>تعداد افراد</th>
+                        <th>اتاق</th>
                         <th>عملیات</th>
                     </tr>
                     </thead>
@@ -323,7 +324,7 @@
                                 <div class="user-avatar me-2">
                                     <i class="bi bi-person-circle"></i>
                                 </div>
-                                <div>{{ res.user.name }}</div>
+                                <div>{{ res.user.family }}</div>
                             </div>
                         </td>
                         <td>{{ res.start_time.strftime("%H:%M") }}</td>
@@ -332,6 +333,9 @@
 
                         <td>
                             <span class="badge bg-secondary rounded-pill">{{ res.participants }} نفر</span>
+                        </td>
+                        <td>
+                            <span class="">{{ res.meeting_room.name }} </span>
                         </td>
                         <td>
                             <form method="post" action="/admin/meetingroom/delete/{{ res.id }}"
@@ -348,11 +352,11 @@
                     <tr>
                         <td><span class="status-badge available-badge"></span> آزاد</td>
                         <td colspan="5">از {{ current_time }} تا {{ day_end }}</td>
-                        <td>
-                            <button class="btn btn-leather btn-sm">
-                                <i class="bi bi-plus-lg"></i> رزرو
-                            </button>
-                        </td>
+<!--                        <td>-->
+<!--                            <button class="btn btn-leather btn-sm">-->
+<!--                                <i class="bi bi-plus-lg"></i> رزرو-->
+<!--                            </button>-->
+<!--                        </td>-->
                     </tr>
 
                     {% endif %}
@@ -372,7 +376,7 @@
 
         <div class="card-footer text-muted">
             <i class="bi bi-info-circle"></i>
-            ساعت کاری: ۸:۰۰ تا ۱۷:۰۰ | ظرفیت اتاق: ۲۰ نفر
+            ساعت کاری: ۸:۰۰ تا ۱۷:۰۰ |
         </div>
 
     </div>

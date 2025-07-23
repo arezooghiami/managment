@@ -414,7 +414,7 @@
             {% for meeting in meetings %}
             <tr>
               <td>{{ meeting.start_time }} - {{ meeting.end_time }}</td>
-              <td>{{ meeting.user.name }}</td>
+              <td>{{ meeting.user.family }}</td>
               <td>{{ meeting.reservation_date }}</td>
               <td>
                 {% if meeting.user.id == user.id %}

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Request
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from datetime import datetime, date, timedelta, time
 from starlette.templating import Jinja2Templates
 from starlette.responses import RedirectResponse
@@ -17,10 +17,12 @@ def admin_meetingroom(request: Request, db: Session = Depends(get_db)):
     end_day = today + timedelta(days=7)
     user_id = request.session.get("user_id")
     user = db.query(User).filter(User.id == user_id).first()
-    reservations = db.query(MeetingRoomReservation).filter(
+    reservations = db.query(MeetingRoomReservation).options(
+        joinedload(MeetingRoomReservation.meeting_room)
+    ).filter(
         MeetingRoomReservation.reservation_date >= today,
         MeetingRoomReservation.reservation_date <= end_day,
-        MeetingRoomReservation.office_id==user.office_id
+        MeetingRoomReservation.office_id == user.office_id
     ).order_by(
         MeetingRoomReservation.reservation_date,
         MeetingRoomReservation.start_time
