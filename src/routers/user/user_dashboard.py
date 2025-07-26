@@ -3,6 +3,8 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session, joinedload
 from datetime import date, timedelta
 
+from starlette.responses import RedirectResponse
+
 from DB.database import get_db
 from models.meet import MeetingRoomReservation
 from models.user import User
@@ -14,7 +16,11 @@ router_user = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 @router_user.get("/user_dashboard")
-def user_dashboard(request: Request, user_id: int, db: Session = Depends(get_db)):
+def user_dashboard(request: Request, db: Session = Depends(get_db)):
+    user_id = request.session.get("user_id")
+    role = request.session.get("role")
+    if not user_id or role != 'user':
+        return RedirectResponse(url="/", status_code=302)
     user = db.query(User).filter(User.id == user_id).first()
     tomorrow = date.today() + timedelta(days=1)
 

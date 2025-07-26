@@ -13,6 +13,11 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/admin/meetingroom")
 def admin_meetingroom(request: Request, db: Session = Depends(get_db)):
+    user_id = request.session.get("user_id")
+    role = request.session.get("role")
+
+    if not user_id or role != "admin":
+        return RedirectResponse(url="/", status_code=302)
     today = date.today()
     end_day = today + timedelta(days=7)
     user_id = request.session.get("user_id")

@@ -24,6 +24,7 @@ starlette = "^0.47.1"
 itsdangerous = "^2.2.0"
 khayyam = "^3.0.17"
 pytz = "^2025.2"
+bcrypt = "^4.3.0"
 
 
 [build-system]

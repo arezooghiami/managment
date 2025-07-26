@@ -1,10 +1,11 @@
 import io
 from datetime import date, timedelta
-from jdatetime import date as jdate
+
 from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import StreamingResponse
 from openpyxl import Workbook
 from sqlalchemy.orm import Session, joinedload
+from starlette.responses import RedirectResponse
 from starlette.templating import Jinja2Templates
 
 from DB.database import get_db
@@ -13,15 +14,17 @@ from models.user import User
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
-import pytz
 import jdatetime
 from datetime import datetime
 
 
 @router.get("/lunch/admin/report")
 def lunch_report_get(request: Request, db: Session = Depends(get_db)):
-    from jdatetime import datetime as jdatetime
-    selected_date = jdatetime.now().strftime('%Y/%m/%d')
+    user_id = request.session.get("user_id")
+    role = request.session.get("role")
+
+    if not user_id or role != "admin":
+        return RedirectResponse(url="/", status_code=302)
     user_id = request.session.get("user_id")
     user = db.query(User).filter(User.id == user_id).first()
 
@@ -43,6 +46,11 @@ def lunch_report_post(
         jalali_date: str = Form(...),
         db: Session = Depends(get_db)
 ):
+    user_id = request.session.get("user_id")
+    role = request.session.get("role")
+
+    if not user_id or role != "admin":
+        return RedirectResponse(url="/", status_code=302)
     try:
         parts = [int(p) for p in jalali_date.split('/')]
         jalali = jdatetime.date(parts[0], parts[1], parts[2])
@@ -77,6 +85,11 @@ def lunch_count_report_post(
         code: str = Form(...),
         db: Session = Depends(get_db)
 ):
+    user_id = request.session.get("user_id")
+    role = request.session.get("role")
+
+    if not user_id or role != "admin":
+        return RedirectResponse(url="/", status_code=302)
     try:
         parts = [int(p) for p in jalali_date_start.split('/')]
         gregorian_start = jdatetime.date(parts[0], parts[1], parts[2]).togregorian()

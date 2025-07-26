@@ -42,6 +42,11 @@ def get_current_week_dates() -> List[date]:
 
 @router_lunch.get("/admin/menu")
 async def manage_lunch_menu(request: Request, db: Session = Depends(get_db)):
+    user_id = request.session.get("user_id")
+    role = request.session.get("role")
+
+    if not user_id or role != "admin":
+        return RedirectResponse(url="/", status_code=302)
     week_dates = get_current_week_dates()  # [شنبه تا پنجشنبه]
 
     user_id = request.session.get("user_id")
@@ -97,13 +102,13 @@ def add_lunch_menu_single(
         main_dish: str = Form(...),
         db: Session = Depends(get_db)
 ):
+    user_id = request.session.get("user_id")
+    role = request.session.get("role")
+
+    if not user_id or role != "admin":
+        return RedirectResponse(url="/", status_code=302)
     date_obj = datetime.strptime(date, "%Y-%m-%d").date()
 
-    # weekday_num = date_obj.weekday()  # 0=Monday, ..., 6=Sunday
-    # persian_weekdays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه"]
-    # weekday_fa = persian_weekdays[weekday_num]
-    # persian_weekdays = ["دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه", "یکشنبه"]
-    # weekday_fa = persian_weekdays[date_obj.weekday()]
     persian_weekdays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه"]
 
     weekday_num = (date_obj.weekday() + 2) % 7
