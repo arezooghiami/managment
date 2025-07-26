@@ -1,33 +1,132 @@
-from fastapi import APIRouter, Depends, Request
-from sqlalchemy.orm import Session, joinedload
-from datetime import datetime, date, timedelta, time
-from starlette.templating import Jinja2Templates
-from starlette.responses import RedirectResponse
-from fastapi.responses import StreamingResponse
 import io
+from datetime import date, timedelta
+from jdatetime import date as jdate
+from fastapi import APIRouter, Depends, Request, Form
+from fastapi.responses import StreamingResponse
 from openpyxl import Workbook
+from sqlalchemy.orm import Session, joinedload
+from starlette.templating import Jinja2Templates
 
 from DB.database import get_db
 from models.lunch import LunchOrder
-from models.meet import MeetingRoomReservation
+from models.user import User
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
+import pytz
+import jdatetime
+from datetime import datetime
+
 
 @router.get("/lunch/admin/report")
-def lunch_report(request: Request, db: Session = Depends(get_db)):
-    tomorrow = date.today() + timedelta(days=1)
-    meetings = db.query(MeetingRoomReservation).options(joinedload(MeetingRoomReservation.user)).all()
-    # lunch_rep = db.query(LunchOrder).options(joinedload(LunchOrder.user)).all()
-    lunch_rep = db.query(LunchOrder).options(joinedload(LunchOrder.user)).filter(LunchOrder.order_date == tomorrow)
-    # lunch_rep = db.query(LunchOrder).options(joinedload(LunchOrder.lunch_menu)).filter(LunchOrder.order_date == tomorrow)
-    # lunch_rep = db.query(LunchOrder).filter(LunchOrder.order_date == tomorrow).all()
+def lunch_report_get(request: Request, db: Session = Depends(get_db)):
+    from jdatetime import datetime as jdatetime
+    selected_date = jdatetime.now().strftime('%Y/%m/%d')
+    user_id = request.session.get("user_id")
+    user = db.query(User).filter(User.id == user_id).first()
+
+    lunch_rep = db.query(LunchOrder).options(joinedload(LunchOrder.user)).filter(
+        LunchOrder.order_date == datetime.today(),
+        LunchOrder.user.has(office_id=user.office_id)
+    ).all()
+
     return templates.TemplateResponse("admin/lunch_report.html", {
         "request": request,
         "lunches": lunch_rep,
-        "tomorrow": tomorrow
+        "selected_date": None
     })
 
+
+@router.post("/lunch/admin/report")
+def lunch_report_post(
+        request: Request,
+        jalali_date: str = Form(...),
+        db: Session = Depends(get_db)
+):
+    try:
+        parts = [int(p) for p in jalali_date.split('/')]
+        jalali = jdatetime.date(parts[0], parts[1], parts[2])
+        gregorian = jalali.togregorian()
+    except Exception:
+        return templates.TemplateResponse("admin/lunch_report.html", {
+            "request": request,
+            "lunches": [],
+            "selected_date": None,
+            "error": "فرمت تاریخ نادرست است."
+        })
+    user_id = request.session.get("user_id")
+    user = db.query(User).filter(User.id == user_id).first()
+
+    lunch_rep = db.query(LunchOrder).options(joinedload(LunchOrder.user)).filter(
+        LunchOrder.order_date == gregorian,
+        LunchOrder.user.has(office_id=user.office_id)
+    ).all()
+
+    return templates.TemplateResponse("admin/lunch_report.html", {
+        "request": request,
+        "lunches": lunch_rep,
+        "selected_date": jalali
+    })
+
+
+@router.post("/lunch_count/admin/report")
+def lunch_count_report_post(
+        request: Request,
+        jalali_date_start: str = Form(...),
+        jalali_date_end: str = Form(...),
+        code: str = Form(...),
+        db: Session = Depends(get_db)
+):
+    try:
+        parts = [int(p) for p in jalali_date_start.split('/')]
+        gregorian_start = jdatetime.date(parts[0], parts[1], parts[2]).togregorian()
+
+        parts = [int(p) for p in jalali_date_end.split('/')]
+        gregorian_end = jdatetime.date(parts[0], parts[1], parts[2]).togregorian()
+    except Exception:
+        return templates.TemplateResponse("admin/lunch_report.html", {
+            "request": request,
+            "lunches": [],
+            "selected_date": None,
+            "error": "فرمت تاریخ نادرست است."
+        })
+
+    user_id = request.session.get("user_id")
+    admin_user = db.query(User).filter(User.id == user_id).first()
+
+    if not admin_user:
+        return templates.TemplateResponse("admin/lunch_report.html", {
+            "request": request,
+            "lunches": [],
+            "selected_date": None,
+            "error": "دسترسی نامعتبر است."
+        })
+
+    # پیدا کردن یوزر با کد پرسنلی
+    target_user = db.query(User).filter(
+        User.code == code,
+        User.office_id == admin_user.office_id
+    ).first()
+
+    if not target_user:
+        return templates.TemplateResponse("admin/lunch_report.html", {
+            "request": request,
+            "lunches": [],
+            "selected_date": None,
+            "error": "کاربری با این کد یافت نشد."
+        })
+
+    lunch_rep = db.query(LunchOrder).options(joinedload(LunchOrder.user)).filter(
+        LunchOrder.order_date >= gregorian_start,
+        LunchOrder.order_date <= gregorian_end,
+        LunchOrder.user_id == target_user.id
+    ).all()
+
+    return templates.TemplateResponse("admin/lunch_report.html", {
+        "request": request,
+        "lunches": lunch_rep,
+        "selected_date": f"{jalali_date_start} تا {jalali_date_end}"
+    })
 
 
 @router.get("/lunch/admin/report/export")
@@ -40,7 +139,7 @@ def export_lunch_excel(db: Session = Depends(get_db)):
     ws.title = "Lunch Report"
 
     # Header
-    ws.append(["کدپرسنلی","نام کاربر", "نوع غذا", "مهمان"])
+    ws.append(["کدپرسنلی", "نام کاربر", "نوع غذا", "مهمان"])
 
     for item in lunch_rep:
         ws.append([

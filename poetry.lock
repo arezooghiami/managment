@@ -261,6 +261,18 @@ files = [
 pycrypto = ">=2.6"
 
 [[package]]
+name = "khayyam"
+version = "3.0.17"
+description = "Persian Date & Time library (aka: Jalali Calendar) with timezone, DST(daylight-saving), full formatting & parsing support for python 2 & 3 including c extention"
+optional = false
+python-versions = "*"
+files = [
+    {file = "Khayyam-3.0.17-cp27-cp27m-macosx_10_11_x86_64.whl", hash = "sha256:aa389c52bda8813ca7af177ea19077455ac7ee64ae44c3eac44dc675be1bb316"},
+    {file = "Khayyam-3.0.17-cp36-cp36m-macosx_10_11_x86_64.whl", hash = "sha256:8b444aa453ad72d549e065be09a3312e6140a8e015850a890b2f27c8a435eade"},
+    {file = "Khayyam-3.0.17.tar.gz", hash = "sha256:d0a30c6e9caa56a7f730879df8f3fe0ad7d9fa8c57b0d8f479cfa0460a7647f2"},
+]
+
+[[package]]
 name = "markupsafe"
 version = "3.0.2"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -921,4 +933,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "a1100e5016fd4a4323872412d2bc62183eea70c266bc3bed3f68d2b17e7a49fc"
+content-hash = "3fa06017c0126fdcf4ac42fb3b43a30814dcac35ecdf7203f2cd0f06077f0221"

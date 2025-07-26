@@ -3,70 +3,217 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>گزارش ناهار فردا - چرم مشهد</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>گزارش سفارش ناهار</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vazir-font@32.102.2/dist/font-face.css" rel="stylesheet">
   <style>
     body {
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Vazir', sans-serif;
+      background-color: #f5f0e9;
+      color: #3c2f2f;
     }
-    .leather-bg {
-      background: linear-gradient(135deg, #3C2F2F 0%, #4A3728 100%);
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem;
     }
-    .leather-text {
-      color: #FFF8E7;
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid #e0d8cc;
     }
-    .leather-accent {
-      background-color: #D4A373;
+    .table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 1.5rem;
     }
-    .leather-accent:hover {
-      background-color: #C68E5A;
+    .table th, .table td {
+      padding: 1rem;
+      text-align: right;
+      border-bottom: 1px solid #e0d8cc;
     }
-    .table-header {
-      background-color: #2A1E1E;
-      color: #FFF8E7;
+    .table th {
+      background-color: #3c2f2f;
+      color: #ffffff;
+      font-weight: 600;
+      border-radius: 8px 8px 0 0;
     }
-    .table-row:nth-child(even) {
-      background-color: #F5ECE3;
+    .table tr:hover {
+      background-color: #f9f5f0;
     }
-    .table-row:nth-child(odd) {
-      background-color: #FFF8E7;
+    .table-footer {
+      background-color: #f5f0e9;
+      font-weight: 600;
+      color: #3c2f2f;
+    }
+    .error {
+      color: #a91b0d;
+      font-size: 0.875rem;
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    .btn-primary {
+      background-color: #3c2f2f;
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background-color: #5c4033;
+    }
+    .btn-secondary {
+      background-color: #8b6f47;
+      color: #ffffff;
+    }
+    .btn-secondary:hover {
+      background-color: #a68a5e;
+    }
+    .btn-back {
+      background-color: #6b7280;
+      color: #ffffff;
+    }
+    .btn-back:hover {
+      background-color: #4b5563;
+    }
+    .form-label {
+      font-size: 0.875rem;
+      color: #3c2f2f;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .form-input {
+      border: 1px solid #e0d8cc;
+      border-radius: 8px;
+      padding: 0.75rem;
+      width: 100%;
+      font-size: 0.875rem;
+      background-color: #fff;
+      transition: all 0.2s ease;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #3c2f2f;
+      box-shadow: 0 0 0 3px rgba(60, 47, 47, 0.1);
+    }
+    .header {
+      border-bottom: 2px solid #e0d8cc;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body class="leather-bg p-6 min-h-screen">
-<div class="max-w-5xl mx-auto bg-white rounded-lg shadow-xl p-8">
-  <div class="flex items-center justify-between mb-6">
-    <h3 class="text-2xl font-bold text-gray-800">گزارش ناهار برای تاریخ: {{ tomorrow.strftime('%Y/%m/%d') }}</h3>
-    <img src="/static/image/logo.png" alt="چرم مشهد" class="h-12">
+<body>
+<div class="container">
+  <!-- عنوان صفحه -->
+  <div class="header">
+    <h1 class="text-3xl font-bold text-gray-800">گزارش سفارش ناهار</h1>
   </div>
-  <div class="mb-6 space-x-4 space-x-reverse">
-    <a href="/lunch/admin/report/export" class="inline-block px-6 py-3 leather-accent font-semibold rounded-lg shadow-md transition duration-300">دریافت خروجی اکسل</a>
-    <a href="/admin_dashboard" class="inline-block px-6 py-3 leather-accent font-semibold rounded-lg shadow-md transition duration-300">بازگشت</a>
+
+  <!-- دکمه بازگشت -->
+  <div class="mb-6">
+    <a href="/admin_dashboard" class="btn btn-back">بازگشت</a>
   </div>
-  <div class="overflow-x-auto">
-    <table class="w-full table-auto border-collapse">
+
+  <!-- نمایش خطا -->
+  {% if error %}
+  <div class="error">{{ error }}</div>
+  {% endif %}
+
+  <!-- فرم انتخاب تاریخ -->
+  <div class="card">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4">گزارش روزانه</h2>
+    <form method="post" action="/lunch/admin/report" class="flex flex-col sm:flex-row gap-4">
+      <div class="flex-1">
+        <label class="form-label">انتخاب تاریخ (شمسی):</label>
+        <input type="text" name="jalali_date" class="form-input" placeholder="YYYY/MM/DD" value="{{ selected_date or '' }}">
+      </div>
+      <div class="self-end">
+        <button type="submit" class="btn btn-primary">نمایش گزارش</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- فرم گزارش تعداد ناهار -->
+  <div class="card">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4">گزارش تعداد ناهار</h2>
+    <form method="post" action="/lunch_count/admin/report" class="flex flex-col sm:flex-row gap-4">
+      <div class="flex-1">
+        <label class="form-label">تاریخ شروع (شمسی):</label>
+        <input type="text" name="jalali_date_start" class="form-input" placeholder="YYYY/MM/DD">
+      </div>
+      <div class="flex-1">
+        <label class="form-label">تاریخ پایان (شمسی):</label>
+        <input type="text" name="jalali_date_end" class="form-input" placeholder="YYYY/MM/DD">
+      </div>
+      <div class="flex-1">
+        <label class="form-label">کد پرسنلی:</label>
+        <input type="text" name="code" class="form-input" placeholder="کد پرسنلی">
+      </div>
+      <div class="self-end">
+        <button type="submit" class="btn btn-primary">نمایش گزارش</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- دکمه دانلود اکسل -->
+  <div class="card">
+    <a href="/lunch/admin/report/export" class="btn btn-secondary">دانلود گزارش اکسل (فردا)</a>
+  </div>
+
+  <!-- جدول گزارش -->
+  {% if lunches %}
+  <div class="card">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4">
+      {% if selected_date %}
+      گزارش سفارشات برای تاریخ: {{ selected_date }}
+      {% else %}
+      گزارش سفارشات امروز
+      {% endif %}
+    </h2>
+    <table class="table">
       <thead>
-      <tr class="table-header">
-        <th class="px-4 py-3 text-right">نام کاربر</th>
-        <th class="px-4 py-3 text-right">نوع غذا</th>
-        <th class="px-4 py-3 text-right">مهمان</th>
+      <tr>
+        <th>کد پرسنلی</th>
+        <th>نام کاربر</th>
+        <th>نوع غذا</th>
+        <th>مهمان</th>
+        <th>تاریخ سفارش</th>
       </tr>
       </thead>
       <tbody>
       {% for lunch in lunches %}
-      <tr class="table-row">
-        <td class="px-4 py-3 border-t border-gray-200">{{ lunch.user.name }}</td>
-        <td class="px-4 py-3 border-t border-gray-200">{{ lunch.selected_dish }}</td>
-        <td class="px-4 py-3 border-t border-gray-200">{{ lunch.guest_name or '' }}</td>
+      <tr>
+        <td>{{ lunch.user.personal_code }}</td>
+        <td>{{ lunch.user.name }}</td>
+        <td>{{ lunch.selected_dish }}</td>
+        <td>{{ lunch.guest_name or '-' }}</td>
+        <td>{{ lunch.order_date.strftime('%Y/%m/%d') }}</td>
       </tr>
       {% endfor %}
       </tbody>
+      <tfoot>
+      <tr class="table-footer">
+        <td colspan="4" class="text-right">جمع کل ناهارها:</td>
+        <td>{{ lunches|length }}</td>
+      </tr>
+      </tfoot>
     </table>
   </div>
-  <footer class="mt-8 text-center text-gray-600">
-    <p>شرکت چرم مشهد © {{ tomorrow.strftime('%Y') }} - تمامی حقوق محفوظ است</p>
-  </footer>
+  {% else %}
+  <div class="card">
+    <p class="text-gray-600">هیچ سفارشی برای نمایش وجود ندارد.</p>
+  </div>
+  {% endif %}
 </div>
 </body>
 </html>
