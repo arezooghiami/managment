@@ -30,6 +30,7 @@ class LunchOrder(Base):
     order_date = Column(Date, nullable=False)
     selected_dish = Column(String, nullable=True)
     guest_name = Column(String, nullable=True)
+    description = Column(String, nullable=True)
 
     user = relationship("User")
     lunch_menu = relationship("LunchMenu")

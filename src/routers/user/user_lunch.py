@@ -38,6 +38,7 @@ async def user_lunch(request: Request,  db: Session = Depends(get_db)):
     user_order_today = None
     user_order_tomorrow = None
 
+
     if now.time() < cutoff_time:
         # Before 10 AM: Show today's and tomorrow's menus
         menu_today = db.query(LunchMenu).filter(LunchMenu.date == today).first()
@@ -83,7 +84,7 @@ async def user_lunch(request: Request,  db: Session = Depends(get_db)):
     if not orders:
         request.session.setdefault("messages", []).append("سفارشی برای ناهار ثبت نشده است.")
 
-    return templates.TemplateResponse("user/lunch.html", {
+    return templates.TemplateResponse("user/user_lunch.html", {
         "request": request,
         "user": user,
         "lunch_menu": menus,
@@ -100,6 +101,7 @@ def order_lunch(
         user_id: int = Form(...),
         menu_id: int = Form(...),
         selected_dish: str = Form(...),
+        description: str = Form(...),
         for_guest: Optional[str] = Form(None),
         guest_name: Optional[str] = Form(None),
         db: Session = Depends(get_db)
@@ -122,7 +124,8 @@ def order_lunch(
             lunch_menu_id=menu_id,
             selected_dish=selected_dish,
             order_date=order_date,
-            guest_name=guest_name
+            guest_name=guest_name,
+            description=description
         )
         db.add(new_order)
         message = f"سفارش برای مهمان {guest_name} ثبت شد."
@@ -137,13 +140,15 @@ def order_lunch(
         if existing_order:
             existing_order.lunch_menu_id = menu_id
             existing_order.selected_dish = selected_dish
+            existing_order.description = description
             message = "سفارش ناهار شما ویرایش شد."
         else:
             new_order = LunchOrder(
                 user_id=user_id,
                 lunch_menu_id=menu_id,
                 selected_dish=selected_dish,
-                order_date=order_date
+                order_date=order_date,
+                description=description
             )
             db.add(new_order)
             message = "سفارش ناهار شما ثبت شد."

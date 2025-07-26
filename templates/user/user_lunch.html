@@ -315,6 +315,11 @@
                 <input class="form-check-input" type="radio" name="selected_dish" id="dish-{{ loop.index }}" value="{{ dish.strip() }}" required>
                 <label class="form-check-label" for="dish-{{ loop.index }}">{{ dish.strip() }}</label>
               </div>
+              <div class="mb-3">
+                <label for="description" class="form-label">توضیحات (اختیاری)</label>
+                <textarea class="form-control" name="description" id="description" rows="3" placeholder="مثلاً بدون برنج، یا دیرتر ارسال شود..."></textarea>
+              </div>
+
             </div>
             {% endfor %}
             {% else %}
@@ -465,6 +470,10 @@
                   {% endif %}
                 </div>
               </div>
+              <div class="col-12">
+        <label class="form-label" for="description_${guestIndex}">توضیحات (اختیاری)</label>
+        <textarea class="form-control" id="description_${guestIndex}" name="description" rows="3" placeholder="مثلاً بدون برنج..."></textarea>
+                </div>
               <div class="col-12 text-center mt-3">
                 <button class="btn btn-custom" type="submit"  aria-label="ثبت سفارش مهمان">
                   <i class="fas fa-check-circle me-2"></i>
