@@ -8,6 +8,7 @@ class Office(Base):
     __tablename__ = "offices"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, nullable=False)  # مثلاً "دفتر مشهد"، "دفتر تهران"
+    name = Column(String, unique=True, nullable=False)
+    address = Column(String(255))
     meeting_rooms = relationship("MeetingRoom", back_populates="office")
     users = relationship("User", back_populates="office")

@@ -18,7 +18,11 @@ from datetime import datetime, time
 
 
 @router_user_lunch.get("/user_dashboard/lunch")
-async def user_lunch(request: Request, user_id: int, db: Session = Depends(get_db)):
+async def user_lunch(request: Request,  db: Session = Depends(get_db)):
+    user_id = request.session.get("user_id")
+    role = request.session.get("role")
+    if not user_id or role != 'user':
+        return RedirectResponse(url="/", status_code=302)
     # Fetch user
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -156,4 +160,4 @@ def order_lunch(
         request.session["messages"] = []
 
     request.session["messages"].append(message)
-    return RedirectResponse(url=f"/user_dashboard/lunch?user_id={user_id}", status_code=302)
+    return RedirectResponse(url=f"/user_dashboard/lunch", status_code=302)

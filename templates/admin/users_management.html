@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت کاربران | چرم مشهد</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://v1.fontapi.ir/css/Vazir" rel="stylesheet">
+    <style>
+        :root {
+            --brown: #4E342E;
+            --gold: #D4AF37;
+            --light-bg: #F8F5F2;
+        }
+
+        body {
+            font-family: 'Vazir', 'IRANSans', sans-serif;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+
+        .brown-bg { background-color: var(--brown); }
+        .gold-bg { background-color: var(--gold); }
+        .brown-text { color: var(--brown); }
+        .gold-text { color: var(--gold); }
+        .btn-primary {
+            background-color: var(--gold);
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover { background-color: #b8972e; }
+        .btn-danger {
+            background-color: #dc2626;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .btn-danger:hover { background-color: #b91c1c; }
+        input, select {
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            transition: border-color 0.3s ease;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        table th, table td {
+            padding: 0.75rem;
+            text-align: right;
+            border: 1px solid #e5e7eb;
+        }
+        table tr:hover { background-color: rgba(212, 175, 55, 0.1); }
+        .flash-message {
+            animation: fadeOut 5s forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- Header -->
+<header class="brown-bg text-white shadow p-4 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+        <img src="/static/image/logo.png" alt="Mashhad Leather Logo" class="h-12">
+        <h1 class="text-lg font-semibold">مدیریت کاربران | چرم مشهد</h1>
+    </div>
+    <a href="/admin_dashboard" class="text-sm underline hover:text-gold">بازگشت به داشبورد</a>
+</header>
+
+<!-- Flash Message -->
+{% if request.session.get("flash") %}
+<div class="flash-message bg-yellow-100 text-yellow-800 text-center py-3 text-sm">
+    {{ request.session.pop("flash") }}
+</div>
+{% endif %}
+
+<!-- Main Content -->
+<main class="flex-grow p-6 space-y-10 max-w-7xl mx-auto">
+    <!-- Add User Form -->
+    <section class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-xl brown-text font-semibold mb-4">افزودن کاربر جدید</h2>
+        <form action="/admin/add_user" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="name" class="block text-sm brown-text mb-1">نام</label>
+                <input type="text" id="name" name="name" placeholder="نام" required class="w-full">
+            </div>
+            <div>
+                <label for="family" class="block text-sm brown-text mb-1">نام خانوادگی</label>
+                <input type="text" id="family" name="family" placeholder="نام خانوادگی" required class="w-full">
+            </div>
+            <div>
+                <label for="code" class="block text-sm brown-text mb-1">کد پرسنلی</label>
+                <input type="text" id="code" name="code" placeholder="کد پرسنلی" required class="w-full">
+            </div>
+            <div>
+                <label for="password" class="block text-sm brown-text mb-1">رمز عبور</label>
+                <input type="password" id="password" name="password" placeholder="رمز عبور" required class="w-full">
+            </div>
+            <div>
+                <label for="role" class="block text-sm brown-text mb-1">نقش</label>
+                <select id="role" name="role" required class="w-full">
+                    {% for r in UserRole %}
+                    <option value="{{ r.value }}">{{ r.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="office_id" class="block text-sm brown-text mb-1">دفتر</label>
+                <select id="office_id" name="office_id" required class="w-full">
+                    {% for office in offices %}
+                    <option value="{{ office.id }}">{{ office.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="md:col-span-2 text-right">
+                <button type="submit" class="btn-primary px-6 py-2 rounded">افزودن کاربر</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Users Table -->
+    <section class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-xl brown-text font-semibold mb-4">لیست کاربران</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full table-auto">
+                <thead class="bg-yellow-50">
+                <tr class="text-right brown-text">
+                    <th class="p-3">ردیف</th>
+                    <th class="p-3">نام</th>
+                    <th class="p-3">نام خانوادگی</th>
+                    <th class="p-3">کد پرسنلی</th>
+                    <th class="p-3">نقش</th>
+                    <th class="p-3">وضعیت</th>
+                    <th class="p-3">دفتر</th>
+                    <th class="p-3">عملیات</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                <tr class="border-t">
+                    <td class="p-3">{{ loop.index }}</td>
+                    <td class="p-3">{{ user.name }}</td>
+                    <td class="p-3">{{ user.family }}</td>
+                    <td class="p-3">{{ user.code }}</td>
+                    <td class="p-3">{{ user.role.name }}</td>
+                    <td class="p-3">{{ user.status.name }}</td>
+                    <td class="p-3">{{ user.office.name if user.office else "—" }}</td>
+                    <td class="p-3">
+                        <!-- Edit Form (Modal-like behavior with Tailwind) -->
+                        <button onclick="document.getElementById('edit-user-{{ user.id }}').classList.remove('hidden')" class="text-blue-600 hover:underline">ویرایش</button>
+                        <div id="edit-user-{{ user.id }}" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+                            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                                <h3 class="text-lg brown-text font-semibold mb-4">ویرایش کاربر</h3>
+                                <form action="/admin/edit_user/{{ user.id }}" method="post" class="space-y-4">
+                                    <div>
+                                        <label for="edit-name-{{ user.id }}" class="block text-sm brown-text">نام</label>
+                                        <input type="text" id="edit-name-{{ user.id }}" name="name" value="{{ user.name }}" required class="w-full">
+                                    </div>
+                                    <div>
+                                        <label for="edit-family-{{ user.id }}" class="block text-sm brown-text">نام خانوادگی</label>
+                                        <input type="text" id="edit-family-{{ user.id }}" name="family" value="{{ user.family }}" required class="w-full">
+                                    </div>
+                                    <div>
+                                        <label for="edit-code-{{ user.id }}" class="block text-sm brown-text">کد پرسنلی</label>
+                                        <input type="text" id="edit-code-{{ user.id }}" name="code" value="{{ user.code }}" required class="w-full">
+                                    </div>
+                                    <div>
+                                        <label for="edit-password-{{ user.id }}" class="block text-sm brown-text">رمز عبور جدید (اختیاری)</label>
+                                        <input type="password" id="edit-password-{{ user.id }}" name="password" placeholder="رمز عبور جدید" class="w-full">
+                                    </div>
+                                    <div>
+                                        <label for="edit-role-{{ user.id }}" class="block text-sm brown-text">نقش</label>
+                                        <select id="edit-role-{{ user.id }}" name="role" required class="w-full">
+                                            {% for r in UserRole %}
+                                            <option value="{{ r.value }}" {% if r.value == user.role.value %}selected{% endif %}>{{ r.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="edit-status-{{ user.id }}" class="block text-sm brown-text">وضعیت</label>
+                                        <select id="edit-status-{{ user.id }}" name="status" required class="w-full">
+                                            {% for s in Status %}
+                                            <option value="{{ s.value }}" {% if s.value == user.status.value %}selected{% endif %}>{{ s.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="edit-office_id-{{ user.id }}" class="block text-sm brown-text">دفتر</label>
+                                        <select id="edit-office_id-{{ user.id }}" name="office_id" required class="w-full">
+                                            {% for office in offices %}
+                                            <option value="{{ office.id }}" {% if office.id == user.office_id %}selected{% endif %}>{{ office.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="flex justify-end gap-2">
+                                        <button type="button" onclick="document.getElementById('edit-user-{{ user.id }}').classList.add('hidden')" class="btn-danger px-4 py-2 rounded">لغو</button>
+                                        <button type="submit" class="btn-primary px-4 py-2 rounded">ذخیره</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Delete Form -->
+                        <form action="/admin/delete_user/{{ user.id }}" method="post" class="inline">
+                            <button type="submit" class="text-red-600 hover:underline" onclick="return confirm('آیا از حذف این کاربر مطمئن هستید؟')">حذف</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="text-center py-4 text-sm text-gray-600 bg-white shadow-md">
+    طراحی شده توسط تیم فناوری اطلاعات چرم مشهد
+</footer>
+</body>
+</html>
