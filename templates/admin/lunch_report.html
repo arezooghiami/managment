@@ -165,9 +165,19 @@
     </form>
   </div>
 
-  <!-- دکمه دانلود اکسل -->
-  <div class="card">
-    <a href="/lunch/admin/report/export" class="btn btn-secondary">دانلود گزارش اکسل (فردا)</a>
+  <!-- دکمه دانلود اکسل با تاریخ شمسی -->
+  <div class="card p-3">
+    <form id="excelForm" method="get" action="/lunch/admin/report/export">
+      <div class="row">
+        <div class="col-md-6">
+          <label for="shamsi_date" class="form-label">تاریخ شمسی (مثلاً 1404/04/04)</label>
+          <input type="text" class="form-control" id="shamsi_date" name="shamsi_date" placeholder="1404/04/04" required>
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+          <button type="submit" class="btn btn-secondary mt-2">دانلود گزارش اکسل</button>
+        </div>
+      </div>
+    </form>
   </div>
 
   <!-- جدول گزارش -->

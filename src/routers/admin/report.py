@@ -1,7 +1,7 @@
 import io
-from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, Request, Form
+from fastapi import Query
 from fastapi.responses import StreamingResponse
 from openpyxl import Workbook
 from sqlalchemy.orm import Session, joinedload
@@ -12,13 +12,13 @@ from DB.database import get_db
 from models.lunch import LunchOrder
 from models.user import User
 
-router = APIRouter()
+router_report = APIRouter(tags=["report"])
 templates = Jinja2Templates(directory="templates")
 import jdatetime
 from datetime import datetime
 
 
-@router.get("/lunch/admin/report")
+@router_report.get("/lunch/admin/report")
 def lunch_report_get(request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
     role = request.session.get("role")
@@ -40,7 +40,7 @@ def lunch_report_get(request: Request, db: Session = Depends(get_db)):
     })
 
 
-@router.post("/lunch/admin/report")
+@router_report.post("/lunch/admin/report")
 def lunch_report_post(
         request: Request,
         jalali_date: str = Form(...),
@@ -77,7 +77,7 @@ def lunch_report_post(
     })
 
 
-@router.post("/lunch_count/admin/report")
+@router_report.post("/lunch_count/admin/report")
 def lunch_count_report_post(
         request: Request,
         jalali_date_start: str = Form(...),
@@ -142,16 +142,23 @@ def lunch_count_report_post(
     })
 
 
-@router.get("/lunch/admin/report/export")
-def export_lunch_excel(db: Session = Depends(get_db)):
-    tomorrow = date.today() + timedelta(days=1)
-    lunch_rep = db.query(LunchOrder).filter(LunchOrder.order_date == tomorrow).all()
+@router_report.get("/lunch/admin/report/export")
+def export_lunch_excel(
+        shamsi_date: str = Query(..., description="تاریخ شمسی به فرمت 1404/04/04"),
+        db: Session = Depends(get_db)
+):
+    try:
+        # تبدیل تاریخ شمسی به میلادی
+        parts = [int(p) for p in shamsi_date.split('/')]
+        gregorian_date = jdatetime.date(parts[0], parts[1], parts[2]).togregorian()
+    except Exception as e:
+        return {"error": "فرمت تاریخ نادرست است. لطفاً به صورت 1404/04/04 وارد کنید."}
+
+    lunch_rep = db.query(LunchOrder).filter(LunchOrder.order_date == gregorian_date).all()
 
     wb = Workbook()
     ws = wb.active
     ws.title = "Lunch Report"
-
-    # Header
     ws.append(["کدپرسنلی", "نام کاربر", "نوع غذا", "مهمان"])
 
     for item in lunch_rep:
@@ -166,7 +173,8 @@ def export_lunch_excel(db: Session = Depends(get_db)):
     wb.save(stream)
     stream.seek(0)
 
-    filename = f"lunch_report_{tomorrow.strftime('%Y-%m-%d')}.xlsx"
+    filename = f"lunch_report_{gregorian_date.strftime('%Y-%m-%d')}.xlsx"
     return StreamingResponse(stream,
                              media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                             headers={"Content-Disposition": f"attachment; filename={filename}"})
+                             headers={"Content-Disposition": f"attachment; filename={filename}"}
+                             )
