@@ -1,12 +1,13 @@
-from datetime import date
 from enum import Enum
-from pydantic import BaseModel
 
+from pydantic import BaseModel
 
 
 class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
+
+
 class Status(str, Enum):
     ACTIVE = "active"
     DEACTIVE = "deactive"
@@ -18,17 +19,6 @@ class UserBase(BaseModel):
     code: str
     password: str
     role: UserRole
-
-
-class UserCreate(UserBase):
-    pass
-
-
-class UserRead(UserBase):
-    id: int
-
-    class Config:
-        orm_mode = True
 
 
 class UserLogin(BaseModel):

@@ -13,6 +13,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.staticfiles import StaticFiles
 from models import office
 from DB.database import Base, engine
+from routers.Athentication.addSuperAdmin import register_superadmin
 from routers.Athentication.api import login
 from routers.admin import admin_dashboard, lunch, excel, meeting_room, report, user_managment
 from routers.user import user_dashboard, user_lunch, user_meetingroom
@@ -54,6 +55,7 @@ app.include_router(user_managment.router)
 
 def initialize_database():
     Base.metadata.create_all(bind=engine)
+    register_superadmin()
     # import_users()  # Create tables
 
 
