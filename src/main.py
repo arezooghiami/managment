@@ -76,7 +76,7 @@ if not os.path.exists(static_dir):
 
 app.mount(
     "/static",
-    StaticFiles(directory="/Users/arezooghiami/Desktop/ML_managment/static"),
+    StaticFiles(directory="../static"),
     name="static"
 )
 templates_dir = "templates"
