@@ -183,3 +183,55 @@ def order_lunch(
 
     request.session["messages"].append(message)
     return RedirectResponse(url=f"/user_dashboard/lunch", status_code=302)
+
+
+
+
+@router_user_lunch.post("/delete_guest_order/{order_id}")
+def delete_guest_order(order_id: int, request: Request, db: Session = Depends(get_db)):
+    # بررسی وجود user_id و نقش کاربر
+    user_id = request.session.get("user_id")
+    role = request.session.get("role")
+    if not user_id or role != 'user':
+        request.session.setdefault("messages", []).append("خطا: لطفاً ابتدا وارد شوید.")
+        return RedirectResponse(url="/", status_code=302)
+
+    # بررسی وجود کاربر
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        request.session.setdefault("messages", []).append("خطا: کاربر یافت نشد.")
+        return RedirectResponse(url="/user_dashboard/lunch", status_code=302)
+
+    # پیدا کردن سفارش مهمان
+    guest_order = db.query(LunchOrder).filter(
+        LunchOrder.id == order_id,
+        LunchOrder.user_id == user_id,
+        LunchOrder.guest_name != None  # استفاده از guest_name به‌جای for_guest
+    ).first()
+
+    if not guest_order:
+        request.session.setdefault("messages", []).append("خطا: سفارش مهمان یافت نشد یا اجازه حذف آن را ندارید.")
+        return RedirectResponse(url="/user_dashboard/lunch", status_code=302)
+
+    # بررسی تاریخ سفارش برای جلوگیری از حذف سفارش‌های گذشته
+    now = datetime.now()
+    cutoff_time = time(10, 0)
+    today = date.today()
+    if guest_order.order_date < today:
+        request.session.setdefault("messages", []).append("خطا: نمی‌توانید سفارش‌های گذشته را حذف کنید.")
+        return RedirectResponse(url="/user_dashboard/lunch", status_code=302)
+
+    try:
+        db.delete(guest_order)
+        db.commit()
+        jalali_date = to_jalali(guest_order.order_date)
+        request.session.setdefault("messages", []).append(
+            f"سفارش مهمان «{guest_order.guest_name}» برای تاریخ {jalali_date} با موفقیت حذف شد."
+        )
+    except Exception as e:
+        db.rollback()
+        request.session.setdefault("messages", []).append(f"خطا در حذف سفارش: {str(e)}")
+        return RedirectResponse(url="/user_dashboard/lunch", status_code=302)
+
+    return RedirectResponse(url="/user_dashboard/lunch", status_code=302)
+

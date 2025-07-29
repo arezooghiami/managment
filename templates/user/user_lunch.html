@@ -267,7 +267,7 @@
         </a>
         <div class="navbar-text">
             <i class="fas fa-calendar-alt me-2"></i>
-            {{ user_order_today.order_date.strftime('%Y/%m/%d') if user_order_today else 'بدون سفارش' }}
+            {{ 'سفارش ثبت شده' if orders else 'بدون سفارش' }}
         </div>
     </div>
 </nav>
@@ -278,16 +278,16 @@
         <p class="text-muted">به پورتال اختصاصی کارکنان شرکت چرم مشهد خوش آمدید</p>
     </div>
 
-    <!--  &lt;!&ndash; Lunch Menu Management Link &ndash;&gt;-->
-    <!--  <a href="/user_dashboard/lunch?user_id={{ user.id }}" class="menu-link" aria-label="مدیریت منوی ناهار">-->
-    <!--    <input type="hidden" name="user_id" value="{{ user.id }}">-->
-    <!--    <div class="card-icon">-->
-    <!--      <i class="fas fa-utensils fa-2x"></i>-->
-    <!--    </div>-->
-    <!--    <h3>مدیریت منوی ناهار</h3>-->
-    <!--    <p>تعریف، ویرایش و حذف آیتم‌های منوی روزانه</p>-->
-    <!--    <div class="btn btn-custom">مدیریت منو</div>-->
-    <!--  </a>-->
+<!--      &lt;!&ndash; Lunch Menu Management Link &ndash;&gt;-->
+<!--      <a href="/user_dashboard/lunch?user_id={{ user.id }}" class="menu-link" aria-label="مدیریت منوی ناهار">-->
+<!--        <input type="hidden" name="user_id" value="{{ user.id }}">-->
+<!--        <div class="card-icon">-->
+<!--          <i class="fas fa-utensils fa-2x"></i>-->
+<!--        </div>-->
+<!--        <h3>مدیریت منوی ناهار</h3>-->
+<!--        <p>تعریف، ویرایش و حذف آیتم‌های منوی روزانه</p>-->
+<!--        <div class="btn btn-custom">مدیریت منو</div>-->
+<!--      </a>-->
 
     <!-- Lunch Order Form -->
     <div class="card">
@@ -385,6 +385,7 @@
                         <th scope="col">غذا</th>
                         <th scope="col">تاریخ</th>
                         <th scope="col">وضعیت</th>
+                        <th scope="col">عملیات</th> <!-- ستون جدید برای عملیات -->
                     </tr>
                     </thead>
                     <tbody>
@@ -403,6 +404,17 @@
                         <td>{{ item.jalali_date }}</td>
                         <td>
                             <span class="badge bg-success">ثبت شده</span>
+                        </td>
+                        <td>
+                            {% if item.guest_name %}
+                            <form action="/delete_guest_order/{{ item.id }}" method="POST" onsubmit="return confirm('آیا مطمئن هستید که می‌خواهید این سفارش مهمان را حذف کنید؟');">
+                                <!-- اگر از CSRF استفاده می‌کنید، توکن را اینجا اضافه کنید -->
+                                <!-- <input type="hidden" name="_csrf_token" value="{{ csrf_token }}"> -->
+                                <button type="submit" class="btn btn-danger btn-sm" aria-label="حذف سفارش مهمان">
+                                    <i class="fas fa-trash-alt me-2"></i> حذف
+                                </button>
+                            </form>
+                            {% endif %}
                         </td>
 
                     </tr>
