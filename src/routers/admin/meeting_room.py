@@ -19,14 +19,14 @@ def admin_meetingroom(request: Request, db: Session = Depends(get_db)):
     if not user_id or role != "admin":
         return RedirectResponse(url="/", status_code=302)
     today = date.today()
-    end_day = today + timedelta(days=7)
+    # end_day = today + timedelta(days=7)
     user_id = request.session.get("user_id")
     user = db.query(User).filter(User.id == user_id).first()
     reservations = db.query(MeetingRoomReservation).options(
         joinedload(MeetingRoomReservation.meeting_room)
     ).filter(
         MeetingRoomReservation.reservation_date >= today,
-        MeetingRoomReservation.reservation_date <= end_day,
+        # MeetingRoomReservation.reservation_date <= end_day,
         MeetingRoomReservation.office_id == user.office_id
     ).order_by(
         MeetingRoomReservation.reservation_date,

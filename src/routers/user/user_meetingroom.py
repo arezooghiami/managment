@@ -61,20 +61,21 @@ def reserve_meeting(
         selected_room: int = Form(...),
         db: Session = Depends(get_db)
 ):
-    try:
-        clean_date_str = convert_persian_digits_to_english(reservation_date)
-
-        parts = [int(p) for p in clean_date_str.split('/')]
-        jalali_date = jdatetime.date(parts[0], parts[1], parts[2])
-        gregorian_date = jalali_date.togregorian()
-    except Exception as e:
-        return {"error": "فرمت تاریخ نادرست است. لطفاً به صورت 1404/04/04 وارد کنید."}
-
     # گرفتن اطلاعات از سشن
     user_id = request.session.get("user_id")
     role = request.session.get("role")
     if not user_id or role != 'user':
         return RedirectResponse(url="/", status_code=302)
+
+    # تبدیل تاریخ شمسی به میلادی
+    try:
+        clean_date_str = convert_persian_digits_to_english(reservation_date)
+        parts = [int(p) for p in clean_date_str.split('/')]
+        jalali_date = jdatetime.date(parts[0], parts[1], parts[2])
+        gregorian_date = jalali_date.togregorian()
+    except Exception as e:
+        request.session["error_message"] = "فرمت تاریخ نادرست است. لطفاً به صورت 1404/04/04 وارد کنید."
+        return RedirectResponse(url="/user_meetingroom", status_code=302)
 
     # تبدیل ساعت‌ها به آبجکت زمان
     try:
@@ -82,7 +83,12 @@ def reserve_meeting(
         end_time_obj = datetime.strptime(end_time, "%H:%M").time()
     except:
         request.session["error_message"] = "فرمت ساعت نادرست است."
-        return RedirectResponse(url=f"/user_meetingroom", status_code=302)
+        return RedirectResponse(url="/user_meetingroom", status_code=302)
+
+    # بررسی این‌که ساعت شروع باید کمتر از ساعت پایان باشد
+    if start_time_obj >= end_time_obj:
+        request.session["error_message"] = "ساعت شروع باید قبل از ساعت پایان باشد."
+        return RedirectResponse(url="/user_meetingroom", status_code=302)
 
     # بررسی اطلاعات کاربر و اتاق
     user = db.query(User).filter(User.id == user_id).first()
