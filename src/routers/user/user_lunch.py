@@ -1,24 +1,27 @@
+from datetime import date, timedelta
+from datetime import datetime, time
 from typing import Optional
 
+import jdatetime
 from fastapi import APIRouter, Depends, Request, Form, HTTPException
-from sqlalchemy.orm import Session, joinedload
-from datetime import date, timedelta
-
+from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
+from starlette.templating import Jinja2Templates
 
 from DB.database import get_db
-from models.user import User
 from models.lunch import LunchMenu, LunchOrder
-
-from starlette.templating import Jinja2Templates
+from models.user import User
 
 router_user_lunch = APIRouter()
 templates = Jinja2Templates(directory="templates")
-from datetime import datetime, time
+
+
+def to_jalali(gdate):
+    return jdatetime.date.fromgregorian(date=gdate).strftime('%Y/%m/%d')
 
 
 @router_user_lunch.get("/user_dashboard/lunch")
-async def user_lunch(request: Request,  db: Session = Depends(get_db)):
+async def user_lunch(request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
     role = request.session.get("role")
     if not user_id or role != 'user':
@@ -37,7 +40,6 @@ async def user_lunch(request: Request,  db: Session = Depends(get_db)):
     orders = []
     user_order_today = None
     user_order_tomorrow = None
-
 
     if now.time() < cutoff_time:
         # Before 10 AM: Show today's and tomorrow's menus
@@ -78,6 +80,20 @@ async def user_lunch(request: Request,  db: Session = Depends(get_db)):
             LunchOrder.order_date == tomorrow
         ).first()
 
+    # تاریخ‌های شمسی منوها
+    menus_with_jalali = []
+    for menu in menus:
+        menu_dict = menu.__dict__.copy()
+        menu_dict["jalali_date"] = to_jalali(menu.date)
+        menus_with_jalali.append(menu_dict)
+
+    # تاریخ‌های شمسی سفارش‌ها
+    orders_with_jalali = []
+    for order in orders:
+        order_dict = order.__dict__.copy()
+        order_dict["jalali_date"] = to_jalali(order.order_date)
+        orders_with_jalali.append(order_dict)
+
     # Add message if no orders or menus are available
     if not menus:
         request.session.setdefault("messages", []).append("منویی برای نمایش وجود ندارد.")
@@ -87,13 +103,14 @@ async def user_lunch(request: Request,  db: Session = Depends(get_db)):
     return templates.TemplateResponse("user/user_lunch.html", {
         "request": request,
         "user": user,
-        "lunch_menu": menus,
-        "orders": orders,
+        "lunch_menu": menus_with_jalali,
+        "orders": orders_with_jalali,
         "user_order_today": user_order_today,
         "user_order_tomorrow": user_order_tomorrow,
         "now": now,
         "cutoff_time": cutoff_time
     })
+
 
 @router_user_lunch.post("/order_lunch")
 def order_lunch(
@@ -115,7 +132,6 @@ def order_lunch(
         order_date = date.today()
     else:
         order_date = date.today() + timedelta(days=1)
-
 
     if for_guest == "on" and guest_name:
         # سفارش جدید برای مهمان
