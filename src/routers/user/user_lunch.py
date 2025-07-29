@@ -23,6 +23,7 @@ def to_jalali(gdate):
 @router_user_lunch.get("/user_dashboard/lunch")
 async def user_lunch(request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
+    office_id = request.session.get("office_id")
     role = request.session.get("role")
     if not user_id or role != 'user':
         return RedirectResponse(url="/", status_code=302)
@@ -43,8 +44,8 @@ async def user_lunch(request: Request, db: Session = Depends(get_db)):
 
     if now.time() < cutoff_time:
         # Before 10 AM: Show today's and tomorrow's menus
-        menu_today = db.query(LunchMenu).filter(LunchMenu.date == today).first()
-        menu_tomorrow = db.query(LunchMenu).filter(LunchMenu.date == tomorrow).first()
+        menu_today = db.query(LunchMenu).filter(LunchMenu.date == today,LunchMenu.office_id == office_id ).first()
+        menu_tomorrow = db.query(LunchMenu).filter(LunchMenu.date == tomorrow, LunchMenu.office_id == office_id).first()
         menus.extend([menu for menu in [menu_today, menu_tomorrow] if menu])
 
         orders_today = db.query(LunchOrder).filter(
@@ -67,7 +68,7 @@ async def user_lunch(request: Request, db: Session = Depends(get_db)):
         ).first()
     else:
         # After 10 AM: Show only tomorrow's menu
-        menu_tomorrow = db.query(LunchMenu).filter(LunchMenu.date == tomorrow).first()
+        menu_tomorrow = db.query(LunchMenu).filter(LunchMenu.date == tomorrow,LunchMenu.office_id == office_id ).first()
         if menu_tomorrow:
             menus.append(menu_tomorrow)
 
