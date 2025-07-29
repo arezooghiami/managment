@@ -315,13 +315,14 @@
                 <input class="form-check-input" type="radio" name="selected_dish" id="dish-{{ loop.index }}" value="{{ dish.strip() }}" required>
                 <label class="form-check-label" for="dish-{{ loop.index }}">{{ dish.strip() }}</label>
               </div>
-              <div class="mb-3">
-                <label for="description" class="form-label">توضیحات (اختیاری)</label>
-                <textarea class="form-control" name="description" id="description" rows="3" placeholder="مثلاً بدون برنج، یا دیرتر ارسال شود..."></textarea>
-              </div>
+
 
             </div>
             {% endfor %}
+            <div class="mb-3">
+              <label for="description" class="form-label">توضیحات (اختیاری)</label>
+              <textarea class="form-control" name="description" id="description" rows="3" placeholder="مثلاً بدون برنج، یا دیرتر ارسال شود..."></textarea>
+            </div>
             {% else %}
             <p>منویی ثبت نشده است.</p>
             {% endif %}
