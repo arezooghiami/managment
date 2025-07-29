@@ -47,6 +47,7 @@ def lunch_report_post(
         db: Session = Depends(get_db)
 ):
     user_id = request.session.get("user_id")
+    office_id = request.session.get("office_id")
     role = request.session.get("role")
 
     if not user_id or role != "admin":
@@ -65,15 +66,21 @@ def lunch_report_post(
     user_id = request.session.get("user_id")
     user = db.query(User).filter(User.id == user_id).first()
 
-    lunch_rep = db.query(LunchOrder).options(joinedload(LunchOrder.user)).filter(
-        LunchOrder.order_date == gregorian,
-        LunchOrder.user.has(office_id=user.office_id)
-    ).all()
+    if office_id == 1:
+        lunch_rep = db.query(LunchOrder).options(joinedload(LunchOrder.user)).filter(
+            LunchOrder.order_date == gregorian
+        ).all()
+    else:
+        lunch_rep = db.query(LunchOrder).options(joinedload(LunchOrder.user)).filter(
+            LunchOrder.order_date == gregorian,
+            LunchOrder.user.has(office_id=user.office_id)
+        ).all()
+    selected_date_str = jalali.strftime("%Y/%m/%d") if jalali else None
 
     return templates.TemplateResponse("admin/lunch_report.html", {
         "request": request,
         "lunches": lunch_rep,
-        "selected_date": jalali
+        "selected_date": selected_date_str
     })
 
 

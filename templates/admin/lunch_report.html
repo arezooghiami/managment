@@ -135,7 +135,7 @@
     <form method="post" action="/lunch/admin/report" class="flex flex-col sm:flex-row gap-4">
       <div class="flex-1">
         <label class="form-label">انتخاب تاریخ (شمسی):</label>
-        <input type="text" name="jalali_date" class="form-input" placeholder="YYYY/MM/DD" value="{{ selected_date or '' }}">
+        <input type="text" name="jalali_date" class="form-input" placeholder="YYYY/MM/DD" value="{{ selected_date.replace('-', '/') if selected_date else '' }}">
       </div>
       <div class="self-end">
         <button type="submit" class="btn btn-primary">نمایش گزارش</button>
@@ -171,7 +171,7 @@
       <div class="row">
         <div class="col-md-6">
           <label for="shamsi_date" class="form-label">تاریخ شمسی (مثلاً 1404/04/04)</label>
-          <input type="text" class="form-control" id="shamsi_date" name="shamsi_date" placeholder="1404/04/04" required>
+          <input type="text" class="form-input" id="shamsi_date" name="shamsi_date" placeholder="1404/04/04" required>
         </div>
         <div class="col-md-6 d-flex align-items-end">
           <button type="submit" class="btn btn-secondary mt-2">دانلود گزارش اکسل</button>
