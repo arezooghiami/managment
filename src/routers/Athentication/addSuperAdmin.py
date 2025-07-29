@@ -5,7 +5,7 @@ from models.office import Office
 from models.user import User
 from routers.Athentication.user_services import pwd_context
 from schemas.user import UserRole, Status
-
+from sqlalchemy import text
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -26,6 +26,9 @@ def register_superadmin():
         if not super_office:
             super_office = Office(id=1, name="all")
             db.add(super_office)
+            db.commit()
+            # به‌روزرسانی sequence جدول بعد از افزودن رکورد با id=1
+            db.execute(text("SELECT setval(pg_get_serial_sequence('offices', 'id'), 1, true)"))
             db.commit()
 
         # Check if the superadmin already exists
