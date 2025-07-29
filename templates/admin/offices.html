@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>دفاتر و اتاق‌های جلسه</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- تنظیم قالب رنگی سفارشی برای تم چرمی مشهد -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#fdf6f0',
+                            100: '#f9e8da',
+                            200: '#f3d1b8',
+                            300: '#edb996',
+                            400: '#e39a63',
+                            500: '#c87c3c', // قهوه‌ای چرمی
+                            600: '#a8682f',
+                            700: '#8a5526',
+                            800: '#6e441e',
+                            900: '#583719',
+                        },
+                        secondary: {
+                            500: '#b88c4d', // طلایی روشن
+                        },
+                        neutral: {
+                            100: '#f8f9fa',
+                            200: '#e9ecef',
+                            300: '#dee2e6',
+                            800: '#212529',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Vazirmatn"', 'Arial', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+    <!-- فونت Vazirmatn برای زبان فارسی -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/vazirmatn@1.0.0/index.min.css" />
+
+</head>
+
+<body class="bg-primary-50 font-sans text-primary-800 min-h-screen">
+
+<!-- هدر با لوگو -->
+<header class="bg-white shadow-sm border-b border-primary-200">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-reverse space-x-3">
+
+            <img src="/static/image/logo.png" alt="Mashhad Leather Logo" class="h-12" >
+            <h1 class="text-2xl font-bold text-primary-900">مدیریت دفاتر و اتاق‌ها</h1>
+        </div>
+    </div>
+
+</header>
+
+<!-- محتوای اصلی -->
+<main class="container mx-auto px-6 py-8">
+
+    <!-- پیام موفقیت -->
+    {% if request.session.get("flash") %}
+    <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg text-center text-sm">
+        {{ request.session.get("flash") }}
+    </div>
+    {% endif %}
+
+    <!-- فرم افزودن دفتر -->
+    <section class="bg-white p-6 rounded-lg shadow mb-8 border border-primary-100">
+        <h2 class="text-xl font-semibold text-primary-900 mb-5 border-b pb-2 border-primary-200">افزودن دفتر جدید</h2>
+        <form method="post" action="/admin/add_office">
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-primary-700 mb-1">نام دفتر</label>
+                    <input type="text" name="office_name" class="w-full p-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-500 transition" placeholder="نام دفتر را وارد کنید" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-primary-700 mb-1">آدرس</label>
+                    <input type="text" name="address" class="w-full p-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-500 transition" placeholder="آدرس دفتر" required />
+                </div>
+                <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-lg transition duration-200 font-medium shadow-sm">
+                    ثبت دفتر
+                </button>
+            </div>
+        </form>
+    </section>
+
+    {% if offices %}
+    <section class="mb-10">
+        <h2 class="text-2xl font-semibold text-center text-primary-900 mb-6">دفاتر موجود</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for office in offices %}
+            <div class="bg-white p-6 rounded-lg shadow border border-primary-100 hover:shadow-md transition-shadow">
+                <h3 class="text-lg font-semibold text-primary-800">{{ office.name }}</h3>
+                <!-- <p class="text-primary-600 text-sm mt-2">{{ office.address }}</p> -->
+
+                <!-- فرم حذف مربوط به هر دفتر -->
+                <form method="post" action="/admin/delete_office" class="mt-4"
+                      onsubmit="return confirm('آیا مطمئنی که می‌خوای این دفتر حذف بشه؟')">
+                    <input type="hidden" name="office_id" value="{{ office.id }}">
+                    <button type="submit" class="text-red-600 hover:text-red-800">حذف دفتر</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    <!-- فرم افزودن اتاق جلسه -->
+    <section class="bg-white p-6 rounded-lg shadow mb-8 border border-primary-100">
+        <h2 class="text-xl font-semibold text-primary-900 mb-5 border-b pb-2 border-primary-200">افزودن اتاق جلسه</h2>
+        <form method="post" action="/admin/add_meetingroom">
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-primary-700 mb-1">نام اتاق</label>
+                    <input type="text" name="name" class="w-full p-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-500 transition" placeholder="مثال: اتاق جلسات اصلی" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-primary-700 mb-1">ظرفیت</label>
+                    <input type="number" name="capacity" min="1" class="w-full p-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-500 transition" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-primary-700 mb-1">دفتر مربوطه</label>
+                    <select name="office_id" class="w-full p-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-500 bg-white">
+                        {% for office in offices %}
+                        <option value="{{ office.id }}">{{ office.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="bg-secondary-500 hover:bg-secondary-600 text-white px-6 py-2 rounded-lg transition duration-200 font-medium shadow-sm">
+                    ثبت اتاق جلسه
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <!-- نمایش لیست اتاق‌ها -->
+    {% if meeting_room %}
+    <section>
+        <h2 class="text-2xl font-semibold text-center text-primary-900 mb-6">اتاق‌های جلسه</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for meeting in meeting_room %}
+            <div class="bg-white p-6 rounded-lg shadow border border-primary-100 hover:shadow-md transition">
+                <h3 class="text-lg font-semibold text-primary-800">اتاق: {{ meeting.name }}</h3>
+                <p class="text-primary-600 text-sm mt-1">دفتر: {{ meeting.office.name }}</p>
+                <p class="text-primary-500 text-xs mt-1">ظرفیت: {{ meeting.capacity }} نفر</p>
+                <form method="post" action="/admin/delete_meetingroom" onsubmit="return confirm('آیا مطمئنی که می‌خوای این اتاق حذف بشه؟')">
+                    <input type="hidden" name="meetingroom_id" value="{{ meeting.id }}">
+                    <button type="submit" class="text-red-600 hover:text-red-800">حذف اتاق</button>
+                </form>
+
+            </div>
+
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    <button class="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-lg transition duration-200 font-medium shadow-sm">
+
+        <a href="/admin_dashboard" class="btn btn-back px-6 py-3 text-sm">بازگشت</a>
+    </button>
+</main>
+
+
+
+<!-- فوتر ساده -->
+<footer class="mt-12 text-center text-primary-600 text-sm py-4 bg-white border-t border-primary-100">
+    &copy;  شرکت چرم مشهد. تمامی حقوق محفوظ است.
+</footer>
+</body>
+</html>
