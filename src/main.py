@@ -71,15 +71,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-static_dir = "../static"
-if not os.path.exists(static_dir):
-    os.makedirs(static_dir)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "..", "static")
 
-app.mount(
-    "/static",
-    StaticFiles(directory="../static"),
-    name="static"
-)
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates_dir = "templates"
 if not os.path.exists(templates_dir):
     os.makedirs(templates_dir)
