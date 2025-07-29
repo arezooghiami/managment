@@ -323,7 +323,7 @@
     </a>
     <div class="navbar-text">
       <i class="fas fa-calendar-alt me-2"></i>
-      {{ today.strftime('%Y/%m/%d') }}
+      {{ today }}
     </div>
   </div>
 </nav>
@@ -416,7 +416,7 @@
             <tr>
               <td>{{ meeting.start_time }} - {{ meeting.end_time }}</td>
               <td>{{ meeting.user.family }}</td>
-              <td>{{ meeting.reservation_date }}</td>
+              <td>{{ meeting.jalali_date }}</td>
               <td>
                 {% if meeting.user.id == user.id %}
                 <form method="post" action="/delete_meeting" onsubmit="return confirm('آیا از حذف جلسه اطمینان دارید؟');">

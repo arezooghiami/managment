@@ -30,17 +30,23 @@ def user_meetingroom(request: Request, db: Session = Depends(get_db)):
         return RedirectResponse(url="/", status_code=302)
     user = db.query(User).filter(User.id == user_id).first()
     tomorrow = date.today() + timedelta(days=1)
-    user = db.query(User).filter(User.id == user_id).first()
     meeting_rooms = db.query(MeetingRoom).filter(MeetingRoom.office_id == user.office_id).all()
-
     meetings = db.query(MeetingRoomReservation).options(joinedload(MeetingRoomReservation.user)).all()
+
+    # اضافه کردن تاریخ شمسی به هر meeting
+    for meeting in meetings:
+        meeting.jalali_date = jdatetime.date.fromgregorian(date=meeting.reservation_date).strftime('%Y/%m/%d')
+
+    today_shamsi = jdatetime.date.fromgregorian(date=date.today()).strftime('%Y/%m/%d')
+    tomorrow_shamsi = jdatetime.date.fromgregorian(date=tomorrow).strftime('%Y/%m/%d')
 
     return templates.TemplateResponse("user/user_meetingroom.html", {
         "request": request,
         "user": user,
         "meeting_rooms": meeting_rooms,
         "meetings": meetings,
-        "today": date.today()
+        "today": today_shamsi,
+        "tomorrow": tomorrow_shamsi
     })
 
 
