@@ -208,14 +208,23 @@
           weekday: oldData.weekday
         })
       });
+      const resultData = await result.json();
 
-      if (result.ok) {
+      // if (resultData.success) {
+      //   location.reload();
+      // } else {
+      //   alert(resultData.message); // نمایش خطا به کاربر
+      // }
+
+      if (result.success) {
         location.reload();
       } else {
-        alert("خطا در ثبت ویرایش.");
+        alert(resultData.message);
+        location.reload();
       }
     } catch (err) {
       alert("ارتباط با سرور برقرار نشد.");
+
     }
   }
 

@@ -8,10 +8,10 @@ from fastapi import Form
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse, JSONResponse
 
 from DB.database import get_db
-from models.lunch import LunchMenu
+from models.lunch import LunchMenu, LunchOrder
 from models.user import User
 
 router_lunch = APIRouter(prefix="/lunch", tags=["lunch"])
@@ -143,6 +143,9 @@ class UpdateMenuSchema(BaseModel):
     weekday: Optional[str] = None
 
 
+from fastapi import HTTPException
+from sqlalchemy import or_
+
 @router_lunch.put("/admin/menu/{menu_id}")
 def update_menu(menu_id: int, update_data: UpdateMenuSchema, db: Session = Depends(get_db)):
     menu = db.query(LunchMenu).filter(LunchMenu.id == menu_id).first()
@@ -150,7 +153,30 @@ def update_menu(menu_id: int, update_data: UpdateMenuSchema, db: Session = Depen
         raise HTTPException(status_code=404, detail="آیتم منو پیدا نشد")
 
     if update_data.main_dish is not None:
+        old_dishes = set(d.strip() for d in menu.main_dish.split('/'))
+        new_dishes = set(d.strip() for d in update_data.main_dish.split('/'))
+        removed_dishes = old_dishes - new_dishes
+
+        if removed_dishes:
+            # بررسی اینکه آیا کسی غذایی از removed_dishes انتخاب کرده
+            existing_orders = db.query(LunchOrder).filter(
+                LunchOrder.lunch_menu_id == menu_id,
+                LunchOrder.selected_dish.in_(removed_dishes)
+            ).all()
+
+            if existing_orders:
+                used_dishes = set(order.selected_dish for order in existing_orders)
+                return JSONResponse(
+                    status_code=200,
+                    content={
+                        "message":f"نمی‌توان منو را ویرایش کرد، زیرا غذای '{removed_dishes}' توسط کاربر انتخاب شده است.",
+                        "success": False
+                    }
+                )
+
+        # مجازه به ویرایش
         menu.main_dish = update_data.main_dish
+
     if update_data.date is not None:
         menu.date = update_data.date
     if update_data.weekday is not None:
@@ -158,7 +184,8 @@ def update_menu(menu_id: int, update_data: UpdateMenuSchema, db: Session = Depen
 
     db.commit()
     db.refresh(menu)
-    return {"message": "آیتم با موفقیت ویرایش شد"}
+    return JSONResponse(status_code=200, content={"message": "آیتم با موفقیت ویرایش شد", "success": True})
+
 
 # # API حذف آیتم منو
 # @router_lunch.delete("/admin/menu/{id}")
