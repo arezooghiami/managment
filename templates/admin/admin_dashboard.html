@@ -130,6 +130,7 @@
         </a>
 
         <!-- مدیریت کاربران -->
+        {% if request.session.get("office_id") == 1 %}
         <a href="/admin/users" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
             <div class="card-icon">
                 <i class="fas fa-users"></i>
@@ -138,6 +139,7 @@
             <p class="text-gray-600 mt-3">مدیریت حساب‌های کاربری و سطوح دسترسی</p>
             <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">مدیریت کاربران</div>
         </a>
+        {% endif %}
 
         <!-- رزرو اتاق جلسه -->
         <a href="/admin/meetingroom" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
