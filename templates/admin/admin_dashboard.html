@@ -5,8 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>داشبورد ادمین - چرم مشهد</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        leather: {
+                            50: '#faf7f2',
+                            100: '#f4ede0',
+                            200: '#e8d9c5',
+                            300: '#d9c0a3',
+                            400: '#c5a880',
+                            500: '#b08e67',
+                            600: '#8a6d46',
+                            700: '#6b5437',
+                            800: '#4f3f29',
+                            900: '#3a2e1f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         * {
             font-family: 'Vazirmatn', sans-serif;
@@ -14,7 +37,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #f9f5f0 0%, #f1eae3 100%);
+            background: linear-gradient(135deg, #faf7f2 0%, #f4ede0 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -30,40 +53,58 @@
         }
 
         .card-bg {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(10px);
             border-radius: 16px;
-            border: 1px solid rgba(210, 180, 140, 0.2);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(210, 180, 140, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
         }
 
         .card-bg:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .card-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #d4a373, #b08e67);
+            border-radius: 8px 8px 0 0;
         }
 
         .card-icon {
-            background: #e8d9c5;
+            background: #f4ede0;
             color: #8a6d46;
             border-radius: 50%;
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
-            font-size: 28px;
+            font-size: 32px;
+            border: 2px solid #e8d9c5;
         }
 
         .header-shadow {
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+            background: rgba(255, 255, 255, 0.95);
         }
 
         .logo-bg {
             background: linear-gradient(45deg, #d4a373, #b08e67);
             border-radius: 12px;
             padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .admin-name {
@@ -72,40 +113,68 @@
         }
 
         .footer-border {
-            border-top: 1px solid rgba(210, 180, 140, 0.3);
+            border-top: 1px solid rgba(210, 180, 140, 0.2);
+        }
+
+        .logo-text {
+            font-weight: 700;
+            background: linear-gradient(45deg, #8a6d46, #6b5437);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, #f4ede0, #e8d9c5);
+            border: 2px solid #d9c0a3;
+        }
+
+        .leather-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23e8d9c5' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
         }
     </style>
 </head>
-<body class="flex flex-col">
-<header class="bg-white header-shadow py-4 px-6">
+<body class="flex flex-col leather-pattern">
+<header class="header-shadow py-4 px-6 sticky top-0 z-10">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
         <div class="flex items-center space-x-4">
             <div class="logo-bg">
-                <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                <div class="bg-white rounded-xl w-16 h-16 flex items-center justify-center">
+                    <div class="text-center">
+<!--                        <div class="font-bold text-xl text-leather-600">چ</div>-->
+                        <div class="text-xs text-leather-500">چرم مشهد</div>
+                    </div>
+                </div>
             </div>
             <div>
-
-                <p class="text-gray-600 mt-1"></p>
+                <h1 class="text-xl font-bold logo-text">پنل مدیریتی</h1>
+<!--                <p class="text-gray-600 text-sm">شرکت چرم مشهد</p>-->
             </div>
         </div>
 
         <div class="flex items-center space-x-4">
-            <div class="text-right hidden md:block">
-
+            <div class="text-right">
+                <p class="admin-name">admin</p>
+                <p class="text-gray-600 text-xs">مسئول دفتر</p>
             </div>
-<!--            <div class="w-12 h-12 bg-gray-200 border-2 border-dashed rounded-full" />-->
-<!--            <a href="/logout" class="leather-accent px-5 py-2.5 rounded-xl font-medium flex items-center space-x-2">-->
-<!--                <i class="fas fa-sign-out-alt"></i>-->
-<!--                <span>خروج</span>-->
-<!--            </a>-->
-<!--        </div>-->
+            <div class="w-12 h-12 user-avatar rounded-full flex items-center justify-center">
+                <i class="fas fa-user text-leather-500"></i>
+            </div>
+            <form action="/logout" method="get">
+                <button type="submit" class="leather-accent px-5 py-2.5 rounded-xl font-medium flex items-center space-x-2">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>خروج</span>
+                </button>
+            </form>
+        </div>
     </div>
 </header>
 
 <main class="flex-1 max-w-7xl mx-auto w-full p-6">
     <div class="mb-10 text-center">
-        <h2 class="text-3xl font-bold text-gray-800">مدیریت سیستم</h2>
-        <p class="text-gray-600 mt-3 max-w-2xl mx-auto">به پنل مدیریت شرکت چرم مشهد خوش آمدید. از طریق گزینه‌های زیر می‌توانید بخش‌های مختلف سیستم را مدیریت کنید.</p>
+        <h2 class="text-3xl font-bold text-gray-800">پنل مدیریتی مسئول دفتر </h2>
+        <p class="text-gray-600 mt-3 max-w-2xl mx-auto">. از طریق گزینه‌های زیر می‌توانید بخش‌های مختلف سیستم را مدیریت
+            کنید.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -157,7 +226,7 @@
                 <i class="fas fa-calendar-check"></i>
             </div>
             <h3 class="text-2xl font-bold text-gray-800">دفاتر و اتاق جلسات</h3>
-            <p class="text-gray-600 mt-3">مدیریت دفاتر و  اتاق‌های جلسه</p>
+            <p class="text-gray-600 mt-3">مدیریت دفاتر و اتاق‌های جلسه</p>
         </a>
         {% endif %}
     </div>
@@ -165,19 +234,23 @@
 
 </main>
 
-<footer class="py-6 footer-border bg-white">
+<footer class="py-6 footer-border bg-white mt-10">
     <div class="max-w-7xl mx-auto px-6">
         <div class="flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10" />
-
+<!--                <div class="logo-bg">-->
+<!--                    <div class="bg-white rounded-xl w-20 h-20 flex items-center justify-center">-->
+<!--                        <div class="font-bold text-leather-600"></div>-->
+                        <img src="/static/image/logo.png" alt="Mashhad Leather Logo" class="h-12">
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="text-gray-700 font-medium">شرکت چرم مشهد</span>-->
             </div>
-            <p class="mt-4 md:mt-0 text-gray-600">شرکت چرم مشهد</p>
-            <p class="mt-4 md:mt-0 text-gray-600"></p>
+            <p class="mt-4 md:mt-0 text-gray-600 text-sm">تمامی حقوق برای شرکت چرم مشهد محفوظ است © 1404</p>
             <div class="mt-4 md:mt-0 flex space-x-4 text-gray-600">
-                <a href="#" class="hover:text-amber-800"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="hover:text-amber-800"><i class="fab fa-telegram"></i></a>
-                <a href="#" class="hover:text-amber-800"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="hover:text-leather-500"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-leather-500"><i class="fab fa-telegram"></i></a>
+                <a href="#" class="hover:text-leather-500"><i class="fab fa-linkedin"></i></a>
             </div>
         </div>
     </div>
