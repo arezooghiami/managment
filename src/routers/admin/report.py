@@ -150,7 +150,7 @@ def lunch_count_report_post(
 
 
 @router_report.get("/lunch/admin/report/export")
-def export_lunch_excel(
+def export_lunch_excel(request: Request,
         shamsi_date: str = Query(..., description="تاریخ شمسی به فرمت 1404/04/04"),
         db: Session = Depends(get_db)
 ):
@@ -159,19 +159,26 @@ def export_lunch_excel(
         parts = [int(p) for p in shamsi_date.split('/')]
         gregorian_date = jdatetime.date(parts[0], parts[1], parts[2]).togregorian()
     except Exception as e:
-        return {"error": "فرمت تاریخ نادرست است. لطفاً به صورت 1404/04/04 وارد کنید."}
+        return templates.TemplateResponse("admin/lunch_report.html", {
+            "request": request,
+            "lunches": [],
+            "selected_date": None,
+            "error": "فرمت تاریخ نادرست است."
+        })
 
     lunch_rep = db.query(LunchOrder).filter(LunchOrder.order_date == gregorian_date).all()
 
     wb = Workbook()
     ws = wb.active
     ws.title = "Lunch Report"
-    ws.append(["کدپرسنلی", "نام کاربر", "نوع غذا", "مهمان"])
+    ws.append(["کدپرسنلی","تاریخ", "نام و نام خانوادگی", "نوع غذا", "مهمان"])
 
     for item in lunch_rep:
         ws.append([
+
             item.user.code,
-            item.user.name,
+            shamsi_date,
+            f"{item.user.name} {item.user.family}",
             item.selected_dish,
             item.guest_name or ''
         ])

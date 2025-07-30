@@ -73,18 +73,35 @@ async def manage_lunch_menu(request: Request, db: Session = Depends(get_db)):
             "office_id": user.office_id
 
         }
+    persian_weekdays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه"]
+    persian_months = [
+            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+            "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+        ]
 
-    # قالب‌دهی برای html
     formatted_menu = []
     for i in range(6):  # شنبه تا پنج‌شنبه
         greg_date = week_dates[i]
-        jalali_date = jdatetime.date.fromgregorian(date=greg_date).strftime("%A %d %B")
+        j_date = jdatetime.date.fromgregorian(date=greg_date)
+        jalali_date = f"{persian_weekdays[i]} {j_date.day} {persian_months[j_date.month - 1]}"
         formatted_menu.append({
             "date": greg_date,
             "jalali_date": jalali_date,
             "weekday": persian_weekdays[i],
             "menu": menu_data[greg_date.strftime("%Y-%m-%d")]
         })
+
+    # # قالب‌دهی برای html
+    # formatted_menu = []
+    # for i in range(6):  # شنبه تا پنج‌شنبه
+    #     greg_date = week_dates[i]
+    #     jalali_date = jdatetime.date.fromgregorian(date=greg_date).strftime("%A %d %B")
+    #     formatted_menu.append({
+    #         "date": greg_date,
+    #         "jalali_date": jalali_date,
+    #         "weekday": persian_weekdays[i],
+    #         "menu": menu_data[greg_date.strftime("%Y-%m-%d")]
+    #     })
 
     return templates.TemplateResponse(
         "admin/admin_menu.html",
@@ -143,9 +160,6 @@ class UpdateMenuSchema(BaseModel):
     weekday: Optional[str] = None
 
 
-from fastapi import HTTPException
-from sqlalchemy import or_
-
 @router_lunch.put("/admin/menu/{menu_id}")
 def update_menu(menu_id: int, update_data: UpdateMenuSchema, db: Session = Depends(get_db)):
     menu = db.query(LunchMenu).filter(LunchMenu.id == menu_id).first()
@@ -169,7 +183,7 @@ def update_menu(menu_id: int, update_data: UpdateMenuSchema, db: Session = Depen
                 return JSONResponse(
                     status_code=200,
                     content={
-                        "message":f"نمی‌توان منو را ویرایش کرد، زیرا غذای '{removed_dishes}' توسط کاربر انتخاب شده است.",
+                        "message": f"نمی‌توان منو را ویرایش کرد، زیرا غذای '{removed_dishes}' توسط کاربر انتخاب شده است.",
                         "success": False
                     }
                 )
@@ -185,7 +199,6 @@ def update_menu(menu_id: int, update_data: UpdateMenuSchema, db: Session = Depen
     db.commit()
     db.refresh(menu)
     return JSONResponse(status_code=200, content={"message": "آیتم با موفقیت ویرایش شد", "success": True})
-
 
 # # API حذف آیتم منو
 # @router_lunch.delete("/admin/menu/{id}")

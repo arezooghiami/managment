@@ -1,229 +1,290 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>گزارش سفارش ناهار</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/vazir-font@32.102.2/dist/font-face.css" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Vazir', sans-serif;
-      background-color: #f5f0e9;
-      color: #3c2f2f;
-    }
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-    .card {
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      padding: 2rem;
-      margin-bottom: 2rem;
-      border: 1px solid #e0d8cc;
-    }
-    .table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      margin-top: 1.5rem;
-    }
-    .table th, .table td {
-      padding: 1rem;
-      text-align: right;
-      border-bottom: 1px solid #e0d8cc;
-    }
-    .table th {
-      background-color: #3c2f2f;
-      color: #ffffff;
-      font-weight: 600;
-      border-radius: 8px 8px 0 0;
-    }
-    .table tr:hover {
-      background-color: #f9f5f0;
-    }
-    .table-footer {
-      background-color: #f5f0e9;
-      font-weight: 600;
-      color: #3c2f2f;
-    }
-    .error {
-      color: #a91b0d;
-      font-size: 0.875rem;
-      margin-top: 1rem;
-      font-weight: 500;
-    }
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      border: none;
-    }
-    .btn-primary {
-      background-color: #3c2f2f;
-      color: #ffffff;
-    }
-    .btn-primary:hover {
-      background-color: #5c4033;
-    }
-    .btn-secondary {
-      background-color: #8b6f47;
-      color: #ffffff;
-    }
-    .btn-secondary:hover {
-      background-color: #a68a5e;
-    }
-    .btn-back {
-      background-color: #6b7280;
-      color: #ffffff;
-    }
-    .btn-back:hover {
-      background-color: #4b5563;
-    }
-    .form-label {
-      font-size: 0.875rem;
-      color: #3c2f2f;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-    .form-input {
-      border: 1px solid #e0d8cc;
-      border-radius: 8px;
-      padding: 0.75rem;
-      width: 100%;
-      font-size: 0.875rem;
-      background-color: #fff;
-      transition: all 0.2s ease;
-    }
-    .form-input:focus {
-      outline: none;
-      border-color: #3c2f2f;
-      box-shadow: 0 0 0 3px rgba(60, 47, 47, 0.1);
-    }
-    .header {
-      border-bottom: 2px solid #e0d8cc;
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>گزارش سفارش ناهار</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vazir-font@32.102.2/dist/font-face.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazir', sans-serif;
+            background-color: #f5f0e9;
+            color: #3c2f2f;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e0d8cc;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1.5rem;
+        }
+
+        .table th, .table td {
+            padding: 1rem;
+            text-align: right;
+            border-bottom: 1px solid #e0d8cc;
+        }
+
+        .table th {
+            background-color: #3c2f2f;
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .table tr:hover {
+            background-color: #f9f5f0;
+        }
+
+        .table-footer {
+            background-color: #f5f0e9;
+            font-weight: 600;
+            color: #3c2f2f;
+        }
+
+        .error {
+            color: #a91b0d;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: #3c2f2f;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #5c4033;
+        }
+
+        .btn-secondary {
+            background-color: #8b6f47;
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #a68a5e;
+        }
+
+        .btn-back {
+            background-color: #6b7280;
+            color: #ffffff;
+        }
+
+        .btn-back:hover {
+            background-color: #4b5563;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            color: #3c2f2f;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            border: 1px solid #e0d8cc;
+            border-radius: 8px;
+            padding: 0.75rem;
+            width: 100%;
+            font-size: 0.875rem;
+            background-color: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3c2f2f;
+            box-shadow: 0 0 0 3px rgba(60, 47, 47, 0.1);
+        }
+
+        .header {
+            border-bottom: 2px solid #e0d8cc;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-  <!-- عنوان صفحه -->
-  <div class="header">
-    <h1 class="text-3xl font-bold text-gray-800">گزارش سفارش ناهار</h1>
-  </div>
 
-  <!-- دکمه بازگشت -->
-  <div class="mb-6">
-    <a href="/admin_dashboard" class="btn btn-back">بازگشت</a>
-  </div>
+    <!-- عنوان صفحه -->
+    <div class="header">
+        <h1 class="text-3xl font-bold text-gray-800">گزارش سفارش ناهار</h1>
+    </div>
 
-  <!-- نمایش خطا -->
-  {% if error %}
-  <div class="error">{{ error }}</div>
-  {% endif %}
+    <!-- دکمه بازگشت -->
+    <div class="mb-6">
+        <a href="/admin_dashboard" class="btn btn-back">بازگشت</a>
+    </div>
 
-  <!-- فرم انتخاب تاریخ -->
-  <div class="card">
-    <h2 class="text-xl font-semibold text-gray-700 mb-4">گزارش روزانه</h2>
-    <form method="post" action="/lunch/admin/report" class="flex flex-col sm:flex-row gap-4">
-      <div class="flex-1">
-        <label class="form-label">انتخاب تاریخ (شمسی):</label>
-        <input type="text" name="jalali_date" class="form-input" placeholder="YYYY/MM/DD" value="{{ selected_date.replace('-', '/') if selected_date else '' }}">
-      </div>
-      <div class="self-end">
-        <button type="submit" class="btn btn-primary">نمایش گزارش</button>
-      </div>
-    </form>
-  </div>
+    <!-- نمایش خطا -->
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
 
-  <!-- فرم گزارش تعداد ناهار -->
-  <div class="card">
-    <h2 class="text-xl font-semibold text-gray-700 mb-4">گزارش تعداد ناهار</h2>
-    <form method="post" action="/lunch_count/admin/report" class="flex flex-col sm:flex-row gap-4">
-      <div class="flex-1">
-        <label class="form-label">تاریخ شروع (شمسی):</label>
-        <input type="text" name="jalali_date_start" class="form-input" placeholder="YYYY/MM/DD">
-      </div>
-      <div class="flex-1">
-        <label class="form-label">تاریخ پایان (شمسی):</label>
-        <input type="text" name="jalali_date_end" class="form-input" placeholder="YYYY/MM/DD">
-      </div>
-      <div class="flex-1">
-        <label class="form-label">کد پرسنلی:</label>
-        <input type="text" name="code" class="form-input" placeholder="کد پرسنلی">
-      </div>
-      <div class="self-end">
-        <button type="submit" class="btn btn-primary">نمایش گزارش</button>
-      </div>
-    </form>
-  </div>
+    <!-- فرم انتخاب تاریخ -->
+    <div class="card">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">گزارش روزانه</h2>
+        <form method="post" action="/lunch/admin/report" class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+                <label class="form-label">انتخاب تاریخ (شمسی):</label>
+                <input type="text" name="jalali_date" id="jalali_date" class="form-input" placeholder="YYYY/MM/DD"
+                       value="{{ selected_date.replace('-', '/') if selected_date else '' }}">
+            </div>
+            <div class="self-end">
+                <button type="submit" class="btn btn-primary">نمایش گزارش</button>
+            </div>
+        </form>
+    </div>
 
-  <!-- دکمه دانلود اکسل با تاریخ شمسی -->
-  <div class="card p-3">
-    <form id="excelForm" method="get" action="/lunch/admin/report/export">
-      <div class="row">
-        <div class="col-md-6">
-          <label for="shamsi_date" class="form-label">تاریخ شمسی (مثلاً 1404/04/04)</label>
-          <input type="text" class="form-input" id="shamsi_date" name="shamsi_date" placeholder="1404/04/04" required>
-        </div>
-        <div class="col-md-6 d-flex align-items-end">
-          <button type="submit" class="btn btn-secondary mt-2">دانلود گزارش اکسل</button>
-        </div>
-      </div>
-    </form>
-  </div>
+    <!-- فرم گزارش تعداد ناهار -->
+    <div class="card">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">گزارش تعداد ناهار</h2>
+        <form method="post" action="/lunch_count/admin/report" class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+                <label class="form-label">تاریخ شروع (شمسی):</label>
+                <input type="text" name="jalali_date_start" class="form-input" placeholder="YYYY/MM/DD">
+            </div>
+            <div class="flex-1">
+                <label class="form-label">تاریخ پایان (شمسی):</label>
+                <input type="text" name="jalali_date_end" class="form-input" placeholder="YYYY/MM/DD">
+            </div>
+            <div class="flex-1">
+                <label class="form-label">کد پرسنلی:</label>
+                <input type="text" name="code" class="form-input" placeholder="کد پرسنلی">
+            </div>
+            <div class="self-end">
+                <button type="submit" class="btn btn-primary">نمایش گزارش</button>
+            </div>
+        </form>
+    </div>
 
-  <!-- جدول گزارش -->
-  {% if lunches %}
-  <div class="card">
-    <h2 class="text-xl font-semibold text-gray-700 mb-4">
-      {% if selected_date %}
-      گزارش سفارشات برای تاریخ: {{ selected_date }}
-      {% else %}
-      گزارش سفارشات امروز
-      {% endif %}
-    </h2>
-    <table class="table">
-      <thead>
-      <tr>
-        <th>کد پرسنلی</th>
-        <th>نام کاربر</th>
-        <th>نوع غذا</th>
-        <th>مهمان</th>
-        <th>تاریخ سفارش</th>
-      </tr>
-      </thead>
-      <tbody>
-      {% for lunch in lunches %}
-      <tr>
-        <td>{{ lunch.user.personal_code }}</td>
-        <td>{{ lunch.user.name }}</td>
-        <td>{{ lunch.selected_dish }}</td>
-        <td>{{ lunch.guest_name or '-' }}</td>
-        <td>{{ lunch.order_date.strftime('%Y/%m/%d') }}</td>
-      </tr>
-      {% endfor %}
-      </tbody>
-      <tfoot>
-      <tr class="table-footer">
-        <td colspan="4" class="text-right">جمع کل ناهارها:</td>
-        <td>{{ lunches|length }}</td>
-      </tr>
-      </tfoot>
-    </table>
-  </div>
-  {% else %}
-  <div class="card">
-    <p class="text-gray-600">هیچ سفارشی برای نمایش وجود ندارد.</p>
-  </div>
-  {% endif %}
+    <!-- دکمه دانلود اکسل با تاریخ شمسی -->
+    <div class="card p-3">
+        <form id="excelForm" method="get" action="/lunch/admin/report/export">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="shamsi_date" class="form-label">تاریخ شمسی (مثلاً 1404/04/04)</label>
+                    <input type="text" class="form-input" id="shamsi_date" name="shamsi_date" placeholder="1404/04/04"
+                           required>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <button type="submit" class="btn btn-secondary mt-2">دانلود گزارش اکسل</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- جدول گزارش -->
+    {% if lunches %}
+    <div class="card">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">
+            {% if selected_date %}
+            گزارش سفارشات برای تاریخ: {{ selected_date }}
+            {% else %}
+            گزارش سفارشات امروز
+            {% endif %}
+        </h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>کد پرسنلی</th>
+                <th>نام کاربر</th>
+                <th>نوع غذا</th>
+                <th>مهمان</th>
+                <th>تاریخ سفارش</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for lunch in lunches %}
+            <tr>
+                <td>{{ lunch.user.personal_code }}</td>
+                <td>{{ lunch.user.name }}</td>
+                <td>{{ lunch.selected_dish }}</td>
+                <td>{{ lunch.guest_name or '-' }}</td>
+                <td>{{ selected_date}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr class="table-footer">
+                <td colspan="4" class="text-right">جمع کل ناهارها:</td>
+                <td>{{ lunches|length }}</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    {% else %}
+    <div class="card">
+        <p class="text-gray-600">هیچ سفارشی برای نمایش وجود ندارد.</p>
+    </div>
+    {% endif %}
 </div>
+
+<script>
+    // تابع تبدیل میلادی به شمسی
+    function toShamsi(gy, gm, gd) {
+        var g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+        var jy = (gy <= 1600) ? 0 : 979;
+        gy -= (gy <= 1600) ? 621 : 1600;
+        var gy2 = (gm > 2) ? (gy + 1) : gy;
+        var days = 365 * gy + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) - 80 + gd + g_d_m[gm - 1];
+        jy += 33 * Math.floor(days / 12053);
+        days %= 12053;
+        jy += 4 * Math.floor(days / 1461);
+        days %= 1461;
+        if (days > 365) {
+            jy += Math.floor((days - 1) / 365);
+            days = (days - 1) % 365;
+        }
+        var jm = (days < 186) ? 1 + Math.floor(days / 31) : 7 + Math.floor((days - 186) / 30);
+        var jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+        return jy + '/' + String(jm).padStart(2, '0') + '/' + String(jd).padStart(2, '0');
+    }
+
+    window.onload = function () {
+        const today = new Date();
+        const shamsi = toShamsi(today.getFullYear(), today.getMonth() + 1, today.getDate());
+
+        const shamsiDateInput = document.getElementById('shamsi_date');
+        if (shamsiDateInput && !shamsiDateInput.value) {
+            shamsiDateInput.value = shamsi;
+        }
+
+        const jalaliDateInput = document.getElementById('jalali_date');
+        if (jalaliDateInput && !jalaliDateInput.value) {
+            jalaliDateInput.value = shamsi;
+        }
+
+    }
+</script>
+
 </body>
 </html>
