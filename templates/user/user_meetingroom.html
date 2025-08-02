@@ -10,6 +10,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Persian Datepicker CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+  <!-- اضافه کردن استایل Flatpickr -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 
   <style>
     :root {
@@ -58,7 +61,7 @@
 
     .navbar-text {
       font-size: 1.1rem;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.70);
       padding: 5px 15px;
       border-radius: 20px;
       font-weight: 500;
@@ -360,14 +363,14 @@
             <small class="form-text text-muted">تاریخ را به فرمت شمسی وارد کنید: 1404/04/30</small>
           </div>
           <div class="col-md-3">
-            <label class="form-label">از ساعت</label>
-            <input type="time" name="start_time" class="form-control" required>
+            <label class="form-label">شروع جلسه</label>
+            <input type="text" id="start_time" name="start_time" class="form-control" required>
           </div>
           <div class="col-md-3">
-            <label class="form-label">تا ساعت</label>
-            <input type="time" name="end_time" class="form-control" required>
+            <label class="form-label">پایان جلسه</label>
+            <input type="text" id="end_time" name="end_time" class="form-control" required>
           </div>
-          <label for="meeting_room_id">انتخاب اتاق جلسه:</label>
+          <label for="meeting_room_id">انتخاب اتاق:</label>
           <select name="selected_room" id="meeting_room_id">
             {% for room in meeting_rooms %}
             <option value="{{ room.id }}">{{ room.name }}</option>
@@ -456,15 +459,32 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6 text-md-start">
-        <p>تمامی حقوق برای شرکت چرم مشهد محفوظ می‌باشد © ۱۴۰۳</p>
+        <p>تمامی حقوق برای شرکت چرم مشهد محفوظ می‌باشد © ۱۴۰۴</p>
       </div>
       <div class="col-md-6 text-md-end">
-        <p>پشتیبانی: داخلی ۱۱۱ | <i class="fas fa-phone me-1"></i> ۰۵۱-۳۸۴۵۱۲۳۴</p>
+        <p>پشتیبانی: داخلی ۱۰۶ | <i class="fas fa-phone me-1"></i></p>
       </div>
     </div>
   </div>
 </footer>
+<!-- اسکریپت Flatpickr -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+<script>
+  flatpickr("#start_time", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",   // فرمت 24 ساعته
+    time_24hr: true       // فعال‌سازی ساعت 24 ساعته
+  });
+
+  flatpickr("#end_time", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    time_24hr: true
+  });
+</script>
 <script>
   let guestIndex = 0;
 

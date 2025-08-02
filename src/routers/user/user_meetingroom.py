@@ -31,7 +31,13 @@ def user_meetingroom(request: Request, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     tomorrow = date.today() + timedelta(days=1)
     meeting_rooms = db.query(MeetingRoom).filter(MeetingRoom.office_id == user.office_id).all()
-    meetings = db.query(MeetingRoomReservation).options(joinedload(MeetingRoomReservation.user)).all()
+    # meetings = db.query(MeetingRoomReservation).options(joinedload(MeetingRoomReservation.user)).all()
+    meetings = db.query(MeetingRoomReservation) \
+        .options(joinedload(MeetingRoomReservation.user)) \
+        .filter(MeetingRoomReservation.reservation_date >= date.today()) \
+        .order_by(MeetingRoomReservation.reservation_date, MeetingRoomReservation.start_time) \
+        .all()
+
 
     # اضافه کردن تاریخ شمسی به هر meeting
     for meeting in meetings:
