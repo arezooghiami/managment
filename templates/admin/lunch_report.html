@@ -227,7 +227,7 @@
             {% for lunch in lunches %}
             <tr>
                 <td>{{ lunch.user.code }}</td>
-                <td>{{ lunch.user.name }}</td>
+                <td>{{ lunch.user.name }} {{ lunch.user.family }}</td>
                 <td>{{ lunch.selected_dish }}</td>
                 <td>{{ lunch.guest_name or '-' }}</td>
                 <td>{{ selected_date}}</td>
