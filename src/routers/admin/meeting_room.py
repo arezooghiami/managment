@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, joinedload
 from datetime import datetime, date, timedelta, time
 from starlette.templating import Jinja2Templates
 from starlette.responses import RedirectResponse
-
+import jdatetime
 from DB.database import get_db
 from models.meet import MeetingRoomReservation, MeetingRoom
 from models.user import User
@@ -36,7 +36,8 @@ def admin_meetingroom(request: Request, db: Session = Depends(get_db)):
     # گروه‌بندی بر اساس تاریخ
     grouped = {}
     for res in reservations:
-        day = res.reservation_date
+        # فرض می‌کنیم reservation_date یک شی datetime است
+        day = jdatetime.date.fromgregorian(date=res.reservation_date).strftime('%Y/%m/%d')
         if day not in grouped:
             grouped[day] = []
         grouped[day].append(res)

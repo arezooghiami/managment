@@ -172,12 +172,12 @@
 
 <main class="flex-1 max-w-7xl mx-auto w-full p-6">
     <div class="mb-10 text-center">
-        <h2 class="text-3xl font-bold text-gray-800">پنل مدیریتی مسئول دفتر </h2>
-        <p class="text-gray-600 mt-3 max-w-2xl mx-auto">. از طریق گزینه‌های زیر می‌توانید بخش‌های مختلف سیستم را مدیریت
-            کنید.</p>
+        <h2 class="text-3xl font-bold text-gray-800">پنل مدیریتی مسئول دفتر</h2>
+        <p class="text-gray-600 mt-3 max-w-2xl mx-auto">از طریق گزینه‌های زیر می‌توانید بخش‌های مختلف سیستم را مدیریت کنید.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <!-- ردیف اول: مدیریت کاربران، دفاتر و اتاق جلسات -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
         <!-- گزارش سفارشات -->
         <a href="/lunch/admin/report" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
             <div class="card-icon">
@@ -188,27 +188,6 @@
             <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">مشاهده گزارشات</div>
         </a>
 
-        <!-- مدیریت منوی ناهار -->
-        <a href="/lunch/admin/menu" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
-            <div class="card-icon">
-                <i class="fas fa-utensils"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800">مدیریت منوی ناهار</h3>
-            <p class="text-gray-600 mt-3">تعریف، ویرایش و حذف آیتم‌های منوی روزانه</p>
-            <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">مدیریت منو</div>
-        </a>
-
-        <!-- مدیریت کاربران -->
-        {% if request.session.get("office_id") == 1 %}
-        <a href="/admin/users" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
-            <div class="card-icon">
-                <i class="fas fa-users"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800">مدیریت کاربران</h3>
-            <p class="text-gray-600 mt-3">مدیریت حساب‌های کاربری و سطوح دسترسی</p>
-            <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">مدیریت کاربران</div>
-        </a>
-        {% endif %}
 
         <!-- رزرو اتاق جلسه -->
         <a href="/admin/meetingroom" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
@@ -219,7 +198,32 @@
             <p class="text-gray-600 mt-3">مدیریت زمان‌بندی و رزرو اتاق‌های جلسه</p>
             <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">رزرو جلسه</div>
         </a>
+        <!-- مدیریت منوی ناهار -->
+        <a href="/lunch/admin/menu" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
+            <div class="card-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">مدیریت منوی ناهار</h3>
+            <p class="text-gray-600 mt-3">تعریف، ویرایش و حذف آیتم‌های منوی روزانه</p>
+            <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">مدیریت منو</div>
+        </a>
 
+
+    </div>
+
+    <!-- ردیف دوم: گزارش سفارشات و مدیریت منوی ناهار -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {% if request.session.get("office_id") == 1 %}
+        <a href="/admin/users" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
+            <div class="card-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">مدیریت کاربران</h3>
+            <p class="text-gray-600 mt-3">مدیریت حساب‌های کاربری و سطوح دسترسی</p>
+            <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">مدیریت کاربران</div>
+        </a>
+        {% endif %}
+        <!-- دفاتر و اتاق جلسات -->
         {% if request.session.get("office_id") == 1 %}
         <a href="/admin/offices" class="card-bg p-8 flex flex-col items-center text-center hover:no-underline">
             <div class="card-icon">
@@ -227,11 +231,13 @@
             </div>
             <h3 class="text-2xl font-bold text-gray-800">دفاتر و اتاق جلسات</h3>
             <p class="text-gray-600 mt-3">مدیریت دفاتر و اتاق‌های جلسه</p>
+            <div class="mt-6 text-sm leather-accent px-4 py-2 rounded-lg">مدیریت دفاتر</div>
         </a>
         {% endif %}
+
+
+
     </div>
-
-
 </main>
 
 <footer class="py-6 footer-border bg-white mt-10">

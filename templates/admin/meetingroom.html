@@ -6,9 +6,9 @@
     <title>سیستم مدیریت رزرو اتاق جلسات</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/vazir-font@32.102.0/dist/font-face.css" rel="stylesheet">
 
     <style>
-
         :root {
             --leather-primary: #5D4037;
             --leather-secondary: #795548;
@@ -17,47 +17,45 @@
             --leather-text: #3E2723;
             --leather-bg: #EFEBE9;
             --leather-card: #FFFFFF;
-
         }
 
         body {
-          background: linear-gradient(135deg, var(--leather-bg) 0%, #e8e2dc 100%);
-          background-attachment: fixed;
-          color: var(--leather-text);
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          padding-bottom: 50px;
+            background: linear-gradient(135deg, var(--leather-bg) 0%, #e8e2dc 100%);
+            background-attachment: fixed;
+            color: var(--leather-text);
+            font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif;
+            padding-bottom: 50px;
         }
 
         .header {
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%235D4037" opacity="0.8"/><path d="M0,50 Q25,30 50,50 T100,50" fill="none" stroke="%238D6E63" stroke-width="2" opacity="0.3"/></svg>');
-            background-size: cover;
-            border-bottom: 3px solid var(--leather-accent);
-            padding: 20px 0;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(90deg, var(--leather-primary), var(--leather-secondary));
+            border-bottom: 4px solid var(--leather-accent);
+            padding: 30px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
 
         .logo-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .logo {
             background-color: var(--leather-light);
-            border: 2px solid var(--leather-accent);
+            border: 3px solid var(--leather-accent);
             border-radius: 50%;
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
         .logo i {
-            font-size: 40px;
+            font-size: 48px;
             color: var(--leather-primary);
         }
 
@@ -65,6 +63,7 @@
             color: white;
             text-align: center;
             font-weight: 700;
+            font-size: 2.5rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             position: relative;
             padding-bottom: 15px;
@@ -76,46 +75,48 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 120px;
-            height: 3px;
+            width: 150px;
+            height: 4px;
             background: linear-gradient(90deg, transparent, var(--leather-light), transparent);
         }
 
         .subtitle {
             color: var(--leather-light);
             text-align: center;
-            font-size: 1.1rem;
-            margin-top: 10px;
+            font-size: 1.2rem;
+            margin-top: 15px;
+            font-weight: 400;
         }
 
         .card {
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             background-color: var(--leather-card);
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 14px 25px rgba(0, 0, 0, 0.15);
         }
 
         .card-header {
             background: linear-gradient(90deg, var(--leather-primary), var(--leather-secondary));
             color: white;
             font-weight: 600;
-            padding: 15px 20px;
-            border-bottom: 2px solid var(--leather-accent);
+            padding: 20px;
+            border-bottom: 3px solid var(--leather-accent);
             display: flex;
             align-items: center;
+            font-size: 1.3rem;
         }
 
         .card-header i {
-            margin-left: 10px;
-            font-size: 1.2rem;
+            margin-left: 12px;
+            font-size: 1.4rem;
         }
 
         .table {
@@ -128,18 +129,20 @@
             background-color: var(--leather-light);
             color: var(--leather-text);
             font-weight: 600;
-            border-bottom: 2px solid var(--leather-accent);
-            padding: 12px 15px;
+            border-bottom: 3px solid var(--leather-accent);
+            padding: 15px;
+            font-size: 1.1rem;
         }
 
         .table tbody td {
-            padding: 12px 15px;
+            padding: 15px;
             vertical-align: middle;
             border-top: 1px solid rgba(93, 64, 55, 0.1);
+            font-size: 1rem;
         }
 
         .table-success {
-          background-color: rgba(200, 230, 201, 0.6) !important;
+            background-color: rgba(200, 230, 201, 0.6) !important;
         }
 
         .table-danger {
@@ -150,26 +153,26 @@
             background-color: var(--leather-primary);
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 6px 12px;
+            border-radius: 6px;
+            padding: 8px 16px;
             transition: all 0.3s ease;
             font-weight: 500;
+            font-size: 0.95rem;
         }
-
 
         .btn-leather:hover {
             background-color: var(--leather-secondary);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
         .status-badge {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            margin-left: 8px;
+            margin-left: 10px;
         }
 
         .available-badge {
@@ -183,57 +186,70 @@
         .legend {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-            padding: 10px;
+            gap: 25px;
+            margin-top: 25px;
+            padding: 15px;
             background-color: var(--leather-card);
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
         .footer {
             text-align: center;
-            padding: 20px;
+            padding: 25px;
             color: var(--leather-text);
-            font-size: 0.9rem;
-            margin-top: 30px;
+            font-size: 0.95rem;
+            margin-top: 40px;
             border-top: 1px solid rgba(93, 64, 55, 0.1);
         }
 
         .empty-state {
             text-align: center;
-            padding: 30px;
-            color: var(--leather-accent);
+            padding: 40px;
+            color: var(--leather-text);
+            background-color: var(--leather-bg);
+            border-radius: 10px;
+            margin: 20px 0;
         }
 
         .empty-state i {
-            font-size: 3rem;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: var(--leather-accent);
+            opacity: 0.8;
+        }
+
+        .empty-state h5 {
+            font-weight: 600;
+            font-size: 1.5rem;
             margin-bottom: 15px;
-            opacity: 0.7;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            color: var(--leather-text);
+            opacity: 0.8;
         }
 
         .date-badge {
             background-color: var(--leather-accent);
             color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            margin-right: 10px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-right: 12px;
         }
     </style>
 </head>
 <body>
-
-
-
 <div class="header">
-
     <div class="container">
         <div class="logo-container">
             <div class="logo">
@@ -241,14 +257,12 @@
             </div>
         </div>
         <h1 class="page-title">سیستم مدیریت رزرو اتاق جلسات</h1>
-<!--        <p class="subtitle">برنامه رزرو هفت روز آینده - اتاق کنفرانس اصلی</p>-->
-
+        <p class="subtitle">مدیریت حرفه‌ای جلسات با چرم مشهد</p>
     </div>
 </div>
 
 <div class="container">
     <div class="legend">
-
         <div class="legend-item">
             <span class="status-badge available-badge"></span>
             <span>زمان‌های آزاد</span>
@@ -258,12 +272,22 @@
             <span>زمان‌های رزرو شده</span>
         </div>
     </div>
+    {% if not grouped_reservations %}
+    <div class="card text-center mt-4">
+        <div class="card-body">
+            <i class="bi bi-calendar-x display-4 text-muted mb-3"></i>
+            <h5 class="card-title">هیچ رزروی ثبت نشده است</h5>
+            <p class="card-text text-muted">در حال حاضر هیچ رزرو فعالی برای اتاق‌های جلسه ثبت نشده است. برای افزودن رزرو جدید، به داشبورد مدیریتی مراجعه کنید.</p>
+            <a href="/user_meetingroom" class="btn btn-primary">افزودن رزرو جدید</a>
+        </div>
+    </div>
+    {% endif %}
 
     {% for day, reservations in grouped_reservations.items() %}
     <div class="card">
         <div class="card-header">
             <i class="bi bi-calendar-event"></i>
-            <span>برنامه رزرو: {{ day.strftime("%Y/%m/%d") }}</span>
+            <span>برنامه رزرو: {{ day }}</span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -287,11 +311,11 @@
 
                     {% if not reservations %}
                     <tr>
-                        <td colspan="7">
+                        <td colspan="8">
                             <div class="empty-state">
                                 <i class="bi bi-calendar-x"></i>
-                                <h5>هیچ رزروی برای این تاریخ ثبت نشده است</h5>
-                                <p class="text-muted">تمام زمان‌های این روز برای رزرو آزاد می‌باشد</p>
+                                <h5>رزروی برای این تاریخ ثبت نشده است</h5>
+                                <p>تمام زمان‌های این روز برای رزرو آزاد است. برای رزرو جدید، به داشبورد مدیریتی مراجعه کنید.</p>
                             </div>
                         </td>
                     </tr>
@@ -302,22 +326,13 @@
                     {% set current_time = previous_res.end_time.strftime("%H:%M") %}
                     {% endif %}
 
-
-
                     {% if current_time < res.start_time.strftime("%H:%M") %}
-
-                    <tr>
+                    <tr class="table-success">
                         <td><span class="status-badge available-badge"></span> آزاد</td>
-                        <td colspan="5">از {{ current_time }} تا {{ res.start_time.strftime("%H:%M") }}</td>
-                        <!--            <td>-->
-                        <!--              <button class="btn btn-leather btn-sm">-->
-                        <!--                <i class="bi bi-plus-lg"></i> رزرو-->
-                        <!--              </button>-->
-                        <!--            </td>-->
+                        <td colspan="7">از {{ current_time }} تا {{ res.start_time.strftime("%H:%M") }}</td>
                     </tr>
-
                     {% endif %}
-                    <tr>
+                    <tr class="table-danger">
                         <td><span class="status-badge reserved-badge"></span> رزرو شده</td>
                         <td>
                             <div class="d-flex align-items-center">
@@ -330,13 +345,10 @@
                         <td>{{ res.start_time.strftime("%H:%M") }}</td>
                         <td>{{ res.end_time.strftime("%H:%M") }}</td>
                         <td>{{ res.subject or '---' }}</td>
-
                         <td>
                             <span class="badge bg-secondary rounded-pill">{{ res.participants }} نفر</span>
                         </td>
-                        <td>
-                            <span class="">{{ res.meeting_room.name }} </span>
-                        </td>
+                        <td>{{ res.meeting_room.name }}</td>
                         <td>
                             <form method="post" action="/admin/meetingroom/delete/{{ res.id }}"
                                   onsubmit="return confirm('آیا از حذف این رزرو اطمینان دارید؟')">
@@ -349,48 +361,28 @@
 
                     {% set current_time = res.end_time.strftime("%H:%M") %}
                     {% if loop.last and current_time < day_end %}
-                    <tr>
+                    <tr class="table-success">
                         <td><span class="status-badge available-badge"></span> آزاد</td>
-                        <td colspan="5">از {{ current_time }} تا {{ day_end }}</td>
-<!--                        <td>-->
-<!--                            <button class="btn btn-leather btn-sm">-->
-<!--                                <i class="bi bi-plus-lg"></i> رزرو-->
-<!--                            </button>-->
-<!--                        </td>-->
+                        <td colspan="7">از {{ current_time }} تا {{ day_end }}</td>
                     </tr>
-
                     {% endif %}
-
                     {% endfor %}
-
-
-
-
-
-
                     </tbody>
                 </table>
-
             </div>
         </div>
-
         <div class="card-footer text-muted">
             <i class="bi bi-info-circle"></i>
-            ساعت کاری: ۸:۰۰ تا ۱۷:۰۰ |
+            ساعت کاری: ۸:۰۰ تا ۱۷:۰۰
         </div>
-
     </div>
     {% endfor %}
-    <button class="btn btn-leather btn-sm">
 
-        <a
-                href="/admin_dashboard"
-                class="btn btn-back px-6 py-3 text-sm"
-                style=" color: white; border: none;"
-        >
-            بازگشت
+    <div class="text-center mt-4">
+        <a href="/admin_dashboard" class="btn btn-leather px-5 py-3">
+            <i class="bi bi-arrow-right-circle me-2"></i> بازگشت به داشبورد
         </a>
-    </button>
+    </div>
 </div>
 
 <div class="footer">
