@@ -220,22 +220,24 @@
                 <th>نوع غذا</th>
                 <th>مهمان</th>
                 <th>تاریخ سفارش</th>
+                <th>توضیحات</th>
             </tr>
             </thead>
             <tbody>
             {% for lunch in lunches %}
             <tr>
-                <td>{{ lunch.user.personal_code }}</td>
+                <td>{{ lunch.user.code }}</td>
                 <td>{{ lunch.user.name }}</td>
                 <td>{{ lunch.selected_dish }}</td>
                 <td>{{ lunch.guest_name or '-' }}</td>
                 <td>{{ selected_date}}</td>
+                <td>{{ lunch.description or '-'  }}</td>
             </tr>
             {% endfor %}
             </tbody>
             <tfoot>
             <tr class="table-footer">
-                <td colspan="4" class="text-right">جمع کل ناهارها:</td>
+                <td colspan="5" class="text-right">جمع کل ناهارها:</td>
                 <td>{{ lunches|length }}</td>
             </tr>
             </tfoot>

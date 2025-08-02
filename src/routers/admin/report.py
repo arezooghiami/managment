@@ -171,7 +171,7 @@ def export_lunch_excel(request: Request,
     wb = Workbook()
     ws = wb.active
     ws.title = "Lunch Report"
-    ws.append(["کدپرسنلی","تاریخ", "نام و نام خانوادگی", "نوع غذا", "مهمان"])
+    ws.append(["کدپرسنلی","تاریخ", "نام و نام خانوادگی", "نوع غذا", "توضیحات", "مهمان"])
 
     for item in lunch_rep:
         ws.append([
@@ -180,6 +180,7 @@ def export_lunch_excel(request: Request,
             shamsi_date,
             f"{item.user.name} {item.user.family}",
             item.selected_dish,
+            item.description,
             item.guest_name or ''
         ])
 
