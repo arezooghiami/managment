@@ -15,7 +15,10 @@ from models.user import User
 router_user_lunch = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-
+def get_jalali_weekday(g_date):
+    j_date = jdatetime.date.fromgregorian(date=g_date)
+    weekdays = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه']
+    return weekdays[j_date.weekday()]
 def to_jalali(gdate):
     return jdatetime.date.fromgregorian(date=gdate).strftime('%Y/%m/%d')
 
@@ -66,12 +69,10 @@ async def user_lunch(request: Request, db: Session = Depends(get_db)):
     for menu in menus:
         menu_dict = menu.__dict__.copy()
         menu_dict["jalali_date"] = to_jalali(menu.date)
-        # بررسی اجازه سفارش برای امروز
-        if menu.date == today:
-            menu_dict["can_order"] = now.time() < cutoff_time
-        else:
-            menu_dict["can_order"] = True
+        menu_dict["jalali_weekday"] = get_jalali_weekday(menu.date)  # ✅ اضافه کردن روز هفته
+        menu_dict["can_order"] = now.time() < cutoff_time if menu.date == today else True
         menus_with_jalali.append(menu_dict)
+
 
     # تبدیل تاریخ‌ها به شمسی برای سفارش‌ها
     orders_with_jalali = []
