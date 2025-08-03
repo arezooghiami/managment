@@ -25,9 +25,11 @@ async def user_lunch(request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
     office_id = request.session.get("office_id")
     role = request.session.get("role")
+
     if not user_id or role != 'user':
         return RedirectResponse(url="/", status_code=302)
-    # Fetch user
+
+    # بررسی وجود کاربر
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -35,67 +37,50 @@ async def user_lunch(request: Request, db: Session = Depends(get_db)):
     now = datetime.now()
     cutoff_time = time(10, 0)
     today = date.today()
-    tomorrow = today + timedelta(days=1)
 
-    menus = []
-    orders = []
-    user_order_today = None
-    user_order_tomorrow = None
+    # دریافت منوهای آینده از امروز به بعد
+    menus = db.query(LunchMenu).filter(
+        LunchMenu.date >= today,
+        LunchMenu.office_id == office_id
+    ).order_by(LunchMenu.date.asc()).all()
 
-    if now.time() < cutoff_time:
-        # Before 10 AM: Show today's and tomorrow's menus
-        menu_today = db.query(LunchMenu).filter(LunchMenu.date == today,LunchMenu.office_id == office_id ).first()
-        menu_tomorrow = db.query(LunchMenu).filter(LunchMenu.date == tomorrow, LunchMenu.office_id == office_id).first()
-        menus.extend([menu for menu in [menu_today, menu_tomorrow] if menu])
+    # دریافت تمام سفارش‌های کاربر از امروز به بعد
+    orders = db.query(LunchOrder).filter(
+        LunchOrder.user_id == user_id,
+        LunchOrder.order_date >= today
+    ).all()
 
-        orders_today = db.query(LunchOrder).filter(
-            LunchOrder.user_id == user_id,
-            LunchOrder.order_date == today
-        ).all()
-        orders_tomorrow = db.query(LunchOrder).filter(
-            LunchOrder.user_id == user_id,
-            LunchOrder.order_date == tomorrow
-        ).all()
-        orders.extend(orders_today + orders_tomorrow)
+    # بررسی وجود سفارش برای امروز و فردا
+    user_order_today = db.query(LunchOrder).filter(
+        LunchOrder.user_id == user_id,
+        LunchOrder.order_date == today
+    ).first()
 
-        user_order_today = db.query(LunchOrder).filter(
-            LunchOrder.user_id == user_id,
-            LunchOrder.order_date == today
-        ).first()
-        user_order_tomorrow = db.query(LunchOrder).filter(
-            LunchOrder.user_id == user_id,
-            LunchOrder.order_date == tomorrow
-        ).first()
-    else:
-        # After 10 AM: Show only tomorrow's menu
-        menu_tomorrow = db.query(LunchMenu).filter(LunchMenu.date == tomorrow,LunchMenu.office_id == office_id ).first()
-        if menu_tomorrow:
-            menus.append(menu_tomorrow)
+    user_order_tomorrow = db.query(LunchOrder).filter(
+        LunchOrder.user_id == user_id,
+        LunchOrder.order_date == today + timedelta(days=1)
+    ).first()
 
-        orders = db.query(LunchOrder).filter(
-            LunchOrder.user_id == user_id,
-            LunchOrder.order_date == tomorrow
-        ).all()
-        user_order_tomorrow = db.query(LunchOrder).filter(
-            LunchOrder.user_id == user_id,
-            LunchOrder.order_date == tomorrow
-        ).first()
-
-    # تاریخ‌های شمسی منوها
+    # تبدیل تاریخ‌ها به شمسی برای منوها
     menus_with_jalali = []
     for menu in menus:
         menu_dict = menu.__dict__.copy()
         menu_dict["jalali_date"] = to_jalali(menu.date)
+        # بررسی اجازه سفارش برای امروز
+        if menu.date == today:
+            menu_dict["can_order"] = now.time() < cutoff_time
+        else:
+            menu_dict["can_order"] = True
         menus_with_jalali.append(menu_dict)
 
-    # تاریخ‌های شمسی سفارش‌ها
+    # تبدیل تاریخ‌ها به شمسی برای سفارش‌ها
     orders_with_jalali = []
     for order in orders:
         order_dict = order.__dict__.copy()
         order_dict["jalali_date"] = to_jalali(order.order_date)
         orders_with_jalali.append(order_dict)
 
-    # Add message if no orders or menus are available
+    # اضافه کردن پیام‌ها در صورت نبود منو یا سفارش
     if not menus:
         request.session.setdefault("messages", []).append("منویی برای نمایش وجود ندارد.")
     if not orders:
@@ -112,7 +97,6 @@ async def user_lunch(request: Request, db: Session = Depends(get_db)):
         "cutoff_time": cutoff_time
     })
 
-
 @router_user_lunch.post("/order_lunch")
 def order_lunch(
         request: Request,
@@ -122,32 +106,43 @@ def order_lunch(
         description: str = Form(...),
         for_guest: Optional[str] = Form(None),
         guest_name: Optional[str] = Form(None),
+        guest_company: Optional[str] = Form(None),
         db: Session = Depends(get_db)
 ):
-    # order_date = date.today() + timedelta(days=1)
     now = datetime.now()
     cutoff_time = time(10, 0)
 
-    # منطق بررسی زمان برای سفارش امروز یا فردا
-    if now.time() < cutoff_time:
-        order_date = date.today()
-    else:
-        order_date = date.today() + timedelta(days=1)
+    # گرفتن منوی انتخاب شده
+    menu = db.query(LunchMenu).filter(LunchMenu.id == menu_id).first()
+    if not menu:
+        raise HTTPException(status_code=404, detail="منوی انتخاب‌شده یافت نشد.")
+
+    order_date = menu.date
+
+    # ⛔ جلوگیری از سفارش برای امروز بعد از ساعت ۱۰
+    if order_date == date.today() and now.time() >= cutoff_time:
+        request.session.setdefault("messages", []).append(
+            f"مهلت ثبت یا ویرایش سفارش ناهار امروز ({to_jalali(order_date)}) به پایان رسیده است."
+        )
+        return RedirectResponse(url="/user_dashboard/lunch", status_code=302)
+
+    # ساخت اطلاعات کامل مهمان
+    full_guest_info = f"{guest_name} - {guest_company}" if guest_name else None
 
     if for_guest == "on" and guest_name:
-        # سفارش جدید برای مهمان
+        # ثبت سفارش برای مهمان
         new_order = LunchOrder(
             user_id=user_id,
             lunch_menu_id=menu_id,
             selected_dish=selected_dish,
             order_date=order_date,
-            guest_name=guest_name,
+            guest_name=full_guest_info,
             description=description
         )
         db.add(new_order)
-        message = f"سفارش برای مهمان {guest_name} ثبت شد."
+        message = f"سفارش ناهار برای مهمان «{guest_name}» با موفقیت ثبت شد."
     else:
-        # فقط یک سفارش در روز برای خود شخص قابل ویرایش است
+        # بررسی وجود سفارش قبلی برای همین روز و همین کاربر (نه مهمان)
         existing_order = db.query(LunchOrder).filter(
             LunchOrder.user_id == user_id,
             LunchOrder.order_date == order_date,
@@ -158,7 +153,7 @@ def order_lunch(
             existing_order.lunch_menu_id = menu_id
             existing_order.selected_dish = selected_dish
             existing_order.description = description
-            message = "سفارش ناهار شما ویرایش شد."
+            message = f"سفارش ناهار شما برای تاریخ {to_jalali(order_date)} ویرایش شد."
         else:
             new_order = LunchOrder(
                 user_id=user_id,
@@ -168,21 +163,87 @@ def order_lunch(
                 description=description
             )
             db.add(new_order)
-            message = "سفارش ناهار شما ثبت شد."
+            message = f"سفارش ناهار شما برای تاریخ {to_jalali(order_date)} با موفقیت ثبت شد."
 
     db.commit()
-    if for_guest == "on" and guest_name:
 
-        message = f"سفارش ناهار برای مهمان «{guest_name}» با موفقیت ثبت شد."
-    else:
+    # افزودن پیام به سشن
+    request.session.setdefault("messages", []).append(message)
 
-        message = "سفارش ناهار شما با موفقیت ثبت شد."
+    return RedirectResponse(url="/user_dashboard/lunch", status_code=302)
 
-    if "messages" not in request.session:
-        request.session["messages"] = []
 
-    request.session["messages"].append(message)
-    return RedirectResponse(url=f"/user_dashboard/lunch", status_code=302)
+
+# @router_user_lunch.post("/order_lunch")
+# def order_lunch(
+#         request: Request,
+#         user_id: int = Form(...),
+#         menu_id: int = Form(...),
+#         selected_dish: str = Form(...),
+#         description: str = Form(...),
+#         for_guest: Optional[str] = Form(None),
+#         guest_name: Optional[str] = Form(None),
+#         db: Session = Depends(get_db)
+# ):
+#     # order_date = date.today() + timedelta(days=1)
+#     now = datetime.now()
+#     cutoff_time = time(10, 0)
+#
+#     # منطق بررسی زمان برای سفارش امروز یا فردا
+#     if now.time() < cutoff_time:
+#         order_date = date.today()
+#     else:
+#         order_date = date.today() + timedelta(days=1)
+#
+#     if for_guest == "on" and guest_name:
+#         # سفارش جدید برای مهمان
+#         new_order = LunchOrder(
+#             user_id=user_id,
+#             lunch_menu_id=menu_id,
+#             selected_dish=selected_dish,
+#             order_date=order_date,
+#             guest_name=guest_name,
+#             description=description
+#         )
+#         db.add(new_order)
+#         message = f"سفارش برای مهمان {guest_name} ثبت شد."
+#     else:
+#         # فقط یک سفارش در روز برای خود شخص قابل ویرایش است
+#         existing_order = db.query(LunchOrder).filter(
+#             LunchOrder.user_id == user_id,
+#             LunchOrder.order_date == order_date,
+#             LunchOrder.guest_name == None
+#         ).first()
+#
+#         if existing_order:
+#             existing_order.lunch_menu_id = menu_id
+#             existing_order.selected_dish = selected_dish
+#             existing_order.description = description
+#             message = "سفارش ناهار شما ویرایش شد."
+#         else:
+#             new_order = LunchOrder(
+#                 user_id=user_id,
+#                 lunch_menu_id=menu_id,
+#                 selected_dish=selected_dish,
+#                 order_date=order_date,
+#                 description=description
+#             )
+#             db.add(new_order)
+#             message = "سفارش ناهار شما ثبت شد."
+#
+#     db.commit()
+#     if for_guest == "on" and guest_name:
+#
+#         message = f"سفارش ناهار برای مهمان «{guest_name}» با موفقیت ثبت شد."
+#     else:
+#
+#         message = "سفارش ناهار شما با موفقیت ثبت شد."
+#
+#     if "messages" not in request.session:
+#         request.session["messages"] = []
+#
+#     request.session["messages"].append(message)
+#     return RedirectResponse(url=f"/user_dashboard/lunch", status_code=302)
 
 
 
