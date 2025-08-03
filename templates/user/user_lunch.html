@@ -278,16 +278,16 @@
         <p class="text-muted">به پورتال اختصاصی کارکنان شرکت چرم مشهد خوش آمدید</p>
     </div>
 
-<!--      &lt;!&ndash; Lunch Menu Management Link &ndash;&gt;-->
-<!--      <a href="/user_dashboard/lunch?user_id={{ user.id }}" class="menu-link" aria-label="مدیریت منوی ناهار">-->
-<!--        <input type="hidden" name="user_id" value="{{ user.id }}">-->
-<!--        <div class="card-icon">-->
-<!--          <i class="fas fa-utensils fa-2x"></i>-->
-<!--        </div>-->
-<!--        <h3>مدیریت منوی ناهار</h3>-->
-<!--        <p>تعریف، ویرایش و حذف آیتم‌های منوی روزانه</p>-->
-<!--        <div class="btn btn-custom">مدیریت منو</div>-->
-<!--      </a>-->
+    <!--      &lt;!&ndash; Lunch Menu Management Link &ndash;&gt;-->
+    <!--      <a href="/user_dashboard/lunch?user_id={{ user.id }}" class="menu-link" aria-label="مدیریت منوی ناهار">-->
+    <!--        <input type="hidden" name="user_id" value="{{ user.id }}">-->
+    <!--        <div class="card-icon">-->
+    <!--          <i class="fas fa-utensils fa-2x"></i>-->
+    <!--        </div>-->
+    <!--        <h3>مدیریت منوی ناهار</h3>-->
+    <!--        <p>تعریف، ویرایش و حذف آیتم‌های منوی روزانه</p>-->
+    <!--        <div class="btn btn-custom">مدیریت منو</div>-->
+    <!--      </a>-->
 
     <!-- Lunch Order Form -->
     <div class="card">
@@ -308,16 +308,18 @@
                         <input type="hidden" name="menu_id" value="{{ menu.id }}">
 
                         <h5 class="fw-bold mb-3">
-                            منوی تاریخ :  {{ menu.jalali_weekday }} {{ menu.jalali_date }}
+                            منوی تاریخ : {{ menu.jalali_weekday }} {{ menu.jalali_date }}
                         </h5>
 
                         {% if menu.main_dish %}
                         <p class="mb-2">غذاهای اصلی:</p>
                         {% for dish in menu.main_dish.split('/') %}
                         <div class="form-check mb-1">
-                            <input class="form-check-input" type="radio" name="selected_dish" id="dish-{{ menu.id }}-{{ loop.index }}"
+                            <input class="form-check-input" type="radio" name="selected_dish"
+                                   id="dish-{{ menu.id }}-{{ loop.index }}"
                                    value="{{ dish.strip() }}" required>
-                            <label class="form-check-label" for="dish-{{ menu.id }}-{{ loop.index }}">{{ dish.strip() }}</label>
+                            <label class="form-check-label" for="dish-{{ menu.id }}-{{ loop.index }}">{{ dish.strip()
+                                }}</label>
                         </div>
                         {% endfor %}
                         {% else %}
@@ -331,7 +333,8 @@
                         </div>
 
                         <div class="text-center mt-3">
-                            <button class="btn btn-custom" type="submit" aria-label="ثبت سفارش برای {{ menu.jalali_date }}">
+                            <button class="btn btn-custom" type="submit"
+                                    aria-label="ثبت سفارش برای {{ menu.jalali_date }}">
                                 <i class="fas fa-paper-plane me-2"></i>
                                 ثبت سفارش من
                             </button>
@@ -384,7 +387,7 @@
                         <th scope="col">غذا</th>
                         <th scope="col">تاریخ</th>
                         <th scope="col">وضعیت</th>
-                        <th scope="col">عملیات</th> <!-- ستون جدید برای عملیات -->
+                        <th scope="col">عملیات</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -405,14 +408,26 @@
                             <span class="badge bg-success">ثبت شده</span>
                         </td>
                         <td>
+                            {% if item.can_delete %}
                             {% if item.guest_name %}
-                            <form action="/delete_guest_order/{{ item.id }}" method="POST" onsubmit="return confirm('آیا مطمئن هستید که می‌خواهید این سفارش مهمان را حذف کنید؟');">
-                                <!-- اگر از CSRF استفاده می‌کنید، توکن را اینجا اضافه کنید -->
-                                <!-- <input type="hidden" name="_csrf_token" value="{{ csrf_token }}"> -->
-                                <button type="submit" class="btn btn-danger btn-sm" aria-label="حذف سفارش مهمان">
+                            <!-- فرم حذف سفارش مهمان -->
+                            <form action="/delete_guest_order/{{ item.id }}" method="POST"
+                                  onsubmit="return confirm('آیا مطمئن هستید که می‌خواهید این سفارش مهمان را حذف کنید؟');">
+                                <button type="submit" class="btn btn-danger btn-sm">
                                     <i class="fas fa-trash-alt me-2"></i> حذف
                                 </button>
                             </form>
+                            {% else %}
+                            <!-- فرم حذف سفارش پرسنل -->
+                            <form action="/delete_user_order/{{ item.id }}" method="POST"
+                                  onsubmit="return confirm('آیا مطمئن هستید که می‌خواهید این سفارش پرسنل را حذف کنید؟');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-trash me-2"></i> حذف
+                                </button>
+                            </form>
+                            {% endif %}
+                            {% else %}
+                            <span class="text-muted">امکان حذف نیست</span>
                             {% endif %}
                         </td>
 
@@ -421,6 +436,7 @@
                     </tbody>
                 </table>
             </div>
+
         </div>
     </div>
     {% endif %}
@@ -440,7 +456,7 @@
                 <p>تمامی حقوق برای شرکت چرم مشهد محفوظ است ©۱۴۰۴</p>
             </div>
             <div class="col-md-6 text-md-end">
-                <p>پشتیبانی: داخلی ۱۰۶ | <i class="fas fa-phone me-1"></i> </p>
+                <p>پشتیبانی: داخلی ۱۰۶ | <i class="fas fa-phone me-1"></i></p>
             </div>
         </div>
     </div>

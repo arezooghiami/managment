@@ -15,10 +15,13 @@ from models.user import User
 router_user_lunch = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
+
 def get_jalali_weekday(g_date):
     j_date = jdatetime.date.fromgregorian(date=g_date)
     weekdays = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه']
     return weekdays[j_date.weekday()]
+
+
 def to_jalali(gdate):
     return jdatetime.date.fromgregorian(date=gdate).strftime('%Y/%m/%d')
 
@@ -73,12 +76,18 @@ async def user_lunch(request: Request, db: Session = Depends(get_db)):
         menu_dict["can_order"] = now.time() < cutoff_time if menu.date == today else True
         menus_with_jalali.append(menu_dict)
 
-
     # تبدیل تاریخ‌ها به شمسی برای سفارش‌ها
     orders_with_jalali = []
+
     for order in orders:
         order_dict = order.__dict__.copy()
         order_dict["jalali_date"] = to_jalali(order.order_date)
+
+        if order.order_date == today:
+            order_dict["can_delete"] = now.time() < cutoff_time
+        else:
+            order_dict["can_delete"] = True
+
         orders_with_jalali.append(order_dict)
 
     # اضافه کردن پیام‌ها در صورت نبود منو یا سفارش
@@ -97,6 +106,7 @@ async def user_lunch(request: Request, db: Session = Depends(get_db)):
         "now": now,
         "cutoff_time": cutoff_time
     })
+
 
 @router_user_lunch.post("/order_lunch")
 def order_lunch(
@@ -174,7 +184,6 @@ def order_lunch(
     return RedirectResponse(url="/user_dashboard/lunch", status_code=302)
 
 
-
 # @router_user_lunch.post("/order_lunch")
 # def order_lunch(
 #         request: Request,
@@ -247,8 +256,6 @@ def order_lunch(
 #     return RedirectResponse(url=f"/user_dashboard/lunch", status_code=302)
 
 
-
-
 @router_user_lunch.post("/delete_guest_order/{order_id}")
 def delete_guest_order(order_id: int, request: Request, db: Session = Depends(get_db)):
     # بررسی وجود user_id و نقش کاربر
@@ -297,3 +304,13 @@ def delete_guest_order(order_id: int, request: Request, db: Session = Depends(ge
 
     return RedirectResponse(url="/user_dashboard/lunch", status_code=302)
 
+
+@router_user_lunch.post("/delete_user_order/{order_id}")
+def delete_user_order(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(LunchOrder).filter(LunchOrder.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    db.delete(order)
+    db.commit()
+    return RedirectResponse(url="/user_dashboard/lunch", status_code=302)
