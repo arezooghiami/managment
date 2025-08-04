@@ -1,4 +1,5 @@
 import io
+from http.client import HTTPException
 
 from fastapi import APIRouter, Depends, Request, Form
 from fastapi import Query
@@ -193,3 +194,14 @@ def export_lunch_excel(request: Request,
                              media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                              headers={"Content-Disposition": f"attachment; filename={filename}"}
                              )
+
+
+@router_report.post("/admin_delete_user_order/{order_id}")
+def admin_delete_user_order(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(LunchOrder).filter(LunchOrder.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    db.delete(order)
+    db.commit()
+    return {"success": True, "message": "Order deleted successfully"}

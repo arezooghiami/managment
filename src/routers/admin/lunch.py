@@ -12,6 +12,7 @@ from starlette.responses import RedirectResponse, JSONResponse
 
 from DB.database import get_db
 from models.lunch import LunchMenu, LunchOrder
+from models.notification import Notification
 from models.user import User
 
 router_lunch = APIRouter(prefix="/lunch", tags=["lunch"])
@@ -244,3 +245,39 @@ def update_menu(menu_id: int, update_data: UpdateMenuSchema, db: Session = Depen
 #         "lunch_report.html",
 #         {"request": request, "orders": orders, "report_date": report_date}
 #     )
+class UpdateMenu(BaseModel):
+    menu_id: int
+    remove_dishes: Optional[List[str]] = None
+@router_lunch.post("/admin/remove_lunch")
+def delete_menu( update_data: UpdateMenu, db: Session = Depends(get_db)):
+    menu = db.query(LunchMenu).filter(LunchMenu.id == update_data.menu_id).first()
+    # menu = db.query(LunchMenu).filter(LunchMenu.id == menu_id).first()
+    if not menu:
+        raise HTTPException(status_code=404, detail="آیتم منو پیدا نشد")
+
+    if update_data.remove_dishes:
+        old_dishes = [d.strip() for d in menu.main_dish.split('/')]
+        remaining_dishes = [d for d in old_dishes if d not in update_data.remove_dishes]
+        removed_dishes = [d for d in old_dishes if d in update_data.remove_dishes]
+
+        if removed_dishes:
+            # پیدا کردن سفارش‌هایی که یکی از غذاهای حذف‌شده رو انتخاب کردن
+            affected_orders = db.query(LunchOrder).filter(
+                LunchOrder.lunch_menu_id == menu.id,
+                LunchOrder.selected_dish.in_(removed_dishes)
+            ).all()
+
+            for order in affected_orders:
+                notification = Notification(
+                    user_id=order.user_id,
+                    message=f"غذای انتخابی شما ({order.selected_dish}) از منو حذف شده است. لطفا مجدداً انتخاب فرمایید.",
+                    created_at=datetime.utcnow()
+                )
+                db.add(notification)
+                db.delete(order)
+
+        # آپدیت رشته main_dish در دیتابیس
+        menu.main_dish = ' / '.join(remaining_dishes)
+        db.commit()
+
+    return {"detail": "غذا از منو حذف شدند و سفارش‌های مرتبط حذف شدند."}

@@ -128,7 +128,12 @@
             <div id="dish-display-{{ menu.menu.id }}">
               {% set dishes = menu.menu.main_dish.split(' / ') %}
               {% for dish in dishes %}
-              <div class="text-gray-800 mb-2">{{ dish }}</div>
+              <div class="flex items-center justify-between mb-2 bg-gray-100 p-2 rounded">
+                <span class="text-gray-800">{{ dish }}</span>
+                <button onclick="removeDish({{ menu.menu.id }}, '{{ dish }}')" class="btn btn-secondary text-xs px-2 py-1 ml-2">
+                  حذف سفارشات
+                </button>
+              </div>
               {% endfor %}
             </div>
 
@@ -153,6 +158,8 @@
             <button onclick="toggleEditInput({{ menu.menu.id }})" class="btn btn-secondary px-4 py-2 text-sm">
               ویرایش
             </button>
+            <!-- دکمه حذف غذا -->
+
             {% endif %}
           </td>
         </tr>
@@ -164,6 +171,34 @@
 </div>
 
 <script>
+  async function removeDish(menuId, dish) {
+    if (!confirm(`آیا مطمئن هستید که می‌خواهید «${dish}» را حذف کنید؟`)) return;
+
+    try {
+      const response = await fetch('/lunch/admin/remove_lunch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          menu_id: menuId,
+          remove_dishes: [dish]
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(result.detail || 'غذا با موفقیت حذف شد.');
+        location.reload();
+      } else {
+        alert(result.detail || 'خطایی رخ داد.');
+      }
+    } catch (error) {
+      alert('ارتباط با سرور برقرار نشد.');
+    }
+  }
+
   // تابع برای تبدیل تاریخ به فرمت «۲۹ تیر»
   function formatJalaliDate(dateString) {
     const parts = dateString.split(' ');

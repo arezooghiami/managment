@@ -221,6 +221,7 @@
                 <th>مهمان</th>
                 <th>تاریخ سفارش</th>
                 <th>توضیحات</th>
+                <th>عملیات</th>
             </tr>
             </thead>
             <tbody>
@@ -232,12 +233,17 @@
                 <td>{{ lunch.guest_name or '-' }}</td>
                 <td>{{ selected_date}}</td>
                 <td>{{ lunch.description or '-'  }}</td>
+                <td>
+                    <button onclick="deleteOrder({{ lunch.id }}, this)" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
+                        حذف
+                    </button>
+                </td>
             </tr>
             {% endfor %}
             </tbody>
             <tfoot>
             <tr class="table-footer">
-                <td colspan="5" class="text-right">جمع کل ناهارها:</td>
+                <td colspan="6" class="text-right">جمع کل ناهارها:</td>
                 <td>{{ lunches|length }}</td>
             </tr>
             </tfoot>
@@ -249,6 +255,32 @@
     </div>
     {% endif %}
 </div>
+<script>
+    function deleteOrder(orderId, btn) {
+        if (!confirm("آیا از حذف این سفارش مطمئن هستید؟")) return;
+
+        fetch(`/admin_delete_user_order/${orderId}`, {
+            method: 'POST',
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to delete");
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // حذف ردیف جدول
+                    const row = btn.closest('tr');
+                    row.remove();
+                } else {
+                    alert("خطا در حذف سفارش");
+                }
+            })
+            .catch(error => {
+                alert("خطا در ارتباط با سرور");
+                console.error(error);
+            });
+    }
+</script>
 
 <script>
     // تابع تبدیل میلادی به شمسی
