@@ -355,35 +355,69 @@
             {% set _ = request.session.pop("error_message") %}
           </div>
           {% endif %}
+
           <input type="hidden" name="user_id" value="{{ user.id }}">
 
           <div class="col-md-6">
             <label class="form-label">تاریخ جلسه</label>
-            <input type="text" name="reservation_date" class="form-control" placeholder="مثلاً: 1404/04/30" required>
-            <small class="form-text text-muted">تاریخ را به فرمت شمسی وارد کنید: 1404/04/30</small>
+            <input name="reservation_date" class="form-control"
+                   value="{{ form_data.reservation_date if form_data else '' }}">
+            {% if form_errors.reservation_date %}
+            <div class="text-danger small">{{ form_errors.reservation_date }}</div>
+            {% endif %}
           </div>
+
           <div class="col-md-3">
             <label class="form-label">شروع جلسه</label>
-            <input type="text" id="start_time" name="start_time" class="form-control" required>
+            <input type="text" id="start_time" name="start_time" class="form-control"
+                   value="{{ form_data.start_time if form_data else '' }}">
+            {% if form_errors.start_time %}
+            <div class="text-danger small">{{ form_errors.start_time }}</div>
+            {% endif %}
           </div>
+
           <div class="col-md-3">
             <label class="form-label">پایان جلسه</label>
-            <input type="text" id="end_time" name="end_time" class="form-control" required>
+            <input type="text" id="end_time" name="end_time" class="form-control"
+                   value="{{ form_data.end_time if form_data else '' }}">
+            {% if form_errors.end_time %}
+            <div class="text-danger small">{{ form_errors.end_time }}</div>
+            {% endif %}
           </div>
-          <label for="meeting_room_id">انتخاب اتاق:</label>
-          <select name="selected_room" id="meeting_room_id">
-            {% for room in meeting_rooms %}
-            <option value="{{ room.id }}">{{ room.name }}</option>
-            {% endfor %}
-          </select>
+
+          <div class="col-md-6">
+            <label  class="form-label">انتخاب اتاق</label>
+            <select name="selected_room" id="meeting_room_id" class="form-select">
+              {% for room in meeting_rooms %}
+              <option value="{{ room.id }}"
+                      {% if form_data and form_data.selected_room == room.id %}selected{% endif %}>
+                {{ room.name }}
+              </option>
+              {% endfor %}
+            </select>
+            {% if form_errors.selected_room %}
+            <div class="text-danger small">{{ form_errors.selected_room }}</div>
+            {% endif %}
+          </div>
+
           <div class="col-md-6">
             <label class="form-label">تعداد شرکت‌کنندگان</label>
-            <input type="number" name="participants" class="form-control" required min="1">
+            <input type="number" name="participants" class="form-control" min="1"
+                   value="{{ form_data.participants if form_data else '' }}">
+            {% if form_errors.participants %}
+            <div class="text-danger small">{{ form_errors.participants }}</div>
+            {% endif %}
           </div>
-          <div class="col-md-6">
+
+          <div >
             <label class="form-label">موضوع جلسه</label>
-            <input type="text" name="subject" class="form-control" required>
+            <input type="text" name="subject" class="form-control"
+                   value="{{ form_data.subject if form_data else '' }}">
+            {% if form_errors.subject %}
+            <div class="text-danger small">{{ form_errors.subject }}</div>
+            {% endif %}
           </div>
+
           <div class="col-12 text-center mt-3">
             <button class="btn btn-custom px-4">
               <i class="fas fa-check-circle me-2"></i>
@@ -392,6 +426,7 @@
           </div>
         </form>
       </div>
+
     </div>
   </div>
 
