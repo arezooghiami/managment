@@ -75,14 +75,16 @@
     </div>
     <!-- مودال پاپ‌آپ نوتیفیکیشن -->
     {% if notifications %}
-    <div id="notificationModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
+    {% for note in notifications %}
+    <div id="notificationModal_{{ note.id }}" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 {% if not note.is_read %}block{% else %}hidden{% endif %}">
         <div class="card-bg p-6 max-w-md w-full text-center relative">
             <div class="card-icon mx-auto"><i class="fas fa-bell"></i></div>
             <h3 class="text-xl font-bold text-gray-800">اطلاعیه</h3>
-            <p class="text-gray-600 mt-2">{{ notifications[0].message }}</p>
-            <button id="closeModal" class="mt-4 leather-accent px-4 py-2 rounded-lg font-medium">بستن</button>
+            <p class="border-b pb-2 text-sm">{{ note.message }}</p>
+            <button onclick="markAsRead('{{ note.id }}')" class="mt-4 leather-accent px-4 py-2 rounded-lg font-medium">اوکی</button>
         </div>
     </div>
+    {% endfor %}
     {% endif %}
 
 
@@ -127,28 +129,28 @@
     </div>
 </footer>
 <script>
-    // بررسی اینکه آیا نوتیفیکیشن قبلاً نمایش داده شده است
-    document.addEventListener('DOMContentLoaded', function () {
-        const notificationModal = document.getElementById('notificationModal');
-        const closeModalBtn = document.getElementById('closeModal');
-
-        // بررسی localStorage برای نمایش یک‌بار
-        if (notificationModal && !localStorage.getItem('notificationShown')) {
-            notificationModal.classList.remove('hidden');
-
-            // بستن مودال با کلیک روی دکمه
-            closeModalBtn.addEventListener('click', function () {
-                notificationModal.classList.add('hidden');
-                localStorage.setItem('notificationShown', 'true');
+    function markAsRead(notificationId) {
+        // ارسال درخواست AJAX به سرور برای به‌روزرسانی وضعیت is_read
+        fetch('/user/mark_notification_read', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ notification_id: notificationId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // بستن پاپ‌آپ مربوط به این نوتیفیکیشن
+                    document.getElementById(`notificationModal_${notificationId}`).classList.add('hidden');
+                } else {
+                    console.error('خطا در به‌روزرسانی نوتیفیکیشن:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('خطا در ارسال درخواست:', error);
             });
-
-            // بستن خودکار مودال بعد از 5 ثانیه (اختیاری)
-            setTimeout(function () {
-                notificationModal.classList.add('hidden');
-                localStorage.setItem('notificationShown', 'true');
-            }, 5000);
-        }
-    });
+    }
 </script>
 </body>
 </html>

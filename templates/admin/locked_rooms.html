@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>قفل کردن اتاق جلسه - چرم مشهد</title>
+
+  <!-- External Dependencies -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css" />
+
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            leather: {
+              50: '#faf7f2',
+              100: '#f4ede0',
+              200: '#e8d9c5',
+              300: '#d9c0a3',
+              400: '#c5a880',
+              500: '#b08e67',
+              600: '#8a6d46',
+              700: '#6b5437',
+              800: '#4f3f29',
+              900: '#3a2e1f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Internal Styles -->
+  <style>
+    * {
+      font-family: 'Vazirmatn', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    body {
+      background: linear-gradient(135deg, #faf7f2 0%, #f4ede0 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .leather-accent {
+      background-color: #c5a880;
+      color: #fff;
+    }
+
+    .leather-accent:hover {
+      background-color: #b08e67;
+    }
+
+    .card-bg {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(210, 180, 140, 0.15);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #d4a373, #b08e67);
+      border-radius: 8px 8px 0 0;
+    }
+
+    .golden-header {
+      color: #8a6d46;
+      font-weight: 700;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .error-message {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    .form-text {
+      color: #6b7280;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    .leather-pattern {
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23e8d9c5' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
+    }
+  </style>
+</head>
+
+<body class="leather-pattern">
+<!-- Header -->
+<header class="bg-white shadow py-4 px-6 sticky top-0 z-10">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <div class="bg-gradient-to-br from-leather-400 to-leather-500 rounded-xl p-1">
+        <div class="bg-white rounded-lg w-16 h-16 flex items-center justify-center">
+          <span class="text-xs text-leather-500">چرم مشهد</span>
+        </div>
+      </div>
+      <h1 class="text-xl font-bold text-leather-600">قفل کردن اتاق جلسه</h1>
+    </div>
+    <a href="/admin_dashboard" class="leather-accent px-5 py-2 rounded-lg font-medium flex items-center space-x-2">
+      <i class="fas fa-arrow-right"></i>
+      <span>بازگشت به داشبورد</span>
+    </a>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="flex-1 max-w-7xl mx-auto w-full p-6">
+  <!-- Success/Error Message -->
+  {% if message %}
+  <div id="message" class="mb-6 p-4 bg-leather-100 border border-leather-300 rounded-lg text-leather-700">
+    {{ message }}
+  </div>
+  {% endif %}
+  {% if error %}
+  <div id="error" class="mb-6 p-4 bg-red-100 border border-red-300 rounded-lg text-red-700">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  <!-- Lock Room Form -->
+  <div class="card-bg p-6 mb-8">
+    <h2 class="golden-header">قفل کردن اتاق جلسه</h2>
+    <form method="post" action="/lock_room" class="space-y-4" onsubmit="return validateForm()">
+      <div>
+        <label for="room_id" class="block text-sm font-bold text-leather-700">اتاق جلسه</label>
+        <select id="room_id" name="room_id" class="w-full mt-1 p-2 border border-leather-300 rounded-lg focus:ring-leather-500 focus:border-leather-500" required>
+          {% for room in rooms %}
+          <option value="{{ room.id }}">{{ room.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="start_date_display" class="block text-sm font-bold text-leather-700">تاریخ شروع</label>
+          <input type="text" id="start_date_display" name="start_date" class="w-full mt-1 p-2 border border-leather-300 rounded-lg" placeholder="مثلاً: 1404/04/30" required>
+          <p class="form-text">تاریخ را به فرمت شمسی وارد کنید: 1404/04/30</p>
+          <p id="start_date_error" class="error-message hidden">فرمت تاریخ باید به صورت YYYY/MM/DD باشد.</p>
+        </div>
+        <div>
+          <label for="end_date_display" class="block text-sm font-bold text-leather-700">تاریخ پایان</label>
+          <input type="text" id="end_date_display" name="end_date" class="w-full mt-1 p-2 border border-leather-300 rounded-lg" placeholder="مثلاً: 1404/04/30" required>
+          <p class="form-text">تاریخ را به فرمت شمسی وارد کنید: 1404/04/30</p>
+          <p id="end_date_error" class="error-message hidden">فرمت تاریخ باید به صورت YYYY/MM/DD باشد.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="start_time" class="block text-sm font-bold text-leather-700">ساعت شروع (اختیاری)</label>
+          <input type="time" id="start_time" name="start_time" class="w-full mt-1 p-2 border border-leather-300 rounded-lg">
+          <p id="start_time_error" class="error-message hidden">ساعت شروع باید قبل از ساعت پایان باشد.</p>
+        </div>
+        <div>
+          <label for="end_time" class="block text-sm font-bold text-leather-700">ساعت پایان (اختیاری)</label>
+          <input type="time" id="end_time" name="end_time" class="w-full mt-1 p-2 border border-leather-300 rounded-lg">
+          <p id="end_time_error" class="error-message hidden">ساعت پایان باید بعد از ساعت شروع باشد.</p>
+        </div>
+      </div>
+      <div>
+        <label for="reason" class="block text-sm font-bold text-leather-700">دلیل قفل کردن</label>
+        <textarea id="reason" name="reason" rows="3" class="w-full mt-1 p-2 border border-leather-300 rounded-lg" required></textarea>
+      </div>
+      <button type="submit" class="leather-accent px-5 py-2 rounded-lg font-medium">قفل کن</button>
+    </form>
+  </div>
+
+  <!-- Upcoming Reservations -->
+  <div class="card-bg p-6 mb-8">
+    <h2 class="golden-header">رزروهای آینده</h2>
+    {% if reservations %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-right">
+        <thead>
+        <tr class="border-b border-leather-200">
+          <th class="p-3 text-leather-700">اتاق</th>
+          <th class="p-3 text-leather-700">تاریخ</th>
+          <th class="p-3 text-leather-700">ساعت شروع</th>
+          <th class="p-3 text-leather-700">ساعت پایان</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for reservation in reservations %}
+        <tr class="border-b border-leather-100">
+          <td class="p-3">{{ reservation.meeting_room.name }}</td>
+          <td class="p-3">{{ reservation.reservation_date.strftime('%Y/%m/%d') }}</td>
+          <td class="p-3">{{ reservation.start_time.strftime('%H:%M') if reservation.start_time else '00:00' }}</td>
+          <td class="p-3">{{ reservation.end_time.strftime('%H:%M') if reservation.end_time else '23:59' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-gray-600">هیچ رزرو آینده‌ای یافت نشد.</p>
+    {% endif %}
+  </div>
+
+  <!-- Locked Rooms -->
+  <div class="card-bg p-6">
+    <h2 class="golden-header">اتاق‌های قفل‌شده</h2>
+    {% if locked_room %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-right">
+        <thead>
+        <tr class="border-b border-leather-200">
+          <th class="p-3 text-leather-700">اتاق</th>
+          <th class="p-3 text-leather-700">تاریخ شروع</th>
+          <th class="p-3 text-leather-700">تاریخ پایان</th>
+          <th class="p-3 text-leather-700">ساعت شروع</th>
+          <th class="p-3 text-leather-700">ساعت پایان</th>
+          <th class="p-3 text-leather-700">دلیل</th>
+          <th class="p-3 text-leather-700">عملیات</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for lock in locked_room %}
+        <tr class="border-b border-leather-100">
+          <td class="p-3">{{ lock.meeting_room.name }}</td>
+          <td class="p-3">{{ lock.start_date.strftime('%Y/%m/%d') }}</td>
+          <td class="p-3">{{ lock.end_date.strftime('%Y/%m/%d') }}</td>
+          <td class="p-3">{{ lock.start_time.strftime('%H:%M') if lock.start_time else '00:00' }}</td>
+          <td class="p-3">{{ lock.end_time.strftime('%H:%M') if lock.end_time else '23:59' }}</td>
+          <td class="p-3">{{ lock.reason }}</td>
+          <td class="p-3">
+            <form method="post" action="/unlock_room/{{ lock.id }}" onsubmit="return confirm('آیا مطمئن هستید که می‌خواهید این قفل را حذف کنید؟');">
+              <button type="submit" class="text-red-500 hover:text-red-700">
+                <i class="fas fa-trash"></i> حذف
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-gray-600">هیچ اتاق قفل‌شده‌ای یافت نشد.</p>
+    {% endif %}
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-white border-t border-leather-200 py-6 mt-10">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+    <div class="flex items-center space-x-3">
+      <img src="/static/image/logo.png" alt="Mashhad Leather Logo" class="h-12">
+    </div>
+    <p class="mt-4 md:mt-0 text-gray-600 text-sm">تمامی حقوق برای شرکت چرم مشهد محفوظ است © 1404</p>
+    <div class="mt-4 md:mt-0 flex space-x-4 text-gray-600">
+      <a href="#" class="hover:text-leather-500"><i class="fab fa-instagram"></i></a>
+      <a href="#" class="hover:text-leather-500"><i class="fab fa-telegram"></i></a>
+      <a href="#" class="hover:text-leather-500"><i class="fab fa-linkedin"></i></a>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-date@1.0.6/dist/persian-date.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $("#start_date_display").persianDatepicker({
+      format: "YYYY/MM/DD",
+      altField: "#start_date",
+      altFormat: "YYYY/MM/DD",
+      observer: true
+    });
+
+    $("#end_date_display").persianDatepicker({
+      format: "YYYY/MM/DD",
+      altField: "#end_date",
+      altFormat: "YYYY/MM/DD",
+      observer: true
+    });
+
+    // Hide messages after 5 seconds
+    setTimeout(function() {
+      const messageDiv = document.getElementById("message");
+      const errorDiv = document.getElementById("error");
+      if (messageDiv) messageDiv.style.display = "none";
+      if (errorDiv) errorDiv.style.display = "none";
+    }, 5000);
+  });
+
+  function validateForm() {
+    const datePattern = /^\d{4}\/\d{2}\/\d{2}$/;
+    const startDate = document.getElementById("start_date_display").value;
+    const endDate = document.getElementById("end_date_display").value;
+    const startTime = document.getElementById("start_time").value;
+    const endTime = document.getElementById("end_time").value;
+
+    // Reset error messages
+    const startDateError = document.getElementById("start_date_error");
+    const endDateError = document.getElementById("end_date_error");
+    const startTimeError = document.getElementById("start_time_error");
+    const endTimeError = document.getElementById("end_time_error");
+    if (startDateError) startDateError.classList.add("hidden");
+    if (endDateError) endDateError.classList.add("hidden");
+    if (startTimeError) startTimeError.classList.add("hidden");
+    if (endTimeError) endTimeError.classList.add("hidden");
+
+    let isValid = true;
+
+    // Validate date format
+    if (!datePattern.test(startDate)) {
+      if (startDateError) startDateError.classList.remove("hidden");
+      isValid = false;
+    }
+    if (!datePattern.test(endDate)) {
+      if (endDateError) endDateError.classList.remove("hidden");
+      isValid = false;
+    }
+
+    // Validate date order
+    if (startDate && endDate && datePattern.test(startDate) && datePattern.test(endDate)) {
+      const start = new Date(startDate.split("/").join("-"));
+      const end = new Date(endDate.split("/").join("-"));
+      if (start > end) {
+        if (endDateError) {
+          endDateError.innerText = "تاریخ پایان باید بعد از تاریخ شروع باشد.";
+          endDateError.classList.remove("hidden");
+        }
+        isValid = false;
+      }
+    }
+
+    // Validate time order if provided
+    if (startTime && endTime) {
+      const startTimeObj = new Date(`2000-01-01T${startTime}`);
+      const endTimeObj = new Date(`2000-01-01T${endTime}`);
+      if (startTimeObj >= endTimeObj) {
+        if (endTimeError) endTimeError.classList.remove("hidden");
+        isValid = false;
+      }
+    }
+
+    return isValid;
+  }
+</script>
+</body>
+</html>

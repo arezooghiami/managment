@@ -15,8 +15,8 @@ from models import office
 from DB.database import Base, engine
 from routers.Athentication.addSuperAdmin import register_superadmin
 from routers.Athentication.api import login
-from routers.admin import admin_dashboard, lunch, excel, meeting_room, report, user_managment, offices
-from routers.user import user_dashboard, user_lunch, user_meetingroom
+from routers.admin import admin_dashboard, lunch, excel, meeting_room, report, user_managment, offices, room_lock
+from routers.user import user_dashboard, user_lunch, user_meetingroom, user_notification
 
 env = Environment(loader=FileSystemLoader('templates'))
 
@@ -52,6 +52,8 @@ app.include_router(user_lunch.router_user_lunch)
 app.include_router(user_meetingroom.router_user)
 app.include_router(user_managment.router)
 app.include_router(offices.router)
+app.include_router(room_lock.router_admin)
+app.include_router(user_notification.router_user)
 
 
 def initialize_database():
