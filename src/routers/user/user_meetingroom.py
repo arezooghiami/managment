@@ -8,6 +8,7 @@ from starlette.templating import Jinja2Templates
 
 from DB.database import get_db
 from models.meet import MeetingRoomReservation, MeetingRoom
+from models.roomLock import RoomLock
 from models.user import User
 
 router_user = APIRouter()
@@ -111,6 +112,23 @@ def reserve_meeting(
     if gregorian_date < date.today():
         request.session["error_message"] = "تاریخ انتخاب شده معتبر نیست."
         return RedirectResponse(url="/user_meetingroom", status_code=302)
+    # بررسی قفل بودن اتاق
+    # بررسی قفل بودن اتاق در تاریخ و بازه ساعتی مورد نظر
+    locked = db.query(RoomLock).filter(
+        RoomLock.meeting_room_id == selected_room,
+        RoomLock.start_date <= gregorian_date,
+        RoomLock.end_date >= gregorian_date,
+        RoomLock.start_time < end_time_obj,
+        RoomLock.end_time > start_time_obj
+    ).first()
+
+    if locked:
+        request.session["error_message"] = (
+            f"رزرو این اتاق برای تاریخ {reservation_date} بین {start_time} تا {end_time} به دلیل «{locked.reason}» مسدود شده است."
+        )
+        return RedirectResponse(url="/user_meetingroom", status_code=302)
+
+
 
     # بررسی تداخل زمان
     overlapping = db.query(MeetingRoomReservation).filter(

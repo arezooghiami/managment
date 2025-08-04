@@ -7,6 +7,7 @@ from starlette.responses import RedirectResponse
 
 from DB.database import get_db
 from models.meet import MeetingRoomReservation
+from models.notification import Notification
 from models.user import User
 from models.lunch import LunchMenu, LunchOrder
 
@@ -37,6 +38,8 @@ def user_dashboard(request: Request, db: Session = Depends(get_db)):
         LunchOrder.user_id == user_id,
         LunchOrder.order_date == tomorrow
     ).all()
+    notifications = db.query(Notification).filter_by(user_id=user.id, is_read=False).all()
+
     if not orders:
         request.session.setdefault("messages", []).append("سفارشی برای ناهار فردا ثبت نشده است.")
 
@@ -47,5 +50,6 @@ def user_dashboard(request: Request, db: Session = Depends(get_db)):
         "lunch_menu": lunch_menu,
         "user_order": user_order,
         "meetings": meetings,
+        "notifications":notifications,
         "today": date.today()
     })
