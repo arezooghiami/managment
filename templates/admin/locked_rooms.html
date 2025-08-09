@@ -235,8 +235,8 @@
         {% for lock in locked_room %}
         <tr class="border-b border-leather-100">
           <td class="p-3">{{ lock.meeting_room.name }}</td>
-          <td class="p-3">{{ lock.start_date.strftime('%Y/%m/%d') }}</td>
-          <td class="p-3">{{ lock.end_date.strftime('%Y/%m/%d') }}</td>
+          <td class="p-3">{{ lock.start_date_jalali }}</td>
+          <td class="p-3">{{ lock.end_date_jalali }}</td>
           <td class="p-3">{{ lock.start_time.strftime('%H:%M') if lock.start_time else '00:00' }}</td>
           <td class="p-3">{{ lock.end_time.strftime('%H:%M') if lock.end_time else '23:59' }}</td>
           <td class="p-3">{{ lock.reason }}</td>

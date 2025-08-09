@@ -70,6 +70,7 @@ async def add_user(
         password: str = Form(...),
         role: UserRole = Form(...),
         office_id: int = Form(...),
+        is_crm: bool = Form(False),
         db: Session = Depends(get_db)
 ):
     # Check if user code already exists
@@ -93,7 +94,8 @@ async def add_user(
         password=hashed_password,
         role=role,
         status=Status.ACTIVE,
-        office_id=office_id
+        office_id=office_id,
+        is_crm=is_crm  #
     )
 
     db.add(new_user)
@@ -148,6 +150,7 @@ async def upload_users_excel(
                     password=hashed_password,
                     role=UserRole.USER,  # یا اگر همیشه یوزر هست
                     status=Status.ACTIVE,
+                    is_crm=False,
                     office_id=office.id
                 )
 

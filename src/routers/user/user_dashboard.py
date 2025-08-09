@@ -20,7 +20,7 @@ templates = Jinja2Templates(directory="templates")
 def user_dashboard(request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
     role = request.session.get("role")
-    if not user_id or role != 'user':
+    if not user_id :
         return RedirectResponse(url="/", status_code=302)
     user = db.query(User).filter(User.id == user_id).first()
     tomorrow = date.today() + timedelta(days=1)

@@ -28,10 +28,14 @@ def can_order_lunch(order_date: date) -> bool:
 
 
 # محاسبه تاریخ‌های هفته
-def get_week_dates(start_date: date) -> list[date]:
-    week_start = start_date - timedelta(days=start_date.weekday())  # شروع هفته (شنبه)
-    return [week_start + timedelta(days=i) for i in range(6)]  # شنبه تا پنج‌شنبه
-
+# def get_week_dates(start_date: date) -> list[date]:
+#     week_start = start_date - timedelta(days=start_date.weekday())  # شروع هفته (شنبه)
+#     return [week_start + timedelta(days=i) for i in range(6)]  # شنبه تا پنج‌شنبه
+def get_week_dates(offset_weeks=0):
+    today = datetime.today().date()
+    start_of_week = today - timedelta(days=today.weekday() + 2)  # شنبه هفته جاری
+    start_of_week += timedelta(weeks=offset_weeks)
+    return [start_of_week + timedelta(days=i) for i in range(6)]  # شنبه تا پنجشنبه
 
 def get_current_week_dates() -> List[date]:
     today = date.today()
@@ -41,47 +45,45 @@ def get_current_week_dates() -> List[date]:
     return [saturday + timedelta(days=i) for i in range(6)]  # شنبه تا پنج‌شنبه
 
 
+from datetime import datetime, timedelta
+
+def get_week_dates(offset_weeks=0):
+    today = datetime.today().date()
+    # پیدا کردن شنبه هفته جاری
+    start_of_week = today - timedelta(days=(today.weekday() + 2) % 7)
+    start_of_week += timedelta(weeks=offset_weeks)
+    return [start_of_week + timedelta(days=i) for i in range(6)]  # شنبه تا پنج‌شنبه
+
 @router_lunch.get("/admin/menu")
-async def manage_lunch_menu(request: Request, db: Session = Depends(get_db)):
+async def manage_lunch_menu(request: Request, db: Session = Depends(get_db), week_offset: int = 0):
     user_id = request.session.get("user_id")
     role = request.session.get("role")
 
     if not user_id or role != "admin":
         return RedirectResponse(url="/", status_code=302)
-    week_dates = get_current_week_dates()  # [شنبه تا پنجشنبه]
 
-    user_id = request.session.get("user_id")
+    week_dates = get_week_dates(week_offset)
+
     user = db.query(User).filter(User.id == user_id).first()
     menus = db.query(LunchMenu).filter(LunchMenu.office_id == user.office_id)
 
     persian_weekdays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه"]
+    persian_months = [
+        "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+        "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+    ]
 
     menu_data = {d.strftime("%Y-%m-%d"): None for d in week_dates}
-
-    for menu in menus:
-        menu_data[menu.date.strftime("%Y-%m-%d")] = {
-            "id": menu.id,
-            "weekday": menu.weekday,
-            "main_dish": menu.main_dish,
-
-        }
-
     for menu in menus:
         menu_data[menu.date.strftime("%Y-%m-%d")] = {
             "id": menu.id,
             "weekday": menu.weekday,
             "main_dish": menu.main_dish,
             "office_id": user.office_id
-
         }
-    persian_weekdays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه"]
-    persian_months = [
-            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
-            "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
-        ]
 
     formatted_menu = []
-    for i in range(6):  # شنبه تا پنج‌شنبه
+    for i in range(6):
         greg_date = week_dates[i]
         j_date = jdatetime.date.fromgregorian(date=greg_date)
         jalali_date = f"{persian_weekdays[i]} {j_date.day} {persian_months[j_date.month - 1]}"
@@ -92,24 +94,13 @@ async def manage_lunch_menu(request: Request, db: Session = Depends(get_db)):
             "menu": menu_data[greg_date.strftime("%Y-%m-%d")]
         })
 
-    # # قالب‌دهی برای html
-    # formatted_menu = []
-    # for i in range(6):  # شنبه تا پنج‌شنبه
-    #     greg_date = week_dates[i]
-    #     jalali_date = jdatetime.date.fromgregorian(date=greg_date).strftime("%A %d %B")
-    #     formatted_menu.append({
-    #         "date": greg_date,
-    #         "jalali_date": jalali_date,
-    #         "weekday": persian_weekdays[i],
-    #         "menu": menu_data[greg_date.strftime("%Y-%m-%d")]
-    #     })
-
     return templates.TemplateResponse(
         "admin/admin_menu.html",
         {
             "request": request,
             "menus": formatted_menu,
-            "week_dates": week_dates
+            "week_dates": week_dates,
+            "week_offset": week_offset
         }
     )
 

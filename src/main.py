@@ -15,6 +15,7 @@ from models import office
 from DB.database import Base, engine
 from routers.Athentication.addSuperAdmin import register_superadmin
 from routers.Athentication.api import login
+from routers.CRM import crm
 from routers.admin import admin_dashboard, lunch, excel, meeting_room, report, user_managment, offices, room_lock
 from routers.user import user_dashboard, user_lunch, user_meetingroom, user_notification
 
@@ -54,6 +55,7 @@ app.include_router(user_managment.router)
 app.include_router(offices.router)
 app.include_router(room_lock.router_admin)
 app.include_router(user_notification.router_user)
+app.include_router(crm.router_crm)
 
 
 def initialize_database():

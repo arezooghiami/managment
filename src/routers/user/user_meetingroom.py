@@ -28,8 +28,8 @@ def convert_persian_digits_to_english(persian_str: str) -> str:
 def user_meetingroom(request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
     role = request.session.get("role")
-    if not user_id or role != 'user':
-        return RedirectResponse(url="/", status_code=302)
+    # if not user_id or role != 'user':
+    #     return RedirectResponse(url="/", status_code=302)
     user = db.query(User).filter(User.id == user_id).first()
     tomorrow = date.today() + timedelta(days=1)
     meeting_rooms = db.query(MeetingRoom).filter(MeetingRoom.office_id == user.office_id).all()
@@ -71,8 +71,8 @@ async def reserve_meeting(
 ):
     user_id = request.session.get("user_id")
     role = request.session.get("role")
-    if not user_id or role != 'user':
-        return RedirectResponse(url="/", status_code=302)
+    # if not user_id or role != 'user':
+    #     return RedirectResponse(url="/", status_code=302)
 
     form_errors = {}
     form_data = {
@@ -300,8 +300,8 @@ def delete_meeting(request: Request, meeting_id: int = Form(...), user_id: int =
                    db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
     role = request.session.get("role")
-    if not user_id or role != 'user':
-        return RedirectResponse(url="/", status_code=302)
+    # if not user_id or role != 'user':
+    #     return RedirectResponse(url="/", status_code=302)
     meeting = db.query(MeetingRoomReservation).filter(MeetingRoomReservation.id == meeting_id).first()
     if not meeting:
         raise HTTPException(status_code=404, detail="جلسه پیدا نشد.")

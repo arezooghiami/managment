@@ -45,8 +45,10 @@ async def login(
     request.session["user_id"] = user.id
     request.session["role"] = user.role
     request.session["office_id"] = user.office_id
+    request.session["is_crm"] = user.is_crm
+    request.session["user_code"] = user.code
 
-    if user.role == 'admin':
+    if user.role == 'admin' and not user.is_crm:
         return RedirectResponse(url="/admin_dashboard", status_code=302)
     else:
         return RedirectResponse(url="/user_dashboard", status_code=302)

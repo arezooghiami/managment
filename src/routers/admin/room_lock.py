@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Request, Form, HTTPException
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse, HTMLResponse
 from starlette.templating import Jinja2Templates
-
+from persiantools.jdatetime import JalaliDate
 from DB.database import get_db
 from models.meet import MeetingRoomReservation, MeetingRoom
 from models.notification import Notification
@@ -37,13 +37,17 @@ def view_locked_rooms(request: Request, db: Session = Depends(get_db)):
         .all()
     )
     locked_room = (db.query(RoomLock).filter(RoomLock.office_id == office_id)).all()
+    for room in locked_room:
+        room.start_date_jalali = JalaliDate.to_jalali(room.start_date).strftime("%Y/%m/%d")
+        room.end_date_jalali = JalaliDate.to_jalali(room.end_date).strftime("%Y/%m/%d")
+
     message = request.session.pop("message", None)  # حذف پیام موفقیت
     error = request.session.pop("error", None)
 
     return templates.TemplateResponse("admin/locked_rooms.html", {
         "request": request,
         "reservations": upcoming_reservations,
-        "locked_room":locked_room,
+        "locked_room": locked_room,
         "rooms": rooms,
         "message": message,
         "error": error
@@ -164,7 +168,6 @@ def lock_room(
     return RedirectResponse(url="/admin/locked_rooms", status_code=303)
 
 
-
 @router_admin.post("/unlock_room/{lock_id}")
 def unlock_room(lock_id: int, request: Request, db: Session = Depends(get_db)):
     lock = db.query(RoomLock).filter(RoomLock.id == lock_id).first()
@@ -173,7 +176,6 @@ def unlock_room(lock_id: int, request: Request, db: Session = Depends(get_db)):
 
     db.delete(lock)
     db.commit()
-
 
     request.session["message"] = "قفل با موفقیت حذف شد."
     return RedirectResponse(url="/admin/locked_rooms", status_code=303)

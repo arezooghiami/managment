@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>داشبورد مدیریتی چرم مشهد | CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --leather-primary: #5D4037;
+      --leather-secondary: #795548;
+      --leather-accent: #D7CCC8;
+      --leather-light: #EFEBE9;
+      --gold: #D4AF37;
+    }
+
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #f9f5f0 0%, #f0e6dc 100%);
+      background-attachment: fixed;
+      color: #333;
+    }
+
+    .leather-texture {
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%235D4037"/><path d="M20,20 Q40,5 60,20 T100,20 Q80,40 60,20 T20,20" fill="%234E342E" opacity="0.2"/><path d="M30,30 Q50,15 70,30 T100,30 Q80,50 70,30 T30,30" fill="%234E342E" opacity="0.2"/></svg>');
+      background-size: 200px;
+    }
+
+    .card-leather {
+      background: white;
+      border: 1px solid #e0d8d0;
+      box-shadow: 0 4px 20px rgba(93, 64, 55, 0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-leather::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold), #b08d57);
+    }
+
+    .card-leather:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(93, 64, 55, 0.15);
+    }
+
+    .btn-leather {
+      background: linear-gradient(to bottom, var(--leather-secondary), var(--leather-primary));
+      color: white;
+      border: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(93, 64, 55, 0.2);
+    }
+
+    .btn-leather:hover {
+      background: linear-gradient(to bottom, var(--leather-primary), #4E342E);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(93, 64, 55, 0.3);
+    }
+
+    .btn-action {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      transform: scale(1.15);
+    }
+
+    .gold-accent {
+      color: var(--gold);
+    }
+
+    .border-leather {
+      border-bottom: 1px solid #e0d8d0;
+    }
+
+    .leather-pattern {
+      background:
+              radial-gradient(circle at 10% 20%, rgba(121, 85, 72, 0.05) 0%, transparent 5%),
+              radial-gradient(circle at 90% 80%, rgba(121, 85, 72, 0.05) 0%, transparent 5%),
+              radial-gradient(circle at 50% 50%, rgba(121, 85, 72, 0.03) 0%, transparent 10%);
+      background-size: 200px 200px;
+    }
+  </style>
+</head>
+<body class="min-h-screen leather-pattern">
+<!-- نوار هدر لوکس -->
+<div class="leather-texture py-4 shadow-lg">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="bg-white p-2 rounded-full shadow-md">
+          <img src="/static/image/logox.png" alt="لوگو چرم مشهد" class="w-10 h-10 object-contain rounded-full" />
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold text-white">چرم مشهد</h1>
+          <p class="text-amber-200 text-sm">تولید و فروش محصولات چرمی مرغوب</p>
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center space-x-6">
+        <a href="/report" class="text-amber-200 hover:text-white transition">
+          <i class="fas fa-chart-line mr-1"></i> گزارشات
+        </a>
+        <a href="#" class="text-amber-200 hover:text-white transition">
+          <i class="fas fa-users mr-1"></i> مشتریان
+        </a>
+        <a href="#" class="text-amber-200 hover:text-white transition">
+          <i class="fas fa-cog mr-1"></i> تنظیمات
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+  <!-- هدر صفحه -->
+  <div class="text-center mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold text-[#5D4037]">داشبورد مدیریت ارتباط با مشتریان</h1>
+    <div class="w-32 h-1 bg-gradient-to-r from-[#D4AF37] to-[#b08d57] mx-auto mt-4 rounded-full"></div>
+    <p class="text-gray-600 mt-4 max-w-2xl mx-auto">مدیریت حرفه‌ای تماس‌ها و تعاملات مشتریان با سیستم CRM چرم مشهد</p>
+  </div>
+
+  <!-- کارت اطلاعات کاربر -->
+  <div class="card-leather rounded-xl p-6 mb-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+      <div>
+        <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037] mb-2">
+          <i class="fas fa-user-circle gold-accent mr-2"></i> اطلاعات کاربر
+        </h2>
+        <div class="flex flex-wrap gap-4 mt-4">
+          <div class="flex items-center">
+            <span class="text-gray-500 ml-2"><i class="fas fa-user"></i></span>
+            <span class="text-gray-700 font-medium">نام: {{ user.name + ' ' + user.family if user else 'ناشناس' }}</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-gray-500 ml-2"><i class="fas fa-calendar"></i></span>
+            <span class="text-gray-700 font-medium">تاریخ: {{ today }}</span>
+          </div>
+<!--          <div class="flex items-center">-->
+<!--            <span class="text-gray-500 ml-2"><i class="fas fa-clock"></i></span>-->
+<!--            <span class="text-gray-700 font-medium">آخرین فعالیت: ۲ دقیقه پیش</span>-->
+<!--          </div>-->
+        </div>
+      </div>
+
+<!--      <div class="mt-4 md:mt-0">-->
+<!--        <button class="btn-leather px-6 py-2 rounded-lg font-medium">-->
+<!--          <i class="fas fa-sync-alt mr-2"></i> به‌روزرسانی اطلاعات-->
+<!--        </button>-->
+<!--      </div>-->
+<!--    </div>-->
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- کارت تماس‌های ورودی -->
+    <div class="card-leather rounded-xl p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037]">
+          <i class="fas fa-phone-alt gold-accent mr-3"></i>تماس‌های ورودی
+        </h2>
+
+      </div>
+
+      <div class="space-y-4">
+        {% set persian_labels_incoming = {
+        'posty_code': 'استعلام کد رهگیری',
+        'send_product_deadline': 'مهلت ارسال کالا',
+        'branch_change': 'تعویض شعبه',
+        'online_change': 'تعویض آنلاین',
+        'online_return': 'مرجوع آنلاین',
+        'branch_dissatisfaction': 'نارضایتی از شعبه',
+        'payment_followup': 'پیگیری واریزی',
+        'incomplete_delivery': 'ارسال ناقص',
+        'b2b_sales': 'فروش سازمانی',
+        'waiting_for_payment': 'در انتظار پرداخت',
+        'product_search': 'سرچ کالا',
+        'after_sales_service': 'خدمات پس از فروش',
+        'club': 'باشگاه',
+        'other': 'متفرقه'
+        } %}
+        {% for key, value in incoming_data.items() %}
+        <div class="flex items-center justify-between py-3 border-leather">
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-[#EFEBE9] flex items-center justify-center mr-3">
+              <i class="fas fa-phone text-[#795548]"></i>
+            </div>
+            <span class="text-gray-700 font-medium">{{ persian_labels_incoming[key] }}</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button onclick="updateValue('incoming', '{{ key }}', -1)" class="btn-action bg-rose-100 text-rose-700">
+              <i class="fas fa-minus"></i>
+            </button>
+            <span class="text-lg font-semibold text-gray-800 min-w-[30px] text-center">{{ value }}</span>
+            <button onclick="updateValue('incoming', '{{ key }}', 1)" class="btn-action bg-emerald-100 text-emerald-700">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- کارت تماس‌های خروجی -->
+    <div class="card-leather rounded-xl p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037]">
+          <i class="fas fa-phone-volume gold-accent mr-3"></i>تماس‌های خروجی
+        </h2>
+
+      </div>
+
+      <div class="space-y-4">
+        {% set persian_labels_out = {
+        'internet': 'خروجی پیگیری اینترنتی'
+        } %}
+        {% for key, value in out_data.items() %}
+        <div class="flex items-center justify-between py-3 border-leather">
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-[#EFEBE9] flex items-center justify-center mr-3">
+              <i class="fas fa-phone text-[#795548]"></i>
+            </div>
+            <span class="text-gray-700 font-medium">{{ persian_labels_out[key] }}</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button onclick="updateValue('out', '{{ key }}', -1)" class="btn-action bg-rose-100 text-rose-700">
+              <i class="fas fa-minus"></i>
+            </button>
+            <span class="text-lg font-semibold text-gray-800 min-w-[30px] text-center">{{ value }}</span>
+            <button onclick="updateValue('out', '{{ key }}', 1)" class="btn-action bg-emerald-100 text-emerald-700">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+
+<!--        &lt;!&ndash; بخش آمار کلی &ndash;&gt;-->
+<!--        <div class="mt-8 pt-6 border-t border-[#D7CCC8]">-->
+<!--          <h3 class="text-lg font-semibold text-[#5D4037] mb-4">-->
+<!--            <i class="fas fa-chart-pie gold-accent mr-2"></i> آمار کلی تماس‌ها-->
+<!--          </h3>-->
+<!--          <div class="grid grid-cols-2 gap-4">-->
+<!--            <div class="bg-[#F5F1ED] p-4 rounded-lg">-->
+<!--              <div class="text-[#795548]">تماس‌های موفق</div>-->
+<!--              <div class="text-2xl font-bold text-[#5D4037] mt-1">۸۹%</div>-->
+<!--              <div class="h-2 bg-[#D7CCC8] rounded-full mt-2">-->
+<!--                <div class="h-2 bg-emerald-500 rounded-full" style="width: 89%"></div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="bg-[#F5F1ED] p-4 rounded-lg">-->
+<!--              <div class="text-[#795548]">میانگین زمان تماس</div>-->
+<!--              <div class="text-2xl font-bold text-[#5D4037] mt-1">۴:۳۲</div>-->
+<!--              <div class="text-sm text-gray-500 mt-1">دقیقه</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+      </div>
+    </div>
+  </div>
+
+  <!-- فوتر -->
+  <footer class="mt-12 pt-6 border-t border-[#D7CCC8]">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <div class="flex items-center">
+        <div class="w-10 h-10 bg-[#5D4037] rounded-full flex items-center justify-center">
+          <i class="fas fa-warehouse text-amber-200"></i>
+        </div>
+        <div class="mr-3">
+          <h3 class="font-bold text-[#5D4037]">چرم مشهد</h3>
+          <p class="text-sm text-gray-600">مرکز تولید و فروش محصولات چرمی</p>
+        </div>
+      </div>
+
+      <div class="mt-4 md:mt-0 text-center md:text-right text-gray-600">
+        <p>تمامی حقوق این سامانه متعلق به برند چرم مشهد می‌باشد</p>
+        <p class="text-sm mt-1">نسخه نرم‌افزار: ۲.۴.۱</p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  async function updateValue(type, field, change) {
+    try {
+      // شبیه‌سازی انیمیشن
+      const btn = event.currentTarget;
+      btn.classList.add('animate-pulse');
+      setTimeout(() => btn.classList.remove('animate-pulse'), 300);
+
+      // شبیه‌سازی ارسال درخواست به سرور
+      console.log(`Updating ${type}.${field} with change ${change}`);
+
+      // در محیط واقعی این بخش فعال خواهد شد
+      /*
+      const response = await fetch('/update_crm_data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: type,
+          field: field,
+          change: change,
+        }),
+      });
+      if (response.ok) {
+        location.reload();
+      } else {
+        alert('خطا در به‌روزرسانی مقدار');
+      }
+      */
+    } catch (error) {
+      console.error('Error:', error);
+      alert('خطایی رخ داد');
+    }
+  }
+</script>
+</body>
+</html>

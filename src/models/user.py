@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Text,Boolean
 from sqlalchemy import Enum
 from sqlalchemy.orm import relationship
 
@@ -16,5 +16,6 @@ class User(Base):
     role = Column(Enum(UserRole), nullable=False)  # admin, user
     status = Column(Enum(Status), nullable=False)
     office_id = Column(Integer, ForeignKey("offices.id"), nullable=False)
+    is_crm = Column(Boolean, default=False, nullable=False)
 
     office = relationship("Office", back_populates="users")

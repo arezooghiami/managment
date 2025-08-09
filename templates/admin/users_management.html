@@ -123,6 +123,7 @@
                     {% endfor %}
                 </select>
             </div>
+
             <div>
                 <label for="office_id" class="block text-sm brown-text mb-1">دفتر</label>
                 <select id="office_id" name="office_id" required class="w-full">
@@ -131,6 +132,11 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="flex items-center space-x-2">
+                <input type="checkbox" id="is_crm" name="is_crm" class="form-checkbox">
+                <label for="is_crm" class="brown-text text-sm select-none">کاربر CRM</label>
+            </div>
+
             <div class="md:col-span-2 text-right">
                 <button type="submit" class="btn-primary px-6 py-2 rounded">افزودن کاربر</button>
             </div>
@@ -187,6 +193,11 @@
                                         <label for="edit-password-{{ user.id }}" class="block text-sm brown-text">رمز عبور جدید (اختیاری)</label>
                                         <input type="password" id="edit-password-{{ user.id }}" name="password" placeholder="رمز عبور جدید" class="w-full">
                                     </div>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="checkbox" id="edit-is_crm-{{ user.id }}" name="is_crm" class="form-checkbox" {% if user.is_crm %}checked{% endif %}>
+                                        <label for="edit-is_crm-{{ user.id }}" class="brown-text text-sm select-none">کاربر CRM</label>
+                                    </div>
+
                                     <div>
                                         <label for="edit-role-{{ user.id }}" class="block text-sm brown-text">نقش</label>
                                         <select id="edit-role-{{ user.id }}" name="role" required class="w-full">

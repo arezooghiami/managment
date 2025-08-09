@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>گزارش CRM - چرم مشهد</title>
+    <link
+            href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+            rel="stylesheet"
+    />
+    <link
+            href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #3D2B1F;
+            --primary: #6D4C3D;
+            --primary-light: #A67C52;
+            --accent: #D4A76A;
+            --accent-light: #F0D9B5;
+            --background: #F8F5F0;
+            --text: #2C1E13;
+            --light-text: #5D4037;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" stroke="%23D4A76A" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.15"/></svg>');
+        }
+
+        .leather-texture {
+            background:
+                    radial-gradient(circle at 10% 20%, rgba(163, 123, 80, 0.05) 0%, rgba(163, 123, 80, 0) 20%),
+                    linear-gradient(135deg, var(--background) 0%, #f1e8dc 100%);
+            border: 1px solid rgba(163, 123, 80, 0.15);
+            box-shadow: inset 0 0 20px rgba(109, 76, 61, 0.08);
+        }
+
+        .leather-border {
+            border: 1px solid var(--accent);
+            box-shadow: 0 4px 12px rgba(163, 123, 80, 0.15);
+        }
+
+        .leather-header {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            box-shadow: 0 4px 12px rgba(61, 43, 31, 0.2);
+        }
+
+        .gold-text {
+            background: linear-gradient(to right, #D4AF37, #F9E076);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(109, 76, 61, 0.2);
+        }
+
+        .logo-container {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 4px 8px rgba(61, 43, 31, 0.3);
+        }
+
+        .logo {
+            max-width: 160px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        h1, h2, h3 {
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        label {
+            color: var(--primary-dark);
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input[type='text'] {
+            border: 1px solid var(--accent);
+            background-color: rgba(255, 253, 250, 0.9);
+            color: var(--text);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(163, 123, 80, 0.1);
+        }
+
+        input[type='text']:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(166, 124, 82, 0.2);
+            background-color: #fff;
+        }
+
+        button {
+            background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+            color: #fff;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 6px rgba(61, 43, 31, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.6s;
+        }
+
+        button:hover:after {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(61, 43, 31, 0.3);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .error-message {
+            color: #c53030;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: none;
+            background: rgba(197, 48, 48, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #c53030;
+        }
+
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            background-color: rgba(255, 253, 250, 0.95);
+            box-shadow: inset 0 0 15px rgba(163, 123, 80, 0.1);
+        }
+
+        table {
+            min-width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        thead tr {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 1rem 1.2rem;
+            text-align: center;
+            font-weight: 700;
+            border-bottom: 2px solid var(--accent);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        th:not(:last-child):after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 0;
+            height: 70%;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(163, 123, 80, 0.15);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            font-weight: 500;
+            color: var(--light-text);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: rgba(240, 234, 224, 0.4);
+        }
+
+        tbody tr:hover {
+            background-color: rgba(212, 167, 106, 0.15);
+        }
+
+        .total-row {
+            background: linear-gradient(to right, var(--accent-light), #f5e5c8) !important;
+            font-weight: 700 !important;
+            color: var(--primary-dark) !important;
+            border-top: 2px solid var(--accent);
+        }
+
+        .stat-badge {
+            display: inline-block;
+            background: var(--accent-light);
+            color: var(--primary-dark);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0 4px;
+            border: 1px solid rgba(163, 123, 80, 0.2);
+        }
+
+        .stamp {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            opacity: 0.05;
+            font-size: 120px;
+            transform: rotate(15deg);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+
+        @media (max-width: 768px) {
+            .logo {
+                max-width: 120px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .grid-cols-1 {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            th, td {
+                padding: 0.7rem 0.5rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+    <!-- Header -->
+    <header class="leather-header rounded-xl mb-10 p-6 relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-5">
+            <div class="leather-pattern w-full h-full"></div>
+        </div>
+
+        <!-- Header Content -->
+        <div class="flex flex-col md:flex-row items-center justify-between relative z-10">
+            <!-- Logo -->
+            <div class="w-24 md:w-32 mb-4 md:mb-0">
+                <img src="/static/image/logo.png" alt="چرم مشهد" class="w-full h-auto" />
+            </div>
+
+            <!-- Title Section -->
+            <div class="text-center md:text-right flex-1 px-4">
+                <h1 class="text-2xl md:text-3xl gold-text font-bold">گزارش عملکرد CRM</h1>
+                <p class="text-white opacity-90 mt-2">سیستم مدیریت ارتباط با مشتریان چرم مشهد</p>
+            </div>
+
+            <!-- تاریخ -->
+            <div class="hidden md:flex items-center gap-2 text-white bg-brown-700 rounded-full px-4 py-2 shadow-md">
+                <i class="fas fa-calendar-alt"></i>
+                <span id="currentDate">۱۴۰۳/۰۵/۲۵</span>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="absolute top-4 right-4 z-20">
+            <form action="/user_dashboard" method="GET">
+                <input type="hidden" name="user_id" value="{{ user.id }}" />
+                <button
+                        type="submit"
+                        class="btn btn-custom btn-sm text-white font-bold px-4 py-2 rounded-md shadow"
+                        style="
+                    background: linear-gradient(
+                        135deg,
+                        var(--primary-dark) 0%,
+                        var(--primary) 50%,
+                        var(--primary-light) 100%
+                    );
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                "
+                >
+                    <i class="fas fa-arrow-right ml-2"></i> بازگشت
+                </button>
+            </form>
+        </div>
+
+
+        <div class="flex md:hidden justify-center mt-4 text-white bg-brown-700 rounded-full px-4 py-2 shadow-md">
+            <i class="fas fa-calendar-alt ml-2"></i>
+            <span id="currentDate">۱۴۰۳/۰۵/۲۵</span>
+        </div>
+
+        <!-- Decorative Stamp -->
+        <div class="stamp absolute bottom-2 left-4 text-white text-2xl opacity-20">
+            <i class="fas fa-star"></i>
+        </div>
+    </header>
+ <!-- Form Section -->
+    <section class="leather-texture rounded-2xl p-6 mb-10 leather-border">
+        <div class="flex items-center mb-6">
+            <i class="fas fa-chart-bar text-2xl ml-2 text-amber-700"></i>
+            <h2 class="text-2xl font-bold text-amber-800">فیلترهای گزارش</h2>
+        </div>
+
+        <form
+                id="reportForm"
+                class="bg-white rounded-xl shadow-sm p-6"
+                autocomplete="off"
+        >
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="jalali_date_start">
+                        <i class="fas fa-calendar-day ml-2"></i>
+                        تاریخ شروع (شمسی)
+                    </label>
+                    <div class="relative">
+                        <input
+                                type="text"
+                                id="jalali_date_start"
+                                name="jalali_date_start"
+                                required
+                                placeholder="مثال: 1404/05/14"
+                                class="mt-1 w-full rounded-lg px-4 py-3 pr-12"
+                        />
+                        <i class="fas fa-calendar text-amber-600 absolute left-4 top-1/2 transform -translate-y-1/2"></i>
+                    </div>
+                </div>
+                <div>
+                    <label for="jalali_date_end">
+                        <i class="fas fa-calendar-day ml-2"></i>
+                        تاریخ پایان (شمسی)
+                    </label>
+                    <div class="relative">
+                        <input
+                                type="text"
+                                id="jalali_date_end"
+                                name="jalali_date_end"
+                                required
+                                placeholder="مثال: 1404/05/14"
+                                class="mt-1 w-full rounded-lg px-4 py-3 pr-12"
+                        />
+                        <i class="fas fa-calendar text-amber-600 absolute left-4 top-1/2 transform -translate-y-1/2"></i>
+                    </div>
+                </div>
+                {% if not (role == "user" and is_crm) %}
+                <div>
+                    <label for="code">
+                        <i class="fas fa-user-tag ml-2"></i>
+                        کد کاربر (اختیاری)
+                    </label>
+                    <div class="relative">
+                        <input
+                                type="text"
+                                id="code"
+                                name="code"
+                                placeholder="کد کاربر"
+                                class="mt-1 w-full rounded-lg px-4 py-3 pr-12"
+                        />
+                        <i class="fas fa-id-card text-amber-600 absolute left-4 top-1/2 transform -translate-y-1/2"></i>
+                    </div>
+                </div>
+                {% else %}
+                <input type="hidden" id="code" name="code" value="{{ user_code }}"/>
+                {% endif %}
+            </div>
+            <div class="mt-8 flex justify-center">
+                <button
+                        type="submit"
+                        class="px-8 py-3 rounded-xl text-lg flex items-center"
+                >
+                    <i class="fas fa-file-download ml-2"></i>
+                    دریافت گزارش
+                </button>
+            </div>
+
+
+            <p id="errorMessage" class="error-message mt-4">
+                <i class="fas fa-exclamation-circle ml-2"></i>
+                لطفا فرمت تاریخ را بررسی کنید (مثال: 1404/05/14)
+            </p>
+        </form>
+        <div class="mt-6 flex justify-center">
+            <form id="excelForm" action="/report_crm_excel" method="post" target="_blank">
+                <input type="hidden" name="jalali_date_start" id="excel_jalali_date_start">
+                <input type="hidden" name="jalali_date_end" id="excel_jalali_date_end">
+                <input type="hidden" name="code" id="excel_code">
+                <button
+                        type="submit"
+                        class="px-8 py-3 rounded-xl text-lg flex items-center"
+                        style="
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            box-shadow: 0 4px 15px rgba(61, 43, 31, 0.3);
+            color: white;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        "
+                >
+                    <i class="fas fa-file-excel ml-2"></i>
+                    ارسال به اکسل
+                </button>
+            </form>
+        </div>
+    </section>
+<!--    <form id="excelForm" action="/report_crm_excel" method="post" target="_blank">-->
+<!--        <input type="hidden" name="jalali_date_start" id="excel_jalali_date_start">-->
+<!--        <input type="hidden" name="jalali_date_end" id="excel_jalali_date_end">-->
+<!--        <input type="hidden" name="code" id="excel_code">-->
+<!--        <button type="submit" class="btn btn-success">-->
+<!--            📥 دانلود اکسل-->
+<!--        </button>-->
+<!--    </form>-->
+
+
+
+    <!-- Results Table -->
+    <section
+            id="results"
+            class="hidden leather-texture rounded-2xl p-6 overflow-x-auto leather-border"
+    >
+        <div class="flex items-center mb-6">
+            <i class="fas fa-table text-2xl ml-2 text-amber-700"></i>
+            <h2 class="text-2xl font-bold text-amber-800">نتایج گزارش</h2>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>کد پرسنلی</th>
+                    <th>رهگیری</th>
+                    <th>ارسال کالا</th>
+                    <th>تعویض شعبه</th>
+                    <th>تعویض آنلاین</th>
+                    <th>مرجوع آنلاین</th>
+                    <th>نارضایتی شعبه</th>
+                    <th>پیگیری واریزی</th>
+                    <th>ارسال ناقص</th>
+                    <th>فروش سازمانی</th>
+                    <th>در انتظار پرداخت</th>
+                    <th>سرچ کالا</th>
+                    <th>پس از فروش</th>
+                    <th>باشگاه</th>
+                    <th>متفرقه</th>
+                    <th>پیگیری اینترنتی</th>
+                    <th><strong>جمع ردیف</strong></th>
+                </tr>
+                </thead>
+
+                <tbody id="reportTable">
+                <!-- داده ها از طریق JavaScript پر می شوند -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- Average Report Section -->
+    <!-- Average Total Calls Section -->
+    <section class="leather-texture rounded-2xl p-6 mb-10 leather-border">
+        <div class="flex items-center mb-6">
+            <i class="fas fa-users text-2xl ml-2 text-amber-700"></i>
+            <h2 class="text-2xl font-bold text-amber-800">گزارش مجموع تماس‌ها و میانگین کاربران CRM</h2>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl shadow-sm bg-white p-6">
+            <table class="min-w-full table-auto border border-gray-300 text-center text-gray-800">
+                <thead class="bg-amber-100 text-amber-800">
+                <tr>
+                    <th class="px-4 py-2 border">نام کاربر</th>
+                    <th class="px-4 py-2 border">کد</th>
+                    <th class="px-4 py-2 border">مجموع تماس‌ها</th>
+                </tr>
+                </thead>
+                <tbody id="userTotalCallsTableBody">
+                <!-- Rows will be filled by JS -->
+                </tbody>
+                <tfoot class="bg-gray-100 font-bold">
+                <tr>
+                    <td class="px-4 py-2 border text-amber-700" colspan="2">میانگین تماس برای هر کاربر</td>
+                    <td class="px-4 py-2 border text-amber-700" id="averageTotalCalls">0</td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+
+
+
+
+    <!-- Footer -->
+    <footer class="mt-12 pt-6 border-t border-amber-200 text-center text-amber-800">
+        <div class="flex justify-center space-x-6 mb-4">
+            <a href="#" class="hover:text-amber-600 transition">
+                <i class="fab fa-instagram text-xl"></i>
+            </a>
+            <a href="#" class="hover:text-amber-600 transition">
+                <i class="fab fa-telegram text-xl"></i>
+            </a>
+            <a href="#" class="hover:text-amber-600 transition">
+                <i class="fab fa-whatsapp text-xl"></i>
+            </a>
+        </div>
+        <p class="text-sm">
+            <i class="fas fa-map-marker-alt ml-1"></i>
+            آدرس دفتر مشهد مشهد، میدان جانباز، ساختمان اداری شماره 2 پاژ، طبقه 9، واحد 911.
+        </p>
+        <p class="text-sm mt-2">
+            <i class="fas fa-phone ml-1"></i>
+            تلفن:05131711
+        </p>
+        <p class="text-xs mt-4 text-amber-600">
+            کلیه حقوق این سامانه متعلق به مجموعه چرم مشهد می‌باشد © ۱۴۰۴
+        </p>
+    </footer>
+</div>
+<script>
+    async function fetchAverageReport() {
+        try {
+            const formData = new FormData(document.getElementById("reportForm"));
+
+            const response = await fetch("/average_report_crm", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error("خطا در دریافت گزارش");
+            }
+
+            const data = await response.json();
+            const tbody = document.getElementById("userTotalCallsTableBody");
+            const averageCell = document.getElementById("averageTotalCalls");
+
+            tbody.innerHTML = "";  // پاک کردن محتویات قبلی
+
+            const results = data.detailed_results;
+            results.forEach((user) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td class="border px-4 py-2">${user.name}</td>
+                    <td class="border px-4 py-2">${user.code}</td>
+                    <td class="border px-4 py-2">${user.total_row_sum}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // نمایش میانگین کلی
+            averageCell.textContent = data.average_per_user.total_row_sum;
+
+        } catch (error) {
+            document.getElementById("errorMessage").textContent = error.message;
+        }
+    }
+
+    document.getElementById("reportForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await fetchAverageReport();
+    });
+</script>
+
+
+<script>
+    // Set current date
+    const today = new Date();
+    const jalaliDate = today.toLocaleDateString('fa-IR');
+    document.getElementById('currentDate').textContent = jalaliDate;
+
+    function isValidJalaliDate(dateString) {
+        const pattern = /^1[0-4]\d{2}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/;
+        return pattern.test(dateString);
+    }
+
+    // Form submission handler
+    document.getElementById('reportForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const errorMessage = document.getElementById('errorMessage');
+        const resultsDiv = document.getElementById('results');
+        const reportTable = document.getElementById('reportTable');
+
+        // Get date values
+        const startDate = formData.get('jalali_date_start');
+        const endDate = formData.get('jalali_date_end');
+
+        // Reset error state
+        errorMessage.style.display = 'none';
+        document.getElementById('jalali_date_start').classList.remove('border-red-500');
+        document.getElementById('jalali_date_end').classList.remove('border-red-500');
+
+        // Validate dates
+        if (!startDate || !endDate) {
+            errorMessage.textContent = 'لطفاً هر دو فیلد تاریخ را پر کنید';
+            errorMessage.style.display = 'block';
+            if (!startDate) document.getElementById('jalali_date_start').classList.add('border-red-500');
+            if (!endDate) document.getElementById('jalali_date_end').classList.add('border-red-500');
+            return;
+        }
+
+        if (!isValidJalaliDate(startDate) || !isValidJalaliDate(endDate)) {
+            errorMessage.textContent = 'فرمت تاریخ نامعتبر است (فرمت صحیح: YYYY/MM/DD)';
+            errorMessage.style.display = 'block';
+            if (!isValidJalaliDate(startDate)) document.getElementById('jalali_date_start').classList.add('border-red-500');
+            if (!isValidJalaliDate(endDate)) document.getElementById('jalali_date_end').classList.add('border-red-500');
+            return;
+        }
+
+        try {
+            const response = await fetch('/report_crm_data', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                reportTable.innerHTML = '';
+
+                // Set values for Excel form
+                document.getElementById('excel_jalali_date_start').value = startDate;
+                document.getElementById('excel_jalali_date_end').value = endDate;
+                document.getElementById('excel_code').value = formData.get('code');
+
+                data.results.forEach((result) => {
+                    const row = document.createElement('tr');
+                    const isTotalRow = result.name === 'مجموع کل';
+                    if (isTotalRow) row.classList.add('total-row');
+
+                    row.innerHTML = `
+                        <td>${result.name}</td>
+                        <td>${result.code}</td>
+                        <td>${result.incoming.posty_code}</td>
+                        <td>${result.incoming.send_product_deadline}</td>
+                        <td>${result.incoming.branch_change}</td>
+                        <td>${result.incoming.online_change}</td>
+                        <td>${result.incoming.online_return}</td>
+                        <td>${result.incoming.branch_dissatisfaction}</td>
+                        <td>${result.incoming.payment_followup}</td>
+                        <td>${result.incoming.incomplete_delivery}</td>
+                        <td>${result.incoming.b2b_sales}</td>
+                        <td>${result.incoming.waiting_for_payment}</td>
+                        <td>${result.incoming.product_search}</td>
+                        <td>${result.incoming.after_sales_service}</td>
+                        <td>${result.incoming.club}</td>
+                        <td>${result.incoming.other}</td>
+                        <td>${result.out.internet}</td>
+                        <td><strong>${result.total_row_sum}</strong></td>
+                    `;
+                    reportTable.appendChild(row);
+                });
+
+                resultsDiv.classList.remove('hidden');
+                resultsDiv.scrollIntoView({behavior: 'smooth'});
+            } else {
+                errorMessage.textContent = data.detail || 'خطایی رخ داد';
+                errorMessage.style.display = 'block';
+                resultsDiv.classList.add('hidden');
+            }
+        } catch (error) {
+            errorMessage.textContent = 'خطا در ارتباط با سرور';
+            errorMessage.style.display = 'block';
+            resultsDiv.classList.add('hidden');
+        }
+    });
+</script>
+<script>
+    document.getElementById("excelForm").addEventListener("submit", function (e) {
+        const start = document.getElementById("jalali_date_start").value;
+        const end = document.getElementById("jalali_date_end").value;
+        const code = document.getElementById("code")?.value || "";
+
+        function convertPersianToEnglishNumbers(s) {
+            const persianNums = "۰۱۲۳۴۵۶۷۸۹";
+            const englishNums = "0123456789";
+            for (let i = 0; i < persianNums.length; i++) {
+                s = s.replaceAll(persianNums[i], englishNums[i]);
+            }
+            return s;
+        }
+
+        if (!start || !end) {
+            alert("برای دریافت فایل اکسل، لطفاً بازه‌ی تاریخی را وارد کنید.");
+            e.preventDefault();
+            return;
+        }
+
+        if (!isValidJalaliDate(start) || !isValidJalaliDate(end)) {
+            alert("فرمت تاریخ نامعتبر است. لطفاً به فرمت YYYY/MM/DD وارد کنید.");
+            e.preventDefault();
+            return;
+        }
+
+        document.getElementById("excel_jalali_date_start").value = convertPersianToEnglishNumbers(start);
+        document.getElementById("excel_jalali_date_end").value = convertPersianToEnglishNumbers(end);
+        document.getElementById("excel_code").value = code;
+    });
+</script>
+
+</body>
+</html>

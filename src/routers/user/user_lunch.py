@@ -32,8 +32,8 @@ async def user_lunch(request: Request, db: Session = Depends(get_db)):
     office_id = request.session.get("office_id")
     role = request.session.get("role")
 
-    if not user_id or role != 'user':
-        return RedirectResponse(url="/", status_code=302)
+    # if not user_id or role != 'user':
+    #     return RedirectResponse(url="/", status_code=302)
 
     # بررسی وجود کاربر
     user = db.query(User).filter(User.id == user_id).first()
@@ -261,9 +261,9 @@ def delete_guest_order(order_id: int, request: Request, db: Session = Depends(ge
     # بررسی وجود user_id و نقش کاربر
     user_id = request.session.get("user_id")
     role = request.session.get("role")
-    if not user_id or role != 'user':
-        request.session.setdefault("messages", []).append("خطا: لطفاً ابتدا وارد شوید.")
-        return RedirectResponse(url="/", status_code=302)
+    # if not user_id or role != 'user':
+    #     request.session.setdefault("messages", []).append("خطا: لطفاً ابتدا وارد شوید.")
+    #     return RedirectResponse(url="/", status_code=302)
 
     # بررسی وجود کاربر
     user = db.query(User).filter(User.id == user_id).first()
