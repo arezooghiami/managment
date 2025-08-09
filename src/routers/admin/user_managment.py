@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Request, Form, UploadFile, File
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse, HTMLResponse
@@ -184,6 +186,7 @@ async def edit_user(
         password: str = Form(None),  # Password is optional
         role: UserRole = Form(...),
         office_id: int = Form(...),
+        is_crm: Optional[str] = Form(None),
         db: Session = Depends(get_db)
 ):
     # Check admin access
@@ -215,6 +218,7 @@ async def edit_user(
     user.status = status
     user.role = role
     user.office_id = office_id
+    user.is_crm = bool(is_crm)
     if password:  # Update password only if provided
         user.password = pwd_context.hash(password)
 
