@@ -36,7 +36,7 @@ def view_locked_rooms(request: Request, db: Session = Depends(get_db)):
         .order_by(MeetingRoomReservation.reservation_date.asc(), MeetingRoomReservation.start_time.asc())
         .all()
     )
-    locked_room = (db.query(RoomLock).filter(RoomLock.office_id == office_id)).all()
+    locked_room = (db.query(RoomLock).filter(RoomLock.office_id == office_id).filter(RoomLock.end_date >= today)).all()
     for room in locked_room:
         room.start_date_jalali = JalaliDate.to_jalali(room.start_date).strftime("%Y/%m/%d")
         room.end_date_jalali = JalaliDate.to_jalali(room.end_date).strftime("%Y/%m/%d")
