@@ -20,7 +20,7 @@ def admin_dashboard(request: Request,db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     return templates.TemplateResponse("admin/admin_dashboard.html", {
         "request": request,
-        "name":user.name + user.family,
+        "name":user.name +" "+ user.family,
 
 
     })
