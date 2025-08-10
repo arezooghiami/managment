@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Developed by Arezoo, with ❤️ for Charm Mashhad -->
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8" />
@@ -65,13 +66,21 @@
             <span>خروج</span>
         </a>
     </div>
+
 </header>
 
 <!-- Main -->
 <main class="flex-1 max-w-7xl mx-auto w-full p-6">
     <div class="mb-10 text-center">
-        <h2 class="text-3xl font-bold text-gray-800">پنل کاربری </h2>
-        <p class="text-gray-600 mt-3 max-w-2xl mx-auto">به پنل کاربری شرکت چرم مشهد خوش آمدید. از طریق گزینه‌های زیر می‌توانید بخش‌های مختلف سیستم را مشاهده کنید.</p>
+    <h2 class="text-3xl font-bold text-gray-800 flex items-center justify-center gap-3">
+        <div class="w-12 h-12 user-avatar rounded-full flex items-center justify-center bg-gray-100">
+            <i class="fas fa-user text-leather-500"></i>
+        </div>
+        <span class="admin-name">{{ user.name +" "+ user.family }}</span>
+    </h2>
+    <p class="text-gray-600 mt-3 max-w-2xl mx-auto">
+        به پنل کاربری شرکت چرم مشهد خوش آمدید. از طریق گزینه‌های زیر می‌توانید بخش‌های مختلف سیستم را مشاهده کنید.
+    </p>
     </div>
 
     <!-- مودال پاپ‌آپ نوتیفیکیشن -->
@@ -138,9 +147,11 @@
 <!-- Footer -->
 <footer class="bg-white border-t border-gray-200 py-6">
     <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
-        <div class="flex items-center gap-3 mb-4 md:mb-0">
-<!--            <img src="/static/image/logo.png" alt="لوگو" class="w-full h-full rounded-md border" />-->
+        <div class="flex flex-col gap-1 mb-4 md:mb-0">
             <p class="text-gray-600 text-sm">© ۱۴۰۴ چرم مشهد</p>
+            <p style="font-size: 9px; color: #bbb; user-select:none;">
+                Internal Portal v1.0 · Built 2025 by AG
+            </p>
         </div>
         <div class="flex gap-4 text-gray-500 text-lg">
             <a href="https://www.instagram.com/mashadleatherco/?hl=en" class="hover:text-[#8b5e3c]"><i class="fab fa-instagram"></i></a>
@@ -150,6 +161,7 @@
     </div>
 </footer>
 <script>
+    console.log("%cDeveloped by Arezoo Ghiami © 2025", "color: gray; font-size: 10px;");
     function markAsRead(notificationId) {
         // ارسال درخواست AJAX به سرور برای به‌روزرسانی وضعیت is_read
         fetch('/user/mark_notification_read', {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+<!-- Developed by Arezoo, with ❤️ for Charm Mashhad -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -149,7 +150,8 @@
             <div class="logo-bg">
                 <div class="bg-white rounded-xl w-16 h-16 flex items-center justify-center">
                     <div class="text-center">
-                        <div class="text-xs text-leather-500">چرم مشهد</div>
+                        <img src="/static/image/logox.png" alt="چرم مشهد" class="w-16 h-16 object-contain rounded-xl border border-gray-300 p-1" />
+
                     </div>
                 </div>
             </div>
@@ -161,7 +163,7 @@
         <!-- User Section -->
         <div class="flex items-center space-x-4">
             <div class="text-right">
-                <p class="admin-name">admin</p>
+                <p class="admin-name">{{name}}</p>
                 <p class="text-gray-600 text-xs">مسئول دفتر</p>
             </div>
             <div class="w-12 h-12 user-avatar rounded-full flex items-center justify-center">
@@ -254,20 +256,23 @@
 </main>
 
 <!-- Footer -->
-<footer class="py-6 footer-border bg-white mt-10">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <img src="/static/image/logo.png" alt="Mashhad Leather Logo" class="h-12">
-            </div>
-            <p class="mt-4 md:mt-0 text-gray-600 text-sm">تمامی حقوق برای شرکت چرم مشهد محفوظ است © 1404</p>
-            <div class="mt-4 md:mt-0 flex space-x-4 text-gray-600">
-                <a href="#" class="hover:text-leather-500"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="hover:text-leather-500"><i class="fab fa-telegram"></i></a>
-                <a href="#" class="hover:text-leather-500"><i class="fab fa-linkedin"></i></a>
-            </div>
+<footer class="bg-white border-t border-gray-200 py-6">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+        <div class="flex flex-col gap-1 mb-4 md:mb-0">
+            <p class="text-gray-600 text-sm">© ۱۴۰۴ چرم مشهد</p>
+            <p style="font-size: 9px; color: #bbb; user-select:none;">
+                Internal Portal v1.0 · Built 2025 by AG
+            </p>
+        </div>
+        <div class="flex gap-4 text-gray-500 text-lg">
+            <a href="https://www.instagram.com/mashadleatherco/?hl=en" class="hover:text-[#8b5e3c]"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="hover:text-[#8b5e3c]"><i class="fab fa-telegram"></i></a>
+            <a href="https://www.linkedin.com/company/mashadleather/posts/?feedView=all" class="hover:text-[#8b5e3c]"><i class="fab fa-linkedin"></i></a>
         </div>
     </div>
 </footer>
 </body>
+<script>
+    console.log("%cDeveloped by Arezoo Ghiami © 2025", "color: gray; font-size: 10px;");
+</script>
 </html>
