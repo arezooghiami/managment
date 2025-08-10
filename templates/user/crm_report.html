@@ -286,7 +286,7 @@
             <!-- تاریخ -->
             <div class="hidden md:flex items-center gap-2 text-white bg-brown-700 rounded-full px-4 py-2 shadow-md">
                 <i class="fas fa-calendar-alt"></i>
-                <span id="currentDate">۱۴۰۳/۰۵/۲۵</span>
+                <span id="currentDate"></span>
             </div>
         </div>
 
@@ -313,10 +313,10 @@
         </div>
 
 
-        <div class="flex md:hidden justify-center mt-4 text-white bg-brown-700 rounded-full px-4 py-2 shadow-md">
-            <i class="fas fa-calendar-alt ml-2"></i>
-            <span id="currentDate">۱۴۰۳/۰۵/۲۵</span>
-        </div>
+<!--        <div class="flex md:hidden justify-center mt-4 text-white bg-brown-700 rounded-full px-4 py-2 shadow-md">-->
+<!--            <i class="fas fa-calendar-alt ml-2"></i>-->
+<!--            <span id="currentDate">۱۴۰۳/۰۵/۲۵</span>-->
+<!--        </div>-->
 
         <!-- Decorative Stamp -->
         <div class="stamp absolute bottom-2 left-4 text-white text-2xl opacity-20">
@@ -430,15 +430,6 @@
             </form>
         </div>
     </section>
-<!--    <form id="excelForm" action="/report_crm_excel" method="post" target="_blank">-->
-<!--        <input type="hidden" name="jalali_date_start" id="excel_jalali_date_start">-->
-<!--        <input type="hidden" name="jalali_date_end" id="excel_jalali_date_end">-->
-<!--        <input type="hidden" name="code" id="excel_code">-->
-<!--        <button type="submit" class="btn btn-success">-->
-<!--            📥 دانلود اکسل-->
-<!--        </button>-->
-<!--    </form>-->
-
 
 
     <!-- Results Table -->
@@ -541,7 +532,15 @@
         </p>
     </footer>
 </div>
+
+
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const currentDateText = document.getElementById('currentDate').textContent.trim();
+        document.getElementById('jalali_date_start').value = currentDateText;
+        document.getElementById('jalali_date_end').value = currentDateText;
+    });
+
     async function fetchAverageReport() {
         try {
             const formData = new FormData(document.getElementById("reportForm"));
@@ -624,13 +623,6 @@
             return;
         }
 
-        if (!isValidJalaliDate(startDate) || !isValidJalaliDate(endDate)) {
-            errorMessage.textContent = 'فرمت تاریخ نامعتبر است (فرمت صحیح: YYYY/MM/DD)';
-            errorMessage.style.display = 'block';
-            if (!isValidJalaliDate(startDate)) document.getElementById('jalali_date_start').classList.add('border-red-500');
-            if (!isValidJalaliDate(endDate)) document.getElementById('jalali_date_end').classList.add('border-red-500');
-            return;
-        }
 
         try {
             const response = await fetch('/report_crm_data', {
@@ -710,11 +702,6 @@
             return;
         }
 
-        if (!isValidJalaliDate(start) || !isValidJalaliDate(end)) {
-            alert("فرمت تاریخ نامعتبر است. لطفاً به فرمت YYYY/MM/DD وارد کنید.");
-            e.preventDefault();
-            return;
-        }
 
         document.getElementById("excel_jalali_date_start").value = convertPersianToEnglishNumbers(start);
         document.getElementById("excel_jalali_date_end").value = convertPersianToEnglishNumbers(end);
