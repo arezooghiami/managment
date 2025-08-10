@@ -1,14 +1,14 @@
+from io import BytesIO
+
 import jdatetime
-from fastapi import APIRouter, Request, Depends, HTTPException, Form
+from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import Form
+from fastapi.responses import StreamingResponse
 from fastapi.templating import Jinja2Templates
+from openpyxl import Workbook
 from persiantools.jdatetime import JalaliDate
 from sqlalchemy.orm import Session
-from starlette.responses import JSONResponse, HTMLResponse
-from fastapi.responses import StreamingResponse
-from openpyxl import Workbook
-from io import BytesIO
-from fastapi import Form
-
+from starlette.responses import JSONResponse, HTMLResponse, RedirectResponse
 
 from DB.database import get_db
 from models.inCall import IncomingCall
@@ -24,8 +24,8 @@ from datetime import date, datetime
 def crm_dashboard(request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
     role = request.session.get("role")
-    # if not user_id or role != 'user':
-    #     return RedirectResponse(url="/", status_code=302)
+    if not user_id:
+        return RedirectResponse(url="/", status_code=302)
 
     user = db.query(User).filter(User.id == user_id).first()
     today = date.today()
@@ -80,6 +80,8 @@ async def update_crm_data(
     data = await request.json()
     user_id = request.session.get("user_id")
     role = request.session.get("role")
+    if not user_id:
+        return RedirectResponse(url="/", status_code=302)
 
     # if not user_id or role != 'user':
     #     raise HTTPException(status_code=403, detail="Unauthorized")
@@ -138,7 +140,6 @@ async def update_crm_data(
             db.commit()
             db.refresh(record)
 
-
         if not hasattr(record, field):
             raise HTTPException(status_code=400, detail="Invalid field name")
 
@@ -168,6 +169,9 @@ async def report_crm_data(
 ):
     user_id = request.session.get("user_id")
     role = request.session.get("role")
+    if not user_id:
+        return RedirectResponse(url="/", status_code=302)
+
     is_crm = request.session.get("is_crm")
     code = convert_persian_to_english_numbers(code)
     jalali_date_start = convert_persian_to_english_numbers(jalali_date_start)
@@ -259,6 +263,9 @@ async def get_report_page(request: Request,
     is_crm = request.session.get("is_crm")
     user_code = request.session.get("user_code")  # کد پرسنلی کاربر فعلی
     user_id = request.session.get("user_id")
+    if not user_id:
+        return RedirectResponse(url="/", status_code=302)
+
     user = db.query(User).filter(User.id == user_id).first()
 
     return templates.TemplateResponse("user/crm_report.html", {
@@ -272,7 +279,6 @@ async def get_report_page(request: Request,
     # return templates.TemplateResponse("user/crm_report.html", {"request": request})
 
 
-
 @router_crm.post("/report_crm_excel")
 async def report_crm_excel(
         request: Request,
@@ -284,6 +290,8 @@ async def report_crm_excel(
     user_id = request.session.get("user_id")
     role = request.session.get("role")
     is_crm = request.session.get("is_crm")
+    if not user_id:
+        return RedirectResponse(url="/", status_code=302)
 
     code = convert_persian_to_english_numbers(code)
     jalali_date_start = convert_persian_to_english_numbers(jalali_date_start)
@@ -383,6 +391,7 @@ async def report_crm_excel(
     response.headers["Content-Disposition"] = f"attachment; filename*=UTF-8''{filename}"
     return response
 
+
 @router_crm.post("/average_report_crm")
 async def average_report_crm(
         request: Request,
@@ -394,6 +403,8 @@ async def average_report_crm(
     user_id = request.session.get("user_id")
     role = request.session.get("role")
     is_crm = request.session.get("is_crm")
+    if not user_id:
+        return RedirectResponse(url="/", status_code=302)
 
     code = convert_persian_to_english_numbers(code)
     jalali_date_start = convert_persian_to_english_numbers(jalali_date_start)
