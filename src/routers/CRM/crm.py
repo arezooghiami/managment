@@ -324,23 +324,22 @@ async def report_crm_excel(
     ]
     outgoing_fields = ["internet", "voice_mail"]
 
+
     headers = [
         "نام", "کد پرسنلی", "رهگیری", "ارسال کالا", "تعویض شعبه", "تعویض آنلاین",
         "مرجوع آنلاین", "نارضایتی شعبه", "پیگیری واریزی", "ارسال ناقص",
         "فروش سازمانی", "در انتظار پرداخت", "سرچ کالا", "پس از فروش",
-        "باشگاه", "متفرقه", "پیگیری اینترنتی", "صندوق صوتی", "جمع ردیف"
+        "باشگاه", "متفرقه", "پیگیری اینترنتی", "صندوق صوتی",
+        "مجموع تماس‌های ورودی", "مجموع تماس‌های خروجی", "درصد تماس‌های ورودی"
     ]
 
     wb = Workbook()
     ws = wb.active
     ws.title = "گزارش CRM"
-    # فعال کردن راست به چپ برای شیت
     ws.sheet_view.rightToLeft = True
 
-
-
-    # نوشتن عنوان ستون‌ها
     ws.append(headers)
+
     # استایل برای هدرها (پس‌زمینه رنگی + متن بولد + وسط‌چین)
     header_fill = PatternFill(start_color="FFD966", end_color="FFD966", fill_type="solid")
     header_font = Font(bold=True, color="000000")
@@ -391,9 +390,14 @@ async def report_crm_excel(
         incoming_data = sum_fields(incoming_records, incoming_fields)
         out_data = sum_fields(out_records, outgoing_fields)
 
-        total_row_sum = sum(incoming_data.values()) + sum(out_data.values())
+        # مجموع تماس‌های ورودی و خروجی برای هر کاربر
+        incoming_sum = sum(incoming_data.values())
+        outgoing_sum = sum(out_data.values())
 
-        # آپدیت مجموع کل
+        # مجموع کل ردیف برای هر کاربر
+        total_row_sum = incoming_sum + outgoing_sum
+
+        # بروزرسانی مجموع کل کلی
         for field, value in {**incoming_data, **out_data}.items():
             total_sum_all[field] += value
         total_sum_all["total_row_sum"] += total_row_sum
@@ -403,15 +407,21 @@ async def report_crm_excel(
                   user.code
               ] + [incoming_data[field] for field in incoming_fields] + \
               [out_data[field] for field in outgoing_fields] + \
-              [total_row_sum]
+              [incoming_sum, outgoing_sum, f"{round((incoming_sum / (total_row_sum or 1)) * 100, 2)}%"]
 
         ws.append(row)
 
-    # ردیف مجموع کل
-    total_row = ["مجموع کل", "-"] + \
-                [total_sum_all[field] for field in incoming_fields] + \
+    # محاسبه مجموع کل تماس‌های ورودی و خروجی از total_sum_all
+    total_incoming_sum = sum(total_sum_all[field] for field in incoming_fields)
+    total_outgoing_sum = sum(total_sum_all[field] for field in outgoing_fields)
+    total_sum_all["total_row_sum"] = total_incoming_sum + total_outgoing_sum
+
+    total_row = [
+                    "مجموع کل", "-"
+                ] + [total_sum_all[field] for field in incoming_fields] + \
                 [total_sum_all[field] for field in outgoing_fields] + \
-                [total_sum_all["total_row_sum"]]
+                [total_incoming_sum, total_outgoing_sum, f"{round((total_incoming_sum / (total_sum_all['total_row_sum'] or 1)) * 100, 2)}%"]
+
     ws.append(total_row)
 
     # محاسبه درصد بر اساس توضیح شما
@@ -425,12 +435,12 @@ async def report_crm_excel(
     total_calls_sum = total_sum_all["total_row_sum"] or 1
     percent_row = ["درصد", "-"]
 
-    for field in incoming_fields + outgoing_fields:
+    for field in incoming_fields :
         col_sum = total_sum_all[field] or 0
-        percent_value = round((col_sum / total_calls_sum) * 100, 2) if col_sum else 0
+        percent_value = round((col_sum / total_incoming_sum) * 100, 2) if col_sum else 0
         percent_row.append(f"{percent_value}%")  # اضافه کردن علامت %
 
-    percent_row.append("100%")  # ستون آخر همیشه 100%
+
 
     ws.append(percent_row)
     for cell in ws[ws.max_row]:
@@ -491,6 +501,8 @@ async def average_report_crm(
     ]
     outgoing_fields = ["internet"]
 
+    total_sum_incoming = {field: 0 for field in incoming_fields}
+    total_sum_outgoing = {field: 0 for field in outgoing_fields}
     total_sum_all = {field: 0 for field in incoming_fields + outgoing_fields}
     total_sum_all["total_row_sum"] = 0
 
@@ -515,8 +527,13 @@ async def average_report_crm(
 
         total_row_sum = sum(incoming_data.values()) + sum(out_data.values())
 
-        for field, value in {**incoming_data, **out_data}.items():
+        for field, value in incoming_data.items():
+            total_sum_incoming[field] += value
             total_sum_all[field] += value
+        for field, value in out_data.items():
+            total_sum_outgoing[field] += value
+            total_sum_all[field] += value
+
         total_sum_all["total_row_sum"] += total_row_sum
 
         results.append({
@@ -527,15 +544,18 @@ async def average_report_crm(
             "total_row_sum": total_row_sum
         })
 
-    # محاسبه میانگین
     user_count = len(users)
-    average_data = {
-        field: round(value / user_count, 2) for field, value in total_sum_all.items()
-    }
+    average_incoming = {field: round(value / user_count, 2) for field, value in total_sum_incoming.items()}
+    average_outgoing = {field: round(value / user_count, 2) for field, value in total_sum_outgoing.items()}
+    average_all = {field: round(value / user_count, 2) for field, value in total_sum_all.items()}
 
     return {
         "user_count": user_count,
+        "total_sum_incoming": total_sum_incoming,
+        "total_sum_outgoing": total_sum_outgoing,
         "total_sum_all": total_sum_all,
-        "average_per_user": average_data,
+        "average_incoming": average_incoming,
+        "average_outgoing": average_outgoing,
+        "average_per_user": average_all,
         "detailed_results": results
     }

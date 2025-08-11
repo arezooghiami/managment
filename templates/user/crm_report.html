@@ -482,26 +482,34 @@
             <h2 class="text-2xl font-bold text-amber-800">گزارش مجموع تماس‌ها و میانگین کاربران CRM</h2>
         </div>
 
-        <div class="overflow-x-auto rounded-xl shadow-sm bg-white p-6">
-            <table class="min-w-full table-auto border border-gray-300 text-center text-gray-800">
-                <thead class="bg-amber-100 text-amber-800">
-                <tr>
-                    <th class="px-4 py-2 border">نام کاربر</th>
-                    <th class="px-4 py-2 border">کد</th>
-                    <th class="px-4 py-2 border">مجموع تماس‌ها</th>
-                </tr>
-                </thead>
-                <tbody id="userTotalCallsTableBody">
-                <!-- Rows will be filled by JS -->
-                </tbody>
-                <tfoot class="bg-gray-100 font-bold">
-                <tr>
-                    <td class="px-4 py-2 border text-amber-700" colspan="2">میانگین تماس برای هر کاربر</td>
-                    <td class="px-4 py-2 border text-amber-700" id="averageTotalCalls">0</td>
-                </tr>
-                </tfoot>
-            </table>
-        </div>
+        <table class="min-w-full table-auto border border-gray-300 text-center text-gray-800">
+            <thead class="bg-amber-100 text-amber-800">
+            <tr>
+                <th class="px-4 py-2 border">نام کاربر</th>
+                <th class="px-4 py-2 border">کد</th>
+                <th class="px-4 py-2 border">مجموع تماس‌ها</th>
+            </tr>
+            </thead>
+            <tbody id="userTotalCallsTableBody">
+            <!-- ردیف‌های کاربران اینجا توسط JS اضافه می‌شوند -->
+            </tbody>
+            <tfoot class="bg-gray-100 font-bold">
+            <tr>
+                <td class="px-4 py-2 border text-amber-700">میانگین تماس ورودی</td>
+                <td id="averageIncomingCalls" class="px-4 py-2 border"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="px-4 py-2 border text-amber-700">میانگین تماس خروجی</td>
+                <td id="averageOutgoingCalls" class="px-4 py-2 border"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="px-4 py-2 border text-amber-700" colspan="2">میانگین تماس کل برای هر کاربر</td>
+                <td id="averageTotalCalls" class="px-4 py-2 border"></td>
+            </tr>
+            </tfoot>
+        </table>
     </section>
 
 
@@ -558,6 +566,9 @@
             const data = await response.json();
             const tbody = document.getElementById("userTotalCallsTableBody");
             const averageCell = document.getElementById("averageTotalCalls");
+            const averageIncomingCell = document.getElementById("averageIncomingCalls");
+            const averageOutgoingCell = document.getElementById("averageOutgoingCalls");
+
 
             tbody.innerHTML = "";  // پاک کردن محتویات قبلی
 
@@ -565,15 +576,24 @@
             results.forEach((user) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td class="border px-4 py-2">${user.name}</td>
-                    <td class="border px-4 py-2">${user.code}</td>
-                    <td class="border px-4 py-2">${user.total_row_sum}</td>
-                `;
+                <td class="border px-4 py-2">${user.name}</td>
+                <td class="border px-4 py-2">${user.code}</td>
+                <td class="border px-4 py-2">${user.total_row_sum}</td>
+            `;
                 tbody.appendChild(row);
             });
 
             // نمایش میانگین کلی
             averageCell.textContent = data.average_per_user.total_row_sum;
+
+            // نمایش میانگین ورودی و خروجی (فرض شده که فیلد 'internet' فقط در خروجی است)
+            // جمع مقادیر ورودی از داده average_incoming
+            const avgIncomingTotal = Object.values(data.average_incoming).reduce((a, b) => a + b, 0);
+            averageIncomingCell.textContent = avgIncomingTotal.toFixed(2);
+
+            // جمع مقادیر خروجی از داده average_outgoing
+            const avgOutgoingTotal = Object.values(data.average_outgoing).reduce((a, b) => a + b, 0);
+            averageOutgoingCell.textContent = avgOutgoingTotal.toFixed(2);
 
         } catch (error) {
             document.getElementById("errorMessage").textContent = error.message;
@@ -584,6 +604,7 @@
         e.preventDefault();
         await fetchAverageReport();
     });
+
 </script>
 
 
