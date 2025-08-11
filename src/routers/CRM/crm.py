@@ -1,4 +1,5 @@
 from io import BytesIO
+from openpyxl.styles import Alignment, PatternFill, Font
 
 import jdatetime
 from fastapi import APIRouter, Request, Depends, HTTPException
@@ -61,7 +62,8 @@ def crm_dashboard(request: Request, db: Session = Depends(get_db)):
     }
 
     out_data = {
-        "internet": out_call.internet if out_call and out_call.internet else 0
+        "internet": out_call.internet if out_call and out_call.internet else 0,
+        "voice_mail": out_call.voice_mail if out_call and out_call.voice_mail else 0
     }
     return templates.TemplateResponse("user/CRM.html", {
         "request": request,
@@ -202,7 +204,7 @@ async def report_crm_data(
         "b2b_sales", "waiting_for_payment", "product_search", "after_sales_service",
         "club", "other"
     ]
-    outgoing_fields = ["internet"]
+    outgoing_fields = ["internet", "voice_mail"]
 
     # مقدار اولیه مجموع کل همه کاربران
     total_sum_all = {field: 0 for field in incoming_fields + outgoing_fields}
@@ -320,21 +322,52 @@ async def report_crm_excel(
         "b2b_sales", "waiting_for_payment", "product_search", "after_sales_service",
         "club", "other"
     ]
-    outgoing_fields = ["internet"]
+    outgoing_fields = ["internet", "voice_mail"]
 
     headers = [
         "نام", "کد پرسنلی", "رهگیری", "ارسال کالا", "تعویض شعبه", "تعویض آنلاین",
         "مرجوع آنلاین", "نارضایتی شعبه", "پیگیری واریزی", "ارسال ناقص",
         "فروش سازمانی", "در انتظار پرداخت", "سرچ کالا", "پس از فروش",
-        "باشگاه", "متفرقه", "پیگیری اینترنتی", "جمع ردیف"
+        "باشگاه", "متفرقه", "پیگیری اینترنتی", "صندوق صوتی", "جمع ردیف"
     ]
 
     wb = Workbook()
     ws = wb.active
     ws.title = "گزارش CRM"
+    # فعال کردن راست به چپ برای شیت
+    ws.sheet_view.rightToLeft = True
+
+
 
     # نوشتن عنوان ستون‌ها
     ws.append(headers)
+    # استایل برای هدرها (پس‌زمینه رنگی + متن بولد + وسط‌چین)
+    header_fill = PatternFill(start_color="FFD966", end_color="FFD966", fill_type="solid")
+    header_font = Font(bold=True, color="000000")
+    header_alignment = Alignment(horizontal="center", vertical="center")
+    for col_num, header in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = header_alignment
+    # استایل داده‌ها (راست‌چین + وسط عمودی)
+    data_alignment = Alignment(horizontal="center", vertical="center")
+    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, max_col=len(headers)):
+        for cell in row:
+            cell.alignment = data_alignment
+
+# تعیین عرض ستون‌ها به صورت اتوماتیک
+    for col in ws.columns:
+        max_length = 0
+        col_letter = col[0].column_letter
+        for cell in col:
+            try:
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            except:
+                pass
+        adjusted_width = max_length + 2
+        ws.column_dimensions[col_letter].width = adjusted_width
 
     total_sum_all = {field: 0 for field in incoming_fields + outgoing_fields}
     total_sum_all["total_row_sum"] = 0
@@ -380,6 +413,30 @@ async def report_crm_excel(
                 [total_sum_all[field] for field in outgoing_fields] + \
                 [total_sum_all["total_row_sum"]]
     ws.append(total_row)
+
+    # محاسبه درصد بر اساس توضیح شما
+    total_calls_sum = total_sum_all["total_row_sum"] or 1  # ستون آخر مجموع کل
+    percent_row = ["درصد", "-"]
+
+    percent_fill = PatternFill(start_color="C6E0B4", end_color="C6E0B4", fill_type="solid")  # سبز ملایم
+    percent_font = Font(bold=True, color="006100")  # سبز تیره
+
+    # ردیف درصد
+    total_calls_sum = total_sum_all["total_row_sum"] or 1
+    percent_row = ["درصد", "-"]
+
+    for field in incoming_fields + outgoing_fields:
+        col_sum = total_sum_all[field] or 0
+        percent_value = round((col_sum / total_calls_sum) * 100, 2) if col_sum else 0
+        percent_row.append(f"{percent_value}%")  # اضافه کردن علامت %
+
+    percent_row.append("100%")  # ستون آخر همیشه 100%
+
+    ws.append(percent_row)
+    for cell in ws[ws.max_row]:
+        cell.fill = percent_fill
+        cell.font = percent_font
+        cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # ساخت فایل در حافظه
     stream = BytesIO()

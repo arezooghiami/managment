@@ -9,4 +9,5 @@ class OutCall(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     internet = Column(Integer, comment="خروجی پیگیری اینترنتی")
+    voice_mail = Column(Integer, comment="صندوق صوتی")
     datetime = Column(Date)
