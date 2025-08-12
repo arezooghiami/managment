@@ -38,7 +38,7 @@ host = "0.0.0.0"
 port = 5300
 
 app.add_middleware(SessionMiddleware, secret_key="e455a74e1805ab61e6c1a9c57ee4e5c2a6d64dfe6e97c3753fe5723dc7a8f670",
-                   session_cookie="session",max_age=600, same_site="lax")
+                   session_cookie="session",max_age=18000, same_site="lax")
 
 
 app.include_router(login.router_login)
