@@ -1,12 +1,14 @@
 from io import BytesIO
-from openpyxl.styles import Alignment, PatternFill, Font
 
 import jdatetime
+import pandas as pd
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi import Form
+from fastapi import UploadFile, File
 from fastapi.responses import StreamingResponse
 from fastapi.templating import Jinja2Templates
 from openpyxl import Workbook
+from openpyxl.styles import Alignment, PatternFill, Font
 from persiantools.jdatetime import JalaliDate
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse, HTMLResponse, RedirectResponse
@@ -324,7 +326,6 @@ async def report_crm_excel(
     ]
     outgoing_fields = ["internet", "voice_mail"]
 
-
     headers = [
         "نام", "کد پرسنلی", "رهگیری", "ارسال کالا", "تعویض شعبه", "تعویض آنلاین",
         "مرجوع آنلاین", "نارضایتی شعبه", "پیگیری واریزی", "ارسال ناقص",
@@ -355,7 +356,7 @@ async def report_crm_excel(
         for cell in row:
             cell.alignment = data_alignment
 
-# تعیین عرض ستون‌ها به صورت اتوماتیک
+    # تعیین عرض ستون‌ها به صورت اتوماتیک
     for col in ws.columns:
         max_length = 0
         col_letter = col[0].column_letter
@@ -420,7 +421,8 @@ async def report_crm_excel(
                     "مجموع کل", "-"
                 ] + [total_sum_all[field] for field in incoming_fields] + \
                 [total_sum_all[field] for field in outgoing_fields] + \
-                [total_incoming_sum, total_outgoing_sum, f"{round((total_incoming_sum / (total_sum_all['total_row_sum'] or 1)) * 100, 2)}%"]
+                [total_incoming_sum, total_outgoing_sum,
+                 f"{round((total_incoming_sum / (total_sum_all['total_row_sum'] or 1)) * 100, 2)}%"]
 
     ws.append(total_row)
 
@@ -435,12 +437,10 @@ async def report_crm_excel(
     total_calls_sum = total_sum_all["total_row_sum"] or 1
     percent_row = ["درصد", "-"]
 
-    for field in incoming_fields :
+    for field in incoming_fields:
         col_sum = total_sum_all[field] or 0
         percent_value = round((col_sum / total_incoming_sum) * 100, 2) if col_sum else 0
         percent_row.append(f"{percent_value}%")  # اضافه کردن علامت %
-
-
 
     ws.append(percent_row)
     for cell in ws[ws.max_row]:
@@ -559,3 +559,104 @@ async def average_report_crm(
         "average_per_user": average_all,
         "detailed_results": results
     }
+
+
+@router_crm.post("/upload_crm_excel")
+async def upload_crm_excel(
+        file: UploadFile = File(...),
+        db: Session = Depends(get_db),
+        request: Request = None
+):
+    # user_id = request.session.get("user_id")
+    # if not user_id:
+    #     return RedirectResponse(url="/", status_code=302)
+
+    try:
+        df = pd.read_excel(file.file)
+
+        for _, row in df.iterrows():
+            # استخراج نام خانوادگی از ستون اپراتور
+            family_name = row['اپراتور'].strip()
+
+            # پیدا کردن کاربر بر اساس نام خانوادگی
+            user = db.query(User).filter(User.family == family_name).first()
+            if not user:
+                raise HTTPException(status_code=404, detail=f"User with family name {family_name} not found")
+
+            # تبدیل تاریخ شمسی به میلادی
+            shamsi_date = str(row['تاریخ']).strip()
+            if '/' in shamsi_date:
+                parts = shamsi_date.split('/')
+                sh_year, sh_month, sh_day = map(int, parts)
+                g_date = jdatetime.date(sh_year, sh_month, sh_day).togregorian()
+            else:
+                g_date = datetime.today().date()
+
+            now = datetime.now()
+
+            # IncomingCall
+            incoming_fields = {
+                "استعلام کد رهگیری پستی": "posty_code",
+                "مهلت ارسال کالا": "send_product_deadline",
+                "تعویضی مرجوعی شعب": "branch_change",
+                "تعویض آنلاین": "online_change",
+                "مرجوعی آنلاین": "online_return",
+                "نارضایتی از شعبه": "branch_dissatisfaction",
+                "پیگیری واریزی": "payment_followup",
+                "ارسال ناقص": "incomplete_delivery",
+                "فروش سازمانی": "b2b_sales",
+                "در انتظار پرداخت": "waiting_for_payment",
+                "سرچ کالا": "product_search",
+                "خدمات پس از فروش": "after_sales_service",
+                "باشگاه": "club",
+                "متفرقه": "other"
+            }
+
+            record = (
+                db.query(IncomingCall)
+                .filter(IncomingCall.user_id == user.id, IncomingCall.datetime == g_date)
+                .first()
+            )
+
+            if not record:
+                record = IncomingCall(
+                    user_id=user.id,
+                    datetime=g_date,
+                    start_datetime=now,
+                    end_datetime=now
+                )
+                db.add(record)
+            else:
+                # فقط زمان پایان تماس آپدیت بشه
+                record.end_datetime = now
+
+            for persian_col, db_col in incoming_fields.items():
+                value = row.get(persian_col, 0)
+                if value is not None:
+                    setattr(record, db_col, int(value))
+
+            # OutCall
+            out_fields = {
+                "پیگیری اینترنتی(تماس خروجی)": "internet",
+                "پیگیری صندوق صوتی": "voice_mail"
+            }
+
+            record_out = (
+                db.query(OutCall)
+                .filter(OutCall.user_id == user.id, OutCall.datetime == g_date)
+                .first()
+            )
+            if not record_out:
+                record_out = OutCall(user_id=user.id, datetime=g_date)
+                db.add(record_out)
+
+            for persian_col, db_col in out_fields.items():
+                value = row.get(persian_col, 0)
+                if value is not None:
+                    setattr(record_out, db_col, int(value))
+
+        db.commit()
+        return {"success": True, "message": "Data imported/updated successfully"}
+
+    except Exception as e:
+        return {"success": False, "error": str(e)}
