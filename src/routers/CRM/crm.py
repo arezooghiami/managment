@@ -18,7 +18,9 @@ from models.inCall import IncomingCall
 from models.outCall import OutCall
 from models.user import User
 
-router_crm = APIRouter()
+router_crm = APIRouter(
+    tags=["Crm"],  # ← تگ دسته‌بندی در سوَگر
+)
 templates = Jinja2Templates(directory="templates")
 from datetime import date, datetime
 
@@ -61,6 +63,10 @@ def crm_dashboard(request: Request, db: Session = Depends(get_db)):
         "after_sales_service": incoming_call.after_sales_service if incoming_call and incoming_call.after_sales_service else 0,
         "club": incoming_call.club if incoming_call and incoming_call.club else 0,
         "other": incoming_call.other if incoming_call and incoming_call.other else 0,
+        "branch_info": incoming_call.branch_info if incoming_call and incoming_call.branch_info else 0,
+        "product_site_info": incoming_call.product_site_info if incoming_call and incoming_call.product_site_info else 0,
+        "snapp_pay": incoming_call.snapp_pay if incoming_call and incoming_call.snapp_pay else 0,
+        "inner_call": incoming_call.inner_call if incoming_call and incoming_call.inner_call else 0,
     }
 
     out_data = {
@@ -76,7 +82,29 @@ def crm_dashboard(request: Request, db: Session = Depends(get_db)):
     })
 
 
-@router_crm.post("/update_crm_data")
+@router_crm.post("/update_crm_data",
+                 summary="به‌روزرسانی اطلاعات CRM کاربر",
+                 description="""
+این سرویس جهت **ثبت و به‌روزرسانی اطلاعات تماس‌های دریافتی و خروجی کاربران** در ماژول CRM استفاده می‌شود.
+
+### عملکرد سرویس
+- دریافت نوع عملیات (`incoming` یا `out`)
+- افزایش یا کاهش مقدار یک فیلد با `+1` یا `-1`
+- ایجاد رکورد جدید برای کاربر در صورت نبودن رکورد روز جاری
+- ثبت زمان شروع و پایان تماس برای تماس‌های ورودی
+
+### اعتبارسنجی‌ها
+- بررسی لاگین بودن کاربر از طریق سشن
+- بررسی معتبر بودن نوع عملیات
+- بررسی وجود فیلد در مدل دیتابیس
+- جلوگیری از منفی شدن مقادیر
+
+### سناریوهای کاربرد
+- سیستم‌های مانیتورینگ تماس روزانه
+- داشبورد عملکرد کارمندان
+- سیستم ثبت پیگیری‌ها و تماس‌ها
+
+""", )
 async def update_crm_data(
         request: Request,
         db: Session = Depends(get_db)
@@ -204,7 +232,7 @@ async def report_crm_data(
         "posty_code", "send_product_deadline", "branch_change", "online_change",
         "online_return", "branch_dissatisfaction", "payment_followup", "incomplete_delivery",
         "b2b_sales", "waiting_for_payment", "product_search", "after_sales_service",
-        "club", "other"
+        "club", "other","branch_info","product_site_info","snapp_pay","inner_call"
     ]
     outgoing_fields = ["internet", "voice_mail"]
 
@@ -322,7 +350,7 @@ async def report_crm_excel(
         "posty_code", "send_product_deadline", "branch_change", "online_change",
         "online_return", "branch_dissatisfaction", "payment_followup", "incomplete_delivery",
         "b2b_sales", "waiting_for_payment", "product_search", "after_sales_service",
-        "club", "other"
+        "club", "other","branch_info","product_site_info","snapp_pay","inner_call"
     ]
     outgoing_fields = ["internet", "voice_mail"]
 
@@ -330,7 +358,7 @@ async def report_crm_excel(
         "نام", "کد پرسنلی", "رهگیری", "ارسال کالا", "تعویض شعبه", "تعویض آنلاین",
         "مرجوع آنلاین", "نارضایتی شعبه", "پیگیری واریزی", "ارسال ناقص",
         "فروش سازمانی", "در انتظار پرداخت", "سرچ کالا", "پس از فروش",
-        "باشگاه", "متفرقه", "پیگیری اینترنتی", "صندوق صوتی",
+        "باشگاه", "متفرقه","اطلاعات شعب","اطلاعات سایت و محصول","اسنپ ‌پی","داخلی" ,"پیگیری اینترنتی", "صندوق صوتی",
         "مجموع تماس‌های ورودی", "مجموع تماس‌های خروجی", "درصد تماس‌های ورودی"
     ]
 
@@ -497,7 +525,7 @@ async def average_report_crm(
         "posty_code", "send_product_deadline", "branch_change", "online_change",
         "online_return", "branch_dissatisfaction", "payment_followup", "incomplete_delivery",
         "b2b_sales", "waiting_for_payment", "product_search", "after_sales_service",
-        "club", "other"
+        "club", "other","branch_info","product_site_info","snapp_pay","inner_call"
     ]
     outgoing_fields = ["internet"]
 
@@ -609,7 +637,11 @@ async def upload_crm_excel(
                 "سرچ کالا": "product_search",
                 "خدمات پس از فروش": "after_sales_service",
                 "باشگاه": "club",
-                "متفرقه": "other"
+                "متفرقه": "other",
+                "اطلاعات شعب":"branch_info",
+                "اطلاعات سایت و محصول":"product_site_info",
+                "اسنپ‌پی":"snapp_pay",
+                "داخلی":"inner_call"
             }
 
             record = (

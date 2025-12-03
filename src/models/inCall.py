@@ -24,6 +24,10 @@ class IncomingCall(Base):
     after_sales_service = Column(Integer, comment="خدمات پس از فروش")
     club = Column(Integer, comment="باشگاه")
     other = Column(Integer, comment="متفرقه")
+    branch_info = Column(Integer, nullable=True, comment="اطلاعات شعب")
+    product_site_info = Column(Integer, nullable=True, comment="اطلاعات سایت و محصول")
+    snapp_pay = Column(Integer, nullable=True, comment="اسنپ‌پی")
+    inner_call = Column(Integer, nullable=True, comment="داخلی")
 
     datetime = Column(Date)
     start_datetime = Column(DateTime, comment="اولین زمان تماس در روز")
