@@ -67,6 +67,7 @@ def crm_dashboard(request: Request, db: Session = Depends(get_db)):
         "product_site_info": incoming_call.product_site_info if incoming_call and incoming_call.product_site_info else 0,
         "snapp_pay": incoming_call.snapp_pay if incoming_call and incoming_call.snapp_pay else 0,
         "inner_call": incoming_call.inner_call if incoming_call and incoming_call.inner_call else 0,
+        "defective_product": incoming_call.defective_product if incoming_call and incoming_call.defective_product else 0,
     }
 
     out_data = {
@@ -232,7 +233,7 @@ async def report_crm_data(
         "posty_code", "send_product_deadline", "branch_change", "online_change",
         "online_return", "branch_dissatisfaction", "payment_followup", "incomplete_delivery",
         "b2b_sales", "waiting_for_payment", "product_search", "after_sales_service",
-        "club", "other","branch_info","product_site_info","snapp_pay","inner_call"
+        "club", "other","branch_info","product_site_info","snapp_pay","inner_call","defective_product"
     ]
     outgoing_fields = ["internet", "voice_mail"]
 
@@ -350,7 +351,7 @@ async def report_crm_excel(
         "posty_code", "send_product_deadline", "branch_change", "online_change",
         "online_return", "branch_dissatisfaction", "payment_followup", "incomplete_delivery",
         "b2b_sales", "waiting_for_payment", "product_search", "after_sales_service",
-        "club", "other","branch_info","product_site_info","snapp_pay","inner_call"
+        "club", "other","branch_info","product_site_info","snapp_pay","inner_call","defective_product"
     ]
     outgoing_fields = ["internet", "voice_mail"]
 
@@ -358,7 +359,7 @@ async def report_crm_excel(
         "نام", "کد پرسنلی", "رهگیری", "ارسال کالا", "تعویض شعبه", "تعویض آنلاین",
         "مرجوع آنلاین", "نارضایتی شعبه", "پیگیری واریزی", "ارسال ناقص",
         "فروش سازمانی", "در انتظار پرداخت", "سرچ کالا", "پس از فروش",
-        "باشگاه", "متفرقه","اطلاعات شعب","اطلاعات سایت و محصول","اسنپ ‌پی","داخلی" ,"پیگیری اینترنتی", "صندوق صوتی",
+        "باشگاه", "متفرقه","اطلاعات شعب","اطلاعات سایت و محصول","اسنپ ‌پی","داخلی" ,"کالای ایراد دار","پیگیری اینترنتی", "صندوق صوتی",
         "مجموع تماس‌های ورودی", "مجموع تماس‌های خروجی", "درصد تماس‌های ورودی"
     ]
 
@@ -525,7 +526,7 @@ async def average_report_crm(
         "posty_code", "send_product_deadline", "branch_change", "online_change",
         "online_return", "branch_dissatisfaction", "payment_followup", "incomplete_delivery",
         "b2b_sales", "waiting_for_payment", "product_search", "after_sales_service",
-        "club", "other","branch_info","product_site_info","snapp_pay","inner_call"
+        "club", "other","branch_info","product_site_info","snapp_pay","inner_call","defective_product"
     ]
     outgoing_fields = ["internet"]
 
@@ -641,7 +642,8 @@ async def upload_crm_excel(
                 "اطلاعات شعب":"branch_info",
                 "اطلاعات سایت و محصول":"product_site_info",
                 "اسنپ‌پی":"snapp_pay",
-                "داخلی":"inner_call"
+                "داخلی":"inner_call",
+                "کالای ایراد دار":"defective_product"
             }
 
             record = (

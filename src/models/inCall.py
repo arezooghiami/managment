@@ -28,6 +28,7 @@ class IncomingCall(Base):
     product_site_info = Column(Integer, nullable=True, comment="اطلاعات سایت و محصول")
     snapp_pay = Column(Integer, nullable=True, comment="اسنپ‌پی")
     inner_call = Column(Integer, nullable=True, comment="داخلی")
+    defective_product = Column(Integer, nullable=True, comment="کالای ایراد دار")
 
     datetime = Column(Date)
     start_datetime = Column(DateTime, comment="اولین زمان تماس در روز")
