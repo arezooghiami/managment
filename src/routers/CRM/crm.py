@@ -14,6 +14,8 @@ from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse, HTMLResponse, RedirectResponse
 
 from DB.database import get_db
+from models.ComplaintIssue import ComplaintIssue
+from models.branch import Branch, Unit
 from models.inCall import IncomingCall
 from models.outCall import OutCall
 from models.user import User
@@ -47,6 +49,9 @@ def crm_dashboard(request: Request, db: Session = Depends(get_db)):
         .filter(OutCall.user_id == user_id, OutCall.datetime == today)
         .first()
     )
+    issues = db.query(ComplaintIssue).all()
+    branches = db.query(Branch).all()
+    units = db.query(Unit).all()
 
     incoming_data = {
         "posty_code": incoming_call.posty_code if incoming_call and incoming_call.posty_code else 0,
@@ -79,7 +84,13 @@ def crm_dashboard(request: Request, db: Session = Depends(get_db)):
         "user": user,
         "incoming_data": incoming_data,
         "out_data": out_data,
-        "today": shamsi_today  # 👈 فقط تاریخ روز
+        "today": shamsi_today , # 👈 فقط تاریخ روز
+        'issues':issues,
+        "branches":branches,
+        "units":units
+
+
+
     })
 
 

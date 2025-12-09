@@ -14,6 +14,7 @@
       --leather-accent: #D7CCC8;
       --leather-light: #EFEBE9;
       --gold: #D4AF37;
+      --primary-color: #5D4037;
     }
 
     body {
@@ -96,6 +97,59 @@
               radial-gradient(circle at 50% 50%, rgba(121, 85, 72, 0.03) 0%, transparent 10%);
       background-size: 200px 200px;
     }
+
+    /* استایل برای مودال */
+    .modal-overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 50;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(93, 64, 55, 0.15);
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .input-field {
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      background-color: #f9fafb;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.1);
+      background-color: white;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--leather-secondary), var(--leather-primary));
+      color: white;
+      border: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(93, 64, 55, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--leather-primary), #4E342E);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(93, 64, 55, 0.35);
+    }
   </style>
 </head>
 <body class="min-h-screen leather-pattern">
@@ -138,7 +192,7 @@
           <i class="fas fa-chart-line mr-1"></i> گزارشات
         </a>
         <a href="/Customer_complaint_list" class="text-amber-200 hover:text-white transition">
-          <i class="fas fa-chart-line mr-1"></i> شکایت مشتری
+          <i class="fas fa-headset mr-1"></i> شکایت مشتری
         </a>
         <a href="#" class="text-amber-200 hover:text-white transition">
           <i class="fas fa-users mr-1"></i> مشتریان
@@ -175,19 +229,17 @@
             <span class="text-gray-500 ml-2"><i class="fas fa-calendar"></i></span>
             <span class="text-gray-700 font-medium">تاریخ: {{ today }}</span>
           </div>
-<!--          <div class="flex items-center">-->
-<!--            <span class="text-gray-500 ml-2"><i class="fas fa-clock"></i></span>-->
-<!--            <span class="text-gray-700 font-medium">آخرین فعالیت: ۲ دقیقه پیش</span>-->
-<!--          </div>-->
         </div>
       </div>
 
-<!--      <div class="mt-4 md:mt-0">-->
-<!--        <button class="btn-leather px-6 py-2 rounded-lg font-medium">-->
-<!--          <i class="fas fa-sync-alt mr-2"></i> به‌روزرسانی اطلاعات-->
-<!--        </button>-->
-<!--      </div>-->
-<!--    </div>-->
+      <!-- دکمه ثبت شکایت جدید -->
+      <div class="mt-6 md:mt-0">
+        <button onclick="openNewComplaintModal()" class="btn-primary font-medium px-6 py-3 rounded-lg flex items-center gap-2">
+          <i class="fas fa-plus"></i>
+          شکایت جدید
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -197,7 +249,6 @@
         <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037]">
           <i class="fas fa-phone-alt gold-accent mr-3"></i>تماس‌های ورودی
         </h2>
-
       </div>
 
       <div class="space-y-4">
@@ -250,7 +301,6 @@
         <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037]">
           <i class="fas fa-phone-volume gold-accent mr-3"></i>تماس‌های خروجی
         </h2>
-
       </div>
 
       <div class="space-y-4">
@@ -277,28 +327,68 @@
           </div>
         </div>
         {% endfor %}
-
-<!--        &lt;!&ndash; بخش آمار کلی &ndash;&gt;-->
-<!--        <div class="mt-8 pt-6 border-t border-[#D7CCC8]">-->
-<!--          <h3 class="text-lg font-semibold text-[#5D4037] mb-4">-->
-<!--            <i class="fas fa-chart-pie gold-accent mr-2"></i> آمار کلی تماس‌ها-->
-<!--          </h3>-->
-<!--          <div class="grid grid-cols-2 gap-4">-->
-<!--            <div class="bg-[#F5F1ED] p-4 rounded-lg">-->
-<!--              <div class="text-[#795548]">تماس‌های موفق</div>-->
-<!--              <div class="text-2xl font-bold text-[#5D4037] mt-1">۸۹%</div>-->
-<!--              <div class="h-2 bg-[#D7CCC8] rounded-full mt-2">-->
-<!--                <div class="h-2 bg-emerald-500 rounded-full" style="width: 89%"></div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="bg-[#F5F1ED] p-4 rounded-lg">-->
-<!--              <div class="text-[#795548]">میانگین زمان تماس</div>-->
-<!--              <div class="text-2xl font-bold text-[#5D4037] mt-1">۴:۳۲</div>-->
-<!--              <div class="text-sm text-gray-500 mt-1">دقیقه</div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
       </div>
+    </div>
+  </div>
+
+  <!-- مودال ثبت شکایت جدید (همان‌طور که خواسته بودید) -->
+  <div id="complaintModal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50 p-4">
+
+  <div class="glass-card w-full max-w-2xl rounded-xl overflow-hidden p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-edit ml-2"></i> ثبت شکایت جدید</h2>
+      <form method="post" action="/complaints/create" id="complaintForm" class="space-y-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><label class="block mb-1 text-sm font-medium">نام کامل مشتری *</label>
+            <input type="text" name="customer_name" required class="w-full p-3 input-field"></div>
+          <div>
+            <label class="block mb-1 text-sm font-medium">شماره همراه *</label>
+            <input
+                    type="tel"
+                    name="customer_phone"
+                    required
+                    class="w-full p-3 input-field"
+            >
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-1 text-sm font-medium">شعبه</label>
+            <select name="branch_id" id="branchSelect" class="w-full p-3 input-field">
+              <option value="">انتخاب شعبه (اختیاری)</option>
+              {% for branch in branches %}
+              <option value="{{ branch.id }}" data-manager="{{ branch.regional_manager.name if branch.regional_manager else 'نامشخص' }}">{{ branch.name }}</option>
+              {% endfor %}
+            </select>
+            <input id="regionalManager" class="w-full p-3 mt-2 input-field bg-gray-50 text-gray-600 text-sm" readonly placeholder="مدیر منطقه">
+          </div>
+          <div>
+            <label class="block mb-1 text-sm font-medium">واحد مربوطه</label>
+            <select name="unit_id" class="w-full p-3 input-field">
+              <option value="">انتخاب واحد (اختیاری)</option>
+              {% for unit in units %}<option value="{{ unit.id }}">{{ unit.name }}</option>{% endfor %}
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block mb-3 text-sm font-medium">موارد شکایت (حداقل یکی) *</label>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-3 bg-gray-50 rounded-lg">
+            {% for issue in issues %}
+            <label class="flex items-center p-3 bg-white rounded-lg border border-gray-300 hover:border-primary-color cursor-pointer transition">
+              <input type="checkbox" name="issues" value="{{ issue.id }}" class="ml-2 h-4 w-4 text-primary-color">
+              <span class="text-sm">{{ issue.name }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+        <div>
+          <label class="block mb-1 text-sm font-medium">توضیحات تکمیلی</label>
+          <textarea name="description" rows="4" class="w-full p-3 input-field text-sm" placeholder="جزئیات بیشتر..."></textarea>
+        </div>
+        <div class="flex gap-3 pt-4">
+          <button type="button" onclick="closeNewComplaintModal()" class="flex-1 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 font-medium transition">انصراف</button>
+          <button type="submit" class="flex-1 py-3 rounded-lg btn-primary font-medium"><i class="fas fa-check ml-2"></i> ثبت شکایت</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -326,15 +416,10 @@
 <script>
   async function updateValue(type, field, change) {
     try {
-      // شبیه‌سازی انیمیشن
       const btn = event.currentTarget;
       btn.classList.add('animate-pulse');
       setTimeout(() => btn.classList.remove('animate-pulse'), 300);
 
-      // شبیه‌سازی ارسال درخواست به سرور
-      console.log(`Updating ${type}.${field} with change ${change}`);
-
-      // در محیط واقعی این بخش فعال خواهد شد
       const response = await fetch('/update_crm_data', {
         method: 'POST',
         headers: {
@@ -346,6 +431,7 @@
           change: change,
         }),
       });
+
       if (response.ok) {
         location.reload();
       } else {
@@ -356,6 +442,78 @@
       alert('خطایی رخ داد');
     }
   }
+
+  // باز و بسته کردن مودال ثبت شکایت
+  function openNewComplaintModal() {
+    document.getElementById('complaintModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeNewComplaintModal() {
+    document.getElementById('complaintModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  }
+
+  // تبدیل اعداد فارسی به انگلیسی
+  function convertPersianDigitsToEnglish(str) {
+    const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+    const englishDigits = '0123456789';
+    return str.replace(/[۰-۹]/g, d => englishDigits[persianDigits.indexOf(d)]);
+  }
+
+  // نمایش مدیر منطقه بر اساس شعبه انتخابی
+  document.getElementById('branchSelect').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const managerName = selectedOption.getAttribute('data-manager');
+    document.getElementById('regionalManager').value = managerName || '';
+  });
+
+  // مدیریت ارسال فرم بدون رفرش صفحه
+  document.getElementById('complaintForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const checkboxes = document.querySelectorAll('input[name="issues"]:checked');
+    if (checkboxes.length === 0) {
+      alert('لطفا حداقل یک مورد شکایت را انتخاب کنید');
+      return;
+    }
+
+    const phoneInput = document.querySelector('input[name="customer_phone"]');
+    phoneInput.value = convertPersianDigitsToEnglish(phoneInput.value);
+
+    const formData = new FormData(this);
+
+    try {
+      const response = await fetch(this.action, { method: 'POST', body: formData });
+      if (response.ok) {
+        alert('شکایت با موفقیت ثبت شد');
+        this.reset();
+        closeNewComplaintModal();
+        // می‌توانید اینجا داده‌ها را بدون رفرش صفحه به جدول اضافه کنید
+      } else {
+        alert('خطا در ثبت شکایت');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('خطایی رخ داد');
+    }
+  });
+
+  // بستن مودال با ESC
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeNewComplaintModal();
+  });
+
+  // بستن مودال با کلیک روی overlay
+  document.getElementById('complaintModal').addEventListener('click', function(e) {
+    if (e.target === this) closeNewComplaintModal();
+  });
+
+  // اعتبارسنجی فیلد شماره تماس
+  document.querySelector('input[name="customer_phone"]').addEventListener('input', function() {
+    this.value = this.value.replace(/[^۰-۹0-9]/g, '');
+  });
+
 </script>
 </body>
 </html>
