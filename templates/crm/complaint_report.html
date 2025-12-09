@@ -1,5 +1,8 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <head>
     <meta charset="utf-8"/>
@@ -448,57 +451,74 @@
         <h2 class="card-title"><i class="fas fa-sliders-h"></i> فیلترهای پیشرفته</h2>
         <form id="reportForm" method="post" action="/complaints/report">
             <div class="filter-grid">
+                <!-- تاریخ شروع -->
                 <div class="filter-group">
                     <label class="filter-label"><i class="far fa-calendar"></i> تاریخ شروع</label>
-                    <input type="text" class="filter-input" name="jalali_date_start" required
+                    <input type="text" class="filter-input datepicker" name="jalali_date_start" required
                            value="{{ start_date or '' }}" placeholder="1403/01/01"/>
                 </div>
+
+                <!-- تاریخ پایان -->
                 <div class="filter-group">
                     <label class="filter-label"><i class="far fa-calendar"></i> تاریخ پایان</label>
-                    <input type="text" class="filter-input" name="jalali_date_end" required
+                    <input type="text" class="filter-input datepicker" name="jalali_date_end" required
                            value="{{ end_date or '' }}" placeholder="1403/12/29"/>
                 </div>
-                <div class="filter-group">
-                    <label class="filter-label"><i class="fas fa-store"></i> شعبه</label>
-                    <select class="filter-select" name="branch_id">
-                        <option value="">همه شعب</option>
-                        {% for b in branches %}
-                        <option value="{{ b.id }}" {% if selected.branch_id and selected.branch_id == b.id %}selected{% endif %}>{{ b.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label"><i class="fas fa-sitemap"></i> واحد سازمانی</label>
-                    <select class="filter-select" name="unit_id">
-                        <option value="">همه واحدها</option>
-                        {% for u in units %}
-                        <option value="{{ u.id }}" {% if selected.unit_id and selected.unit_id == u.id %}selected{% endif %}>{{ u.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label"><i class="fas fa-user-tie"></i> مدیر منطقه</label>
-                    <select class="filter-select" name="regional_manager_id">
-                        <option value="">همه مدیران</option>
-                        {% for r in regional_managers %}
-                        <option value="{{ r.id }}" {% if selected.regional_manager_id and selected.regional_manager_id == r.id %}selected{% endif %}>{{ r.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label"><i class="fas fa-tag"></i> موضوع شکایت</label>
-                    <select class="filter-select" name="issue_id">
-                        <option value="">همه موضوعات</option>
-                        {% for it in issues %}
-                        <option value="{{ it.id }}" {% if selected.issue_id and selected.issue_id == it.id %}selected{% endif %}>{{ it.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+                <!-- مشتری  -->
+
                 <div class="filter-group">
                     <label class="filter-label"><i class="fas fa-search"></i> جستجوی مشتری</label>
                     <input type="text" class="filter-input" name="customer_query"
                            placeholder="نام یا شماره تماس مشتری" value="{{ selected.customer_query or '' }}"/>
                 </div>
+
+                <!-- شعبه -->
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fas fa-store"></i> شعبه</label>
+                    <select class="filter-select select-search" name="branch_id">
+                        <option value="">همه شعب</option>
+                        {% for b in branches %}
+                        <option value="{{ b.id }}" {% if selected.branch_id == b.id %}selected{% endif %}>{{ b.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- واحد سازمانی -->
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fas fa-sitemap"></i> واحد سازمانی</label>
+                    <select class="filter-select select-search" name="unit_id">
+                        <option value="">همه واحدها</option>
+                        {% for u in units %}
+                        <option value="{{ u.id }}" {% if selected.unit_id == u.id %}selected{% endif %}>{{ u.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- مدیر منطقه -->
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fas fa-user-tie"></i> مدیر منطقه</label>
+                    <select class="filter-select select-search" name="regional_manager_id">
+                        <option value="">همه مدیران</option>
+                        {% for r in regional_managers %}
+                        <option value="{{ r.id }}" {% if selected.regional_manager_id == r.id %}selected{% endif %}>
+                            {{ r.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- موضوع شکایت -->
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fas fa-tag"></i> موضوع شکایت</label>
+                    <select class="filter-select select-search" name="issue_id">
+                        <option value="">همه موضوعات</option>
+                        {% for it in issues %}
+                        <option value="{{ it.id }}" {% if selected.issue_id == it.id %}selected{% endif %}>{{ it.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+
             </div>
 
             <div class="action-buttons">
@@ -634,6 +654,20 @@
         </p>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $('.select-search').select2({
+
+
+            width: '100%',
+            language: {
+                noResults: function () {
+                    return "موردی یافت نشد";
+                }
+            }
+        });
+    });
+</script>
 
 <script>
     function clearFilters() {
