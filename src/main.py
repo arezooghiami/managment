@@ -16,6 +16,8 @@ from DB.database import Base, engine
 from routers.Athentication.addSuperAdmin import register_superadmin
 from routers.Athentication.api import login
 from routers.CRM import crm
+from routers.CRM.complaint.complaint import router_complaint
+from routers.CRM.complaint.import_data import router_branch, router_issues, router_managers, router_unit
 from routers.admin import admin_dashboard, lunch, excel, meeting_room, report, user_managment, offices, room_lock
 from routers.user import user_dashboard, user_lunch, user_meetingroom, user_notification, user_changepass
 
@@ -32,7 +34,12 @@ def get_today_jalali_iran():
 
 templates = Jinja2Templates(directory="templates")
 templates.env.globals["get_today_jalali_iran"] = get_today_jalali_iran
-
+def to_jalali(value):
+    if value:
+        return jdatetime.datetime.fromgregorian(datetime=value).strftime("%Y/%m/%d")
+    return ""
+templates = Jinja2Templates(directory="templates")
+templates.env.filters["to_jalali"] = to_jalali
 app = FastAPI()
 host = "0.0.0.0"
 port = 5300
@@ -57,6 +64,11 @@ app.include_router(room_lock.router_admin)
 app.include_router(user_notification.router_user)
 app.include_router(crm.router_crm)
 app.include_router(user_changepass.router_user)
+app.include_router(router_branch)
+app.include_router(router_issues)
+app.include_router(router_managers)
+app.include_router(router_complaint)
+app.include_router(router_unit)
 
 
 def initialize_database():

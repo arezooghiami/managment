@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لیست شکایات مشتریان - چرم مشهد</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-wdth-normal.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@latest/dist/css/persian-datepicker.min.css">
+    <style>
+        :root {
+            --primary-color: #5D4037;
+            --secondary-color: #795548;
+            --accent-color: #D7CCC8;
+            --light-color: #EFEBE9;
+            --gold-color: #D4AF37;
+        }
+
+        body {
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .glass-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid rgba(93,64,55,0.1);
+        }
+
+        .header-bg {
+            background: linear-gradient(135deg, #5D4037 0%, #795548 100%);
+        }
+
+        .table-header {
+            background: #f5f5f5;
+            color: #5D4037;
+            font-weight: 600;
+        }
+
+        .table-row:hover {
+            background-color: #fafafa;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #5D4037;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #795548;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(93,64,55,0.2);
+        }
+
+        .input-field {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: #5D4037;
+            box-shadow: 0 0 0 3px rgba(93,64,55,0.1);
+            outline: none;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .modal-overlay {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800">
+
+<!-- هدر -->
+<header class="header-bg text-white py-4">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                <i class="fas fa-leaf text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-semibold">چرم مشهد</h1>
+                <p class="text-white/80 text-xs">سیستم مدیریت شکایات</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-right">
+                <div class="font-medium">{{ user.name }} {{ user.family }}</div>
+                <div class="text-white/70 text-xs flex items-center gap-1">
+                    <i class="fas fa-user-circle"></i>
+                    {% if admin_mode %}مدیر سیستم{% else %}کاربر{% endif %}
+                </div>
+            </div>
+            <a href="/user_dashboard" class="text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition">
+                <i class="fas fa-arrow-right ml-1"></i> بازگشت
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+
+    <div class="glass-card p-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">
+                    <i class="fas fa-list-alt ml-2 text-primary-color"></i>
+                    لیست شکایات مشتریان
+                </h1>
+                <p class="mt-1 text-gray-600">مدیریت و پیگیری شکایات دریافتی</p>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+                <i class="far fa-calendar ml-1"></i>
+                <span id="jalaliDate"></span>
+            </div>
+        </div>
+
+        <!-- دکمه ثبت شکایت جدید -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-800">شکایات ثبت شده</h2>
+            <button onclick="openNewComplaintModal()" class="btn-primary font-medium px-5 py-3 rounded-lg flex items-center gap-2">
+                <i class="fas fa-plus"></i>
+                شکایت جدید
+            </button>
+        </div>
+
+        <!-- فیلترهای ادمین -->
+        {% if admin_mode %}
+        <div class="mb-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+            <form method="get" action="/Customer_complaint_list" class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <div><label class="block text-sm font-medium mb-1">از تاریخ</label>
+                    <input type="text" name="start_date" id="start_date" value="{{ start_date or '' }}" class="w-full p-3 input-field text-sm" placeholder="1403/01/01" autocomplete="off"></div>
+                <div><label class="block text-sm font-medium mb-1">تا تاریخ</label>
+                    <input type="text" name="end_date" id="end_date" value="{{ end_date or '' }}" class="w-full p-3 input-field text-sm" placeholder="1403/12/29" autocomplete="off"></div>
+                <div><label class="block text-sm font-medium mb-1">شعبه</label>
+                    <select name="branch_filter" class="w-full p-3 input-field text-sm">
+                        <option value="">همه شعب</option>
+                        {% for branch in branches %}<option value="{{ branch.id }}">{{ branch.name }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div><label class="block text-sm font-medium mb-1">ثبت‌کننده</label>
+                    <select name="user_filter" class="w-full p-3 input-field text-sm">
+                        <option value="">همه کاربران</option>
+                        {% for u in complaint_users %}
+                        <option value="{{ u.id }}" {% if user_filter and user_filter|int == u.id %}selected{% endif %}>{{ u.name }} {{ u.family }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex flex-col justify-end space-y-2">
+                    <button type="submit" class="w-full btn-primary font-medium py-3 rounded-lg flex items-center justify-center gap-2"><i class="fas fa-search"></i> جستجو</button>
+                    <a href="/Customer_complaint_list" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 rounded-lg border border-gray-300 text-center transition text-sm">نمایش همه</a>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- جدول شکایات -->
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+            <table class="w-full">
+                <thead class="table-header">
+                <tr>
+                    <th class="px-4 py-3 text-center text-sm">ردیف</th>
+                    <th class="px-4 py-3 text-right text-sm">مشتری</th>
+                    <th class="px-4 py-3 text-center text-sm">شعبه</th>
+                    <th class="px-4 py-3 text-center text-sm">توضیح</th>
+                    <th class="px-4 py-3 text-center text-sm">تاریخ ثبت</th>
+                    <th class="px-4 py-3 text-center text-sm">واحد</th>
+                    <th class="px-4 py-3 text-center text-sm">ثبت‌کننده</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                {% for item in complaints %}
+                <tr class="table-row cursor-pointer hover:bg-gray-50" onclick="openComplaint({{ item.id }})">
+                    <td class="px-4 py-4 text-center font-medium text-gray-700">{{ loop.index }}</td>
+                    <td class="px-4 py-4">
+                        <div class="font-medium">{{ item.customer_name }}</div>
+                        <div class="text-sm text-gray-600">{{ item.customer_phone }}</div>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        {% if item.branch_name %}
+                        <span class="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">{{ item.branch_name }}</span>
+                        {% else %}<span class="text-gray-400">—</span>{% endif %}
+                    </td>
+                    <td class="px-4 py-4 text-center text-sm">{{ item.description|truncate(50) }}</td>
+                    <td class="px-4 py-4 text-center text-sm font-medium">{{ item.created_at_shamsi }}</td>
+                    <td class="px-4 py-4 text-center text-sm">{{ item.unit_name }}</td>
+                    <td class="px-4 py-4 text-center text-sm">
+                        <div>{{ item.user_name }}</div>
+                        <div class="text-xs text-gray-500">{{ item.user_family }}</div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8" class="py-12 text-center text-gray-400"><i class="fas fa-inbox text-4xl mb-3"></i>
+                    <p class="text-lg">هیچ شکایتی ثبت نشده است</p></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- مودال‌ها -->
+<div id="complaintModal" class="fixed inset-0 modal-overlay hidden items-center justify-center z-50 p-4">
+    <div class="glass-card w-full max-w-2xl rounded-xl overflow-hidden p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-edit ml-2"></i> ثبت شکایت جدید</h2>
+        <form method="post" action="/complaints/create" id="complaintForm" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label class="block mb-1 text-sm font-medium">نام کامل مشتری *</label>
+                    <input type="text" name="customer_name" required class="w-full p-3 input-field"></div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium">شماره همراه *</label>
+                    <input
+                            type="tel"
+                            name="customer_phone"
+                            class="w-full p-3 input-field"
+                    >
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block mb-1 text-sm font-medium">شعبه</label>
+                    <select name="branch_id" id="branchSelect" class="w-full p-3 input-field">
+                        <option value="">انتخاب شعبه (اختیاری)</option>
+                        {% for branch in branches %}
+                        <option value="{{ branch.id }}" data-manager="{{ branch.regional_manager.name if branch.regional_manager else 'نامشخص' }}">{{ branch.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input id="regionalManager" class="w-full p-3 mt-2 input-field bg-gray-50 text-gray-600 text-sm" readonly placeholder="مدیر منطقه">
+                </div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium">واحد مربوطه</label>
+                    <select name="unit_id" class="w-full p-3 input-field">
+                        <option value="">انتخاب واحد (اختیاری)</option>
+                        {% for unit in units %}<option value="{{ unit.id }}">{{ unit.name }}</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block mb-3 text-sm font-medium">موارد شکایت (حداقل یکی) *</label>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-3 bg-gray-50 rounded-lg">
+                    {% for issue in issues %}
+                    <label class="flex items-center p-3 bg-white rounded-lg border border-gray-300 hover:border-primary-color cursor-pointer transition">
+                        <input type="checkbox" name="issues" value="{{ issue.id }}" class="ml-2 h-4 w-4 text-primary-color">
+                        <span class="text-sm">{{ issue.name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div>
+                <label class="block mb-1 text-sm font-medium">توضیحات تکمیلی</label>
+                <textarea name="description" rows="4" class="w-full p-3 input-field text-sm" placeholder="جزئیات بیشتر..."></textarea>
+            </div>
+            <div class="flex gap-3 pt-4">
+                <button type="button" onclick="closeNewComplaintModal()" class="flex-1 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 font-medium transition">انصراف</button>
+                <button type="submit" class="flex-1 py-3 rounded-lg btn-primary font-medium"><i class="fas fa-check ml-2"></i> ثبت شکایت</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- مودال جزئیات -->
+<div id="complaintDetailModal" class="fixed inset-0 modal-overlay hidden items-center justify-center z-50 p-4">
+    <div class="glass-card w-full max-w-3xl rounded-xl overflow-hidden max-h-[90vh] overflow-y-auto p-6">
+        <div class="text-center py-8" id="complaintDetailContent">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-color mx-auto"></div>
+            <p class="mt-4 text-gray-600">در حال دریافت اطلاعات...</p>
+        </div>
+    </div>
+</div>
+
+<!-- اسکریپت‌ها -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://unpkg.com/persian-date@latest/dist/persian-date.min.js"></script>
+<script src="https://unpkg.com/persian-datepicker@latest/dist/js/persian-datepicker.min.js"></script>
+<!-- Modal نمایش جزئیات شکایت -->
+
+
+<script>
+    // تاریخ شمسی
+    document.getElementById("jalaliDate").innerText = new Intl.DateTimeFormat("fa-IR",{year:'numeric',month:'long',day:'numeric'}).format(new Date());
+
+    // Persian datepicker
+    $(document).ready(function(){
+        $("#start_date, #end_date").persianDatepicker({
+            format: 'YYYY/MM/DD',
+            initialValue: false,
+            autoClose: true
+        });
+    });
+
+    // باز و بسته کردن مودال ثبت شکایت
+    function openNewComplaintModal(){document.getElementById('complaintModal').classList.remove('hidden');document.getElementById('complaintModal').classList.add('flex');document.body.style.overflow='hidden';}
+    function closeNewComplaintModal(){document.getElementById('complaintModal').classList.add('hidden');document.getElementById('complaintModal').classList.remove('flex');document.body.style.overflow='auto';}
+    function convertPersianDigitsToEnglish(str) {
+        const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+        const englishDigits = '0123456789';
+        return str.replace(/[۰-۹]/g, d => englishDigits[persianDigits.indexOf(d)]);
+    }
+
+    document.getElementById('complaintForm').addEventListener('submit', function(e){
+        // تبدیل ارقام فارسی به انگلیسی
+        function persianToEnglish(str) {
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+            return str.replace(/[۰-۹]/g, function(d) {
+                return englishDigits[persianDigits.indexOf(d)];
+            });
+        }
+
+        const checked = document.querySelectorAll('input[name="issues"]:checked');
+        if(checked.length === 0){
+            e.preventDefault();
+            alert('لطفاً حداقل یک مورد شکایت را انتخاب کنید.');
+            return false;
+        }
+
+        const phoneInput = document.querySelector('input[name="customer_phone"]');
+        let phone = phoneInput.value.replace(/\s+/g, '');
+
+        // تبدیل ارقام فارسی به انگلیسی
+        phone = persianToEnglish(phone);
+
+        // آپدیت مقدار فیلد (اختیاری)
+        phoneInput.value = phone;
+
+        if(!/^(\+98|0)?9\d{9}$/.test(phone)){
+            e.preventDefault();
+            alert('لطفاً شماره تلفن معتبر وارد کنید (مثال: ۰۹۱۲۳۴۵۶۷۸۹ یا 09123456789)');
+            return false;
+        }
+    });
+
+    // نمایش مدیر منطقه
+    const branchSelect = document.getElementById("branchSelect");
+    const regionalManager = document.getElementById("regionalManager");
+    if(branchSelect){branchSelect.addEventListener("change",function(){regionalManager.value=this.options[this.selectedIndex].getAttribute("data-manager")||'';});}
+
+    // باز کردن جزئیات شکایت
+    function openComplaint(id){
+        const modal=document.getElementById('complaintDetailModal');
+        const content=document.getElementById('complaintDetailContent');
+        content.innerHTML='<div class="text-center py-8"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-color mx-auto"></div><p class="mt-4 text-gray-600">در حال دریافت اطلاعات...</p></div>';
+        modal.classList.remove('hidden');modal.classList.add('flex');document.body.style.overflow='hidden';
+
+        fetch(`/complaints/${id}`).then(res=>res.ok?res.json():Promise.reject('خطا در دریافت اطلاعات')).then(data=>{
+            content.innerHTML=`<div class="space-y-6">
+                <div class="bg-blue-50 p-4 rounded-lg"><h3 class="text-lg font-semibold mb-3 flex items-center"><i class="fas fa-user ml-2 text-blue-600"></i> اطلاعات مشتری</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><p class="text-sm text-gray-500 mb-1">نام کامل مشتری</p><p class="font-medium text-gray-800">${data.customer_name||'—'}</p></div>
+                <div><p class="text-sm text-gray-500 mb-1">شماره تماس</p><a href="tel:${data.customer_phone}" class="font-medium text-blue-600 hover:text-blue-800">${data.customer_phone||'—'}</a></div></div></div>
+                <div class="bg-green-50 p-4 rounded-lg"><h3 class="text-lg font-semibold mb-3 flex items-center"><i class="fas fa-building ml-2 text-green-600"></i> اطلاعات سازمانی</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><p class="text-sm text-gray-500 mb-1">شعبه</p><span class="inline-block px-3 py-1 bg-white text-gray-700 rounded-full text-sm font-medium border border-green-200">${data.branch_name||'ثبت نشده'}</span></div>
+                <div><p class="text-sm text-gray-500 mb-1">واحد مربوطه</p><span class="inline-block px-3 py-1 bg-white text-gray-700 rounded-full text-sm font-medium border border-green-200">${data.unit_name||'ثبت نشده'}</span></div></div></div>
+                <div class="bg-yellow-50 p-4 rounded-lg"><h3 class="text-lg font-semibold mb-3 flex items-center"><i class="fas fa-file-alt ml-2 text-yellow-600"></i> توضیحات شکایت</h3>
+                <div><p class="text-sm text-gray-500 mb-2">متن شکایت</p><div class="p-4 bg-white rounded-lg border border-yellow-200 text-gray-800 leading-relaxed whitespace-pre-line">${data.description||'توضیحاتی ثبت نشده است.'}</div></div></div>
+
+                 <div class="p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-700">موارد</h3>
+                        <div class="p-4 bg-white rounded-lg border border-gray-200 text-gray-800">
+                            ${data.issues && data.issues.length > 0 ? data.issues.join('<br>') : 'ثبت نشده'}
+                        </div>
+                    </div>
+                <div class="bg-purple-50 p-4 rounded-lg"><h3 class="text-lg font-semibold mb-3 flex items-center"><i class="fas fa-history ml-2 text-purple-600"></i> اطلاعات ثبت</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><p class="text-sm text-gray-500 mb-1">ثبت‌کننده</p><div class="flex items-center"><div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center ml-2"><i class="fas fa-user text-purple-600"></i></div>
+                <div><p class="font-medium text-gray-800">${data.user_name||''} ${data.user_family||''}</p></div></div></div>
+                <div><p class="text-sm text-gray-500 mb-1">تاریخ و زمان ثبت</p><div class="flex items-center"><div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center ml-2"><i class="fas fa-calendar text-purple-600"></i></div>
+                <div><p class="font-medium text-gray-800">${data.created_at_shamsi||'—'}</p></div></div></div></div></div>
+                <div class="flex gap-3 pt-4 border-t border-gray-200"><button onclick="closeDetailModal()" class="flex-1 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 font-medium transition">بستن</button>
+                <button onclick="printComplaintDetails()" class="flex-1 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition flex items-center justify-center"><i class="fas fa-print ml-2"></i> چاپ اطلاعات</button></div>
+            </div>`;
+        }).catch(err=>{content.innerHTML=`<div class="text-center py-8"><i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i><p class="text-lg text-gray-700 mb-2">خطا در دریافت اطلاعات</p><p class="text-gray-600 mb-4">${err}</p><button onclick="closeDetailModal()" class="px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 font-medium transition">بستن</button></div>`});
+    }
+
+    function closeDetailModal(){document.getElementById('complaintDetailModal').classList.add('hidden');document.getElementById('complaintDetailModal').classList.remove('flex');document.body.style.overflow='auto';}
+
+    // چاپ جزئیات
+    function printComplaintDetails(){
+        const content=document.getElementById('complaintDetailContent').innerHTML;
+        const original=document.body.innerHTML;
+        document.body.innerHTML=`<html dir="rtl"><head><meta charset="UTF-8"><title>جزئیات شکایت</title><style>body{font-family:'Segoe UI',Tahoma,sans-serif;padding:20px;line-height:1.6}.section{margin-bottom:20px;padding:15px;border:1px solid #ddd;border-radius:5px}@media print{button{display:none}}</style></head><body>${content}</body></html>`;
+        window.print();document.body.innerHTML=original;location.reload();
+    }
+</script>
+</body>
+</html>

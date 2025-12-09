@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>داشبورد شکایات | چرم مشهد</title>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        :root {
+            --leather-dark: #5D4037;          /* قهوه‌ای تیره چرم */
+            --leather-medium: #8B4513;        /* قهوه‌ای اصلی */
+            --leather-light: #D2691E;         /* قهوه‌ای روشن */
+            --gold-primary: #D4AF37;          /* طلایی اصلی */
+            --gold-light: #F5E8AA;            /* طلایی روشن */
+            --cream-bg: #FFFCF5;              /* پس‌زمینه کرمی */
+            --cream-card: #FFFDF9;            /* کارت‌ها */
+            --border-light: #EDE4D8;          /* خطوط */
+            --text-dark: #3E2723;             /* متن تیره */
+            --text-medium: #5D4037;           /* متن متوسط */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--cream-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-size: 15px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* هدر */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .header-left h1 {
+            font-size: 1.8rem;
+            color: var(--leather-dark);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-left h1 i {
+            color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .header-left p {
+            color: var(--text-medium);
+            margin-top: 8px;
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* دکمه بازگشت */
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            border: 1.5px solid var(--border-light);
+            border-radius: 8px;
+            color: var(--leather-medium);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-back:hover {
+            background: var(--cream-card);
+            border-color: var(--gold-primary);
+            color: var(--leather-dark);
+            transform: translateX(-3px);
+        }
+
+        /* کارت‌ها */
+        .card {
+            background: var(--cream-card);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.04);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.08);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--leather-dark);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+
+        .card-title i {
+            color: var(--gold-primary);
+        }
+
+        /* فرم فیلتر */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 5px;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--leather-medium);
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-input, .filter-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1.5px solid var(--border-light);
+            border-radius: 8px;
+            background: white;
+            color: var(--text-dark);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+        }
+
+        /* دکمه‌های اقدام */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--leather-dark);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--leather-medium);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(93, 64, 55, 0.15);
+        }
+
+        .btn-secondary {
+            background: var(--gold-primary);
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .btn-secondary:hover {
+            background: #E6C34A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--leather-medium);
+            border: 1.5px solid var(--border-light);
+        }
+
+        .btn-outline:hover {
+            background: rgba(139, 69, 19, 0.05);
+            border-color: var(--leather-light);
+        }
+
+        /* آمار */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-top: 4px solid var(--gold-primary);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--leather-dark);
+            margin: 15px 0;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--text-medium);
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* جدول */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--border-light);
+            background: white;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        .table thead {
+            background: linear-gradient(to bottom, #FFFCF5, #F9F5EE);
+        }
+
+        .table th {
+            padding: 18px 15px;
+            text-align: right;
+            color: var(--leather-dark);
+            font-weight: 600;
+            border-bottom: 2px solid var(--gold-primary);
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 16px 15px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-medium);
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(212, 175, 55, 0.04);
+        }
+
+        /* نشانگر وضعیت */
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-brown {
+            background: rgba(139, 69, 19, 0.1);
+            color: var(--leather-medium);
+        }
+
+        .badge-gold {
+            background: rgba(212, 175, 55, 0.12);
+            color: var(--leather-dark);
+        }
+
+        /* نمودار درصدی */
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-primary), var(--leather-light));
+            border-radius: 4px;
+        }
+
+        /* فوتر */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-light);
+            color: var(--text-medium);
+            font-size: 0.85rem;
+            opacity: 0.8;
+            position: relative;
+        }
+
+        .signature {
+            position: absolute;
+            left: 20px;
+            bottom: 0;
+            font-size: 0.7rem;
+            color: #D4D4D4;
+            letter-spacing: 1px;
+            transform: rotate(-90deg) translateY(-100%);
+            transform-origin: left bottom;
+            opacity: 0.4;
+            user-select: none;
+        }
+
+        /* وضعیت‌های پاسخگو */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 0 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .header-right {
+                align-self: stretch;
+            }
+
+            .btn-back {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            body {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+    <!-- فونت Vazirmatn برای فونت فارسی زیبا -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container">
+    <!-- هدر -->
+    <div class="header">
+        <div class="header-left">
+            <h1><i class="fas fa-chart-line"></i> تحلیل شکایات مشتریان</h1>
+            <p>سیستم یکپارچه مدیریت و پیگیری شکایات | چرم مشهد</p>
+        </div>
+        <div class="header-right">
+            <a href="/user_dashboard" class="btn-back">
+                <i class="fas fa-arrow-right"></i>
+                بازگشت به داشبورد
+            </a>
+        </div>
+    </div>
+
+    <!-- کارت فیلترها -->
+    <div class="card">
+        <h2 class="card-title"><i class="fas fa-sliders-h"></i> فیلترهای پیشرفته</h2>
+        <form id="reportForm" method="post" action="/complaints/report">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label"><i class="far fa-calendar"></i> تاریخ شروع</label>
+                    <input type="text" class="filter-input" name="jalali_date_start" required
+                           value="{{ start_date or '' }}" placeholder="1403/01/01"/>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label"><i class="far fa-calendar"></i> تاریخ پایان</label>
+                    <input type="text" class="filter-input" name="jalali_date_end" required
+                           value="{{ end_date or '' }}" placeholder="1403/12/29"/>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fas fa-store"></i> شعبه</label>
+                    <select class="filter-select" name="branch_id">
+                        <option value="">همه شعب</option>
+                        {% for b in branches %}
+                        <option value="{{ b.id }}" {% if selected.branch_id and selected.branch_id == b.id %}selected{% endif %}>{{ b.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fas fa-sitemap"></i> واحد سازمانی</label>
+                    <select class="filter-select" name="unit_id">
+                        <option value="">همه واحدها</option>
+                        {% for u in units %}
+                        <option value="{{ u.id }}" {% if selected.unit_id and selected.unit_id == u.id %}selected{% endif %}>{{ u.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fas fa-user-tie"></i> مدیر منطقه</label>
+                    <select class="filter-select" name="regional_manager_id">
+                        <option value="">همه مدیران</option>
+                        {% for r in regional_managers %}
+                        <option value="{{ r.id }}" {% if selected.regional_manager_id and selected.regional_manager_id == r.id %}selected{% endif %}>{{ r.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fas fa-tag"></i> موضوع شکایت</label>
+                    <select class="filter-select" name="issue_id">
+                        <option value="">همه موضوعات</option>
+                        {% for it in issues %}
+                        <option value="{{ it.id }}" {% if selected.issue_id and selected.issue_id == it.id %}selected{% endif %}>{{ it.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label"><i class="fas fa-search"></i> جستجوی مشتری</label>
+                    <input type="text" class="filter-input" name="customer_query"
+                           placeholder="نام یا شماره تماس مشتری" value="{{ selected.customer_query or '' }}"/>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-filter"></i>
+                    اعمال فیلترها
+                </button>
+                <button type="button" id="exportBtn" class="btn btn-secondary">
+                    <i class="fas fa-file-excel"></i>
+                    خروجی Excel
+                </button>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- آمار کلی -->
+    <div class="card">
+        <h2 class="card-title"><i class="fas fa-chart-bar"></i> خلاصه آماری</h2>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <i class="fas fa-file-alt" style="color: var(--gold-primary); font-size: 1.5rem;"></i>
+                <div class="stat-value">{{ total_count or 0 }}</div>
+                <div class="stat-label">کل شکایات</div>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-store" style="color: var(--leather-light); font-size: 1.5rem;"></i>
+                <div class="stat-value">{{ branches|length }}</div>
+                <div class="stat-label">شعب فعال</div>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-tags" style="color: var(--leather-medium); font-size: 1.5rem;"></i>
+                <div class="stat-value">{{ issues|length }}</div>
+                <div class="stat-label">موضوعات</div>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-users" style="color: var(--gold-primary); font-size: 1.5rem;"></i>
+                <div class="stat-value">{{ regional_managers|length }}</div>
+                <div class="stat-label">مدیران منطقه</div>
+            </div>
+        </div>
+
+        {% if issue_stats %}
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>موضوع شکایت</th>
+                    <th>تعداد</th>
+                    <th>درصد</th>
+                    <th>نمودار</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in issue_stats %}
+                <tr>
+                    <td><span class="badge badge-brown">{{ s.title }}</span></td>
+                    <td><strong>{{ s.count }}</strong></td>
+                    <td>{{ s.percent }}%</td>
+                    <td>
+                        <div class="progress-container">
+                            <span style="font-size: 0.85rem; color: var(--text-medium);">{{ s.percent }}%</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ s.percent }}%;"></div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 40px 20px; color: var(--text-medium);">
+            <i class="fas fa-chart-pie" style="font-size: 3.5rem; opacity: 0.2; margin-bottom: 15px;"></i>
+            <p style="font-size: 1rem; opacity: 0.7;">داده‌ای برای نمایش وجود ندارد. لطفا فیلترهای دیگری انتخاب کنید.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- جدول شکایات -->
+    <div class="card">
+        <h2 class="card-title"><i class="fas fa-list-ol"></i> رکوردهای شکایات</h2>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>شناسه</th>
+                    <th>کد پیگیری</th>
+                    <th>مشتری</th>
+                    <th>تماس</th>
+                    <th>شعبه</th>
+                    <th>واحد</th>
+                    <th>مدیر منطقه</th>
+                    <th>ثبت‌کننده</th>
+                    <th>موضوعات</th>
+                    <th>تاریخ</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for c in complaints_query %}
+                <tr>
+                    <td><span class="badge badge-gold">#{{ c.id }}</span></td>
+                    <td><strong style="font-family: monospace;">{{ c.tracking_code }}</strong></td>
+                    <td>{{ c.customer_name }}</td>
+                    <td>{{ c.customer_phone }}</td>
+                    <td>{{ c.branch.name or '-' }}</td>
+                    <td>{{ c.unit.name or '-' }}</td>
+                    <td>{{ c.branch.regional_manager.name
+                        if c.branch and c.branch.regional_manager else '-' }}</td>
+                    <td>{{ (c.user.name ~ ' ' ~ c.user.family) if c.user else '-' }}</td>
+                    <td>
+                        {% for issue in c.issues_names %}
+                        <span class="badge badge-brown" style="display: block; margin: 3px 0;">{{ issue }}</span>
+                        {% endfor %}
+                    </td>
+                    <td style="white-space: nowrap;">{{ c.created_at_jalali }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- فوتر -->
+    <div class="footer">
+        <div class="signature">طراحی شده توسط تیم چرم مشهد</div>
+        <p>گزارش تولید شده در تاریخ {{ current_date }} | نسخه ۲.۱</p>
+        <p style="font-size: 0.8rem; margin-top: 8px; opacity: 0.6;">
+            <i class="fas fa-shield-alt"></i> کلیه اطلاعات محرمانه و مطابق با قوانین حریم خصوصی محافظت می‌شوند.
+        </p>
+    </div>
+</div>
+
+<script>
+    function clearFilters() {
+        const form = document.getElementById('reportForm');
+        form.reset();
+        showNotification('فیلترها با موفقیت بازنشانی شدند.', 'success');
+    }
+    document.getElementById('exportBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const form = document.getElementById('reportForm');
+        const formData = new FormData(form);
+
+        showNotification('در حال تولید فایل Excel...', 'info');
+
+        fetch("/complaints/report/export", {
+            method: "POST",
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('خطا در دریافت فایل');
+                }
+
+                return response.blob(); // ⬅️ خیلی مهم
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'complaints.xlsx'; // اسم فایل (اختیاری)
+                document.body.appendChild(a);
+                a.click();
+
+                a.remove();
+                window.URL.revokeObjectURL(url);
+
+                showNotification('فایل Excel دانلود شد ✅', 'success');
+            })
+            .catch(error => {
+                console.error(error);
+                showNotification('خطا در دانلود فایل', 'error');
+            });
+    });
+
+    // document.getElementById('exportBtn').addEventListener('click', function(e) {
+    //     e.preventDefault(); // جلوی submit عادی فرم رو می‌گیره
+    //
+    //     const form = document.getElementById('reportForm');
+    //     const formData = new FormData(form);
+    //
+    //     showNotification('در حال تولید فایل Excel...', 'info');
+    //
+    //     fetch("/complaints/report/export", {
+    //         method: "POST",
+    //         body: formData
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             if (data.success) {
+    //                 // اگر موفق بود، می‌تونی لینک دانلود فایل رو باز کنی یا کار دیگه‌ای بکنی
+    //                 showNotification('فایل Excel با موفقیت ساخته شد.', 'success');
+    //                 // مثال: window.location.href = data.file_url;
+    //             } else {
+    //                 // خطا رو نشون بده
+    //                 showNotification(data.message || 'خطا رخ داده است.', 'error');
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error(error);
+    //             showNotification('خطا در ارتباط با سرور', 'error');
+    //         });
+    // });
+
+
+    // document.getElementById('exportBtn').addEventListener('click', function() {
+    //     const form = document.getElementById('reportForm');
+    //     const originalAction = form.action;
+    //     const originalMethod = form.method;
+    //
+    //     form.action = "/complaints/report/export";
+    //     form.method = "post";
+    //     form.submit();
+    //
+    //     setTimeout(() => {
+    //         form.action = originalAction;
+    //         form.method = originalMethod;
+    //     }, 100);
+    //
+    //     showNotification('در حال تولید فایل Excel...', 'info');
+    // });
+
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.cssText = `
+                position: fixed;
+                top: 25px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 14px 28px;
+                border-radius: 8px;
+                background: ${type === 'success' ? 'var(--leather-medium)' : 'var(--gold-primary)'};
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+                animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+                font-family: inherit;
+            `;
+
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `
+            @keyframes slideIn {
+                from { top: 0; opacity: 0; }
+                to { top: 25px; opacity: 1; }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        `;
+    document.head.appendChild(style);
+
+    // بهبود تجربه کاربری: فوکوس روی اولین فیلد
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstInput = document.querySelector('.filter-input');
+        if (firstInput) firstInput.focus();
+    });
+</script>
+</body>
+</html>
