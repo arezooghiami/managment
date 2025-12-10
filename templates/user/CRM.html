@@ -1,173 +1,174 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>داشبورد مدیریتی چرم مشهد | CRM</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --leather-primary: #5D4037;
-      --leather-secondary: #795548;
-      --leather-accent: #D7CCC8;
-      --leather-light: #EFEBE9;
-      --gold: #D4AF37;
-      --primary-color: #5D4037;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد مدیریتی چرم مشهد | CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --leather-primary: #5D4037;
+            --leather-secondary: #795548;
+            --leather-accent: #D7CCC8;
+            --leather-light: #EFEBE9;
+            --gold: #D4AF37;
+            --primary-color: #5D4037;
+        }
 
-    body {
-      font-family: 'Vazirmatn', sans-serif;
-      background: linear-gradient(135deg, #f9f5f0 0%, #f0e6dc 100%);
-      background-attachment: fixed;
-      color: #333;
-    }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(135deg, #f9f5f0 0%, #f0e6dc 100%);
+            background-attachment: fixed;
+            color: #333;
+        }
 
-    .leather-texture {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%235D4037"/><path d="M20,20 Q40,5 60,20 T100,20 Q80,40 60,20 T20,20" fill="%234E342E" opacity="0.2"/><path d="M30,30 Q50,15 70,30 T100,30 Q80,50 70,30 T30,30" fill="%234E342E" opacity="0.2"/></svg>');
-      background-size: 200px;
-    }
+        .leather-texture {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%235D4037"/><path d="M20,20 Q40,5 60,20 T100,20 Q80,40 60,20 T20,20" fill="%234E342E" opacity="0.2"/><path d="M30,30 Q50,15 70,30 T100,30 Q80,50 70,30 T30,30" fill="%234E342E" opacity="0.2"/></svg>');
+            background-size: 200px;
+        }
 
-    .card-leather {
-      background: white;
-      border: 1px solid #e0d8d0;
-      box-shadow: 0 4px 20px rgba(93, 64, 55, 0.08);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
+        .card-leather {
+            background: white;
+            border: 1px solid #e0d8d0;
+            box-shadow: 0 4px 20px rgba(93, 64, 55, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .card-leather::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--gold), #b08d57);
-    }
+        .card-leather::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold), #b08d57);
+        }
 
-    .card-leather:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(93, 64, 55, 0.15);
-    }
+        .card-leather:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(93, 64, 55, 0.15);
+        }
 
-    .btn-leather {
-      background: linear-gradient(to bottom, var(--leather-secondary), var(--leather-primary));
-      color: white;
-      border: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(93, 64, 55, 0.2);
-    }
+        .btn-leather {
+            background: linear-gradient(to bottom, var(--leather-secondary), var(--leather-primary));
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(93, 64, 55, 0.2);
+        }
 
-    .btn-leather:hover {
-      background: linear-gradient(to bottom, var(--leather-primary), #4E342E);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(93, 64, 55, 0.3);
-    }
+        .btn-leather:hover {
+            background: linear-gradient(to bottom, var(--leather-primary), #4E342E);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(93, 64, 55, 0.3);
+        }
 
-    .btn-action {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      font-weight: bold;
-      transition: all 0.2s ease;
-    }
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
 
-    .btn-action:hover {
-      transform: scale(1.15);
-    }
+        .btn-action:hover {
+            transform: scale(1.15);
+        }
 
-    .gold-accent {
-      color: var(--gold);
-    }
+        .gold-accent {
+            color: var(--gold);
+        }
 
-    .border-leather {
-      border-bottom: 1px solid #e0d8d0;
-    }
+        .border-leather {
+            border-bottom: 1px solid #e0d8d0;
+        }
 
-    .leather-pattern {
-      background:
-              radial-gradient(circle at 10% 20%, rgba(121, 85, 72, 0.05) 0%, transparent 5%),
-              radial-gradient(circle at 90% 80%, rgba(121, 85, 72, 0.05) 0%, transparent 5%),
-              radial-gradient(circle at 50% 50%, rgba(121, 85, 72, 0.03) 0%, transparent 10%);
-      background-size: 200px 200px;
-    }
+        .leather-pattern {
+            background: radial-gradient(circle at 10% 20%, rgba(121, 85, 72, 0.05) 0%, transparent 5%),
+            radial-gradient(circle at 90% 80%, rgba(121, 85, 72, 0.05) 0%, transparent 5%),
+            radial-gradient(circle at 50% 50%, rgba(121, 85, 72, 0.03) 0%, transparent 10%);
+            background-size: 200px 200px;
+        }
 
-    /* استایل برای مودال */
-    .modal-overlay {
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 50;
-    }
+        /* استایل برای مودال */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+        }
 
-    .glass-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 8px 32px rgba(93, 64, 55, 0.15);
-      animation: modalSlideIn 0.3s ease-out;
-    }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(93, 64, 55, 0.15);
+            animation: modalSlideIn 0.3s ease-out;
+        }
 
-    @keyframes modalSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    .input-field {
-      border: 1px solid #d1d5db;
-      border-radius: 0.5rem;
-      transition: all 0.2s ease;
-      background-color: #f9fafb;
-    }
+        .input-field {
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            background-color: #f9fafb;
+        }
 
-    .input-field:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.1);
-      background-color: white;
-    }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.1);
+            background-color: white;
+        }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--leather-secondary), var(--leather-primary));
-      color: white;
-      border: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(93, 64, 55, 0.25);
-    }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--leather-secondary), var(--leather-primary));
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(93, 64, 55, 0.25);
+        }
 
-    .btn-primary:hover {
-      background: linear-gradient(135deg, var(--leather-primary), #4E342E);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(93, 64, 55, 0.35);
-    }
-  </style>
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--leather-primary), #4E342E);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(93, 64, 55, 0.35);
+        }
+    </style>
 </head>
 <body class="min-h-screen leather-pattern">
 <!-- نوار هدر لوکس -->
 <div class="leather-texture py-4 shadow-lg">
-  <div class="container mx-auto px-4">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <div class="bg-white p-2 rounded-full shadow-md">
-          <img src="/static/image/logox.png" alt="لوگو چرم مشهد" class="w-10 h-10 object-contain rounded-full" />
-        </div>
-        <div class="absolute top-4 right-4 z-20">
-          <form action="/user_dashboard" method="GET">
-            <input type="hidden" name="user_id" value="{{ user.id }}" />
-            <button
-                    type="submit"
-                    class="btn btn-custom btn-sm text-white font-bold px-4 py-2 rounded-md shadow"
-                    style="
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="bg-white p-2 rounded-full shadow-md">
+                    <img src="/static/image/logox.png" alt="لوگو چرم مشهد"
+                         class="w-10 h-10 object-contain rounded-full"/>
+                </div>
+                <div class="absolute top-4 right-4 z-20">
+                    <form action="/user_dashboard" method="GET">
+                        <input type="hidden" name="user_id" value="{{ user.id }}"/>
+                        <button
+                                type="submit"
+                                class="btn btn-custom btn-sm text-white font-bold px-4 py-2 rounded-md shadow"
+                                style="
                     background: linear-gradient(
                         135deg,
                         var(--primary-dark) 0%,
@@ -176,343 +177,373 @@
                     );
                     border: 1px solid rgba(255, 255, 255, 0.2);
                 "
-            >
-              <i class="fas fa-arrow-right ml-2"></i> بازگشت
-            </button>
-          </form>
-        </div>
-        <div>
-          <h1 class="text-xl md:text-2xl font-bold text-white">چرم مشهد</h1>
-          <p class="text-amber-200 text-sm">تولید و فروش محصولات چرمی مرغوب</p>
-        </div>
-      </div>
+                        >
+                            <i class="fas fa-arrow-right ml-2"></i> بازگشت
+                        </button>
+                    </form>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-white">چرم مشهد</h1>
+                    <p class="text-amber-200 text-sm">تولید و فروش محصولات چرمی مرغوب</p>
+                </div>
+            </div>
 
-      <div class="hidden md:flex items-center space-x-6">
-        <a href="/report" class="text-amber-200 hover:text-white transition">
-          <i class="fas fa-chart-line mr-1"></i> گزارشات
-        </a>
-        <a href="/Customer_complaint_list" class="text-amber-200 hover:text-white transition">
-          <i class="fas fa-headset mr-1"></i> شکایت مشتری
-        </a>
-        <a href="#" class="text-amber-200 hover:text-white transition">
-          <i class="fas fa-users mr-1"></i> مشتریان
-        </a>
-        <a href="#" class="text-amber-200 hover:text-white transition">
-          <i class="fas fa-cog mr-1"></i> تنظیمات
-        </a>
-      </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="/report" class="text-amber-200 hover:text-white transition">
+                    <i class="fas fa-chart-line mr-1"></i> گزارشات
+                </a>
+                <a href="/Customer_complaint_list" class="text-amber-200 hover:text-white transition">
+                    <i class="fas fa-headset mr-1"></i> شکایت مشتری
+                </a>
+                <a href="#" class="text-amber-200 hover:text-white transition">
+                    <i class="fas fa-users mr-1"></i> مشتریان
+                </a>
+                <a href="#" class="text-amber-200 hover:text-white transition">
+                    <i class="fas fa-cog mr-1"></i> تنظیمات
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="container mx-auto px-4 py-8 max-w-7xl">
-  <!-- هدر صفحه -->
-  <div class="text-center mb-10">
-    <h1 class="text-3xl md:text-4xl font-bold text-[#5D4037]">داشبورد مدیریت ارتباط با مشتریان</h1>
-    <div class="w-32 h-1 bg-gradient-to-r from-[#D4AF37] to-[#b08d57] mx-auto mt-4 rounded-full"></div>
-    <p class="text-gray-600 mt-4 max-w-2xl mx-auto">مدیریت حرفه‌ای تماس‌ها و تعاملات مشتریان با سیستم CRM چرم مشهد</p>
-  </div>
-
-  <!-- کارت اطلاعات کاربر -->
-  <div class="card-leather rounded-xl p-6 mb-8">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-      <div>
-        <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037] mb-2">
-          <i class="fas fa-user-circle gold-accent mr-2"></i> اطلاعات کاربر
-        </h2>
-        <div class="flex flex-wrap gap-4 mt-4">
-          <div class="flex items-center">
-            <span class="text-gray-500 ml-2"><i class="fas fa-user"></i></span>
-            <span class="text-gray-700 font-medium">نام: {{ user.name + ' ' + user.family if user else 'ناشناس' }}</span>
-          </div>
-          <div class="flex items-center">
-            <span class="text-gray-500 ml-2"><i class="fas fa-calendar"></i></span>
-            <span class="text-gray-700 font-medium">تاریخ: {{ today }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- دکمه ثبت شکایت جدید -->
-      <div class="mt-6 md:mt-0">
-        <button onclick="openNewComplaintModal()" class="btn-primary font-medium px-6 py-3 rounded-lg flex items-center gap-2">
-          <i class="fas fa-plus"></i>
-          شکایت جدید
-        </button>
-      </div>
+    <!-- هدر صفحه -->
+    <div class="text-center mb-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-[#5D4037]">داشبورد مدیریت ارتباط با مشتریان</h1>
+        <div class="w-32 h-1 bg-gradient-to-r from-[#D4AF37] to-[#b08d57] mx-auto mt-4 rounded-full"></div>
+        <p class="text-gray-600 mt-4 max-w-2xl mx-auto">مدیریت حرفه‌ای تماس‌ها و تعاملات مشتریان با سیستم CRM چرم
+            مشهد</p>
     </div>
-  </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <!-- کارت تماس‌های ورودی -->
-    <div class="card-leather rounded-xl p-6">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037]">
-          <i class="fas fa-phone-alt gold-accent mr-3"></i>تماس‌های ورودی
-        </h2>
-      </div>
-
-      <div class="space-y-4">
-        {% set persian_labels_incoming = {
-        'posty_code': 'استعلام کد رهگیری',
-        'send_product_deadline': 'مهلت ارسال کالا',
-        'branch_change': 'تعویض و مرجوع شعبه',
-        'online_change': 'تعویض آنلاین',
-        'online_return': 'مرجوع آنلاین',
-        'branch_dissatisfaction': 'نارضایتی از شعبه',
-        'payment_followup': 'پیگیری واریزی',
-        'incomplete_delivery': 'ارسال ناقص',
-        'b2b_sales': 'فروش سازمانی',
-        'waiting_for_payment': 'در انتظار پرداخت',
-        'product_search': 'سرچ کالا',
-        'after_sales_service': 'خدمات پس از فروش',
-        'club': 'باشگاه',
-        'other': 'متفرقه',
-        'branch_info':'اطلاعات شعب',
-        'product_site_info':'اطلاعات سایت و محصول',
-        'snapp_pay':'اسنپ‌ پی',
-        'inner_call':'داخلی',
-        'defective_product':'کالای ایراد دار'
-        } %}
-        {% for key, value in incoming_data.items() %}
-        <div class="flex items-center justify-between py-3 border-leather">
-          <div class="flex items-center">
-            <div class="w-8 h-8 rounded-full bg-[#EFEBE9] flex items-center justify-center mr-3">
-              <i class="fas fa-phone text-[#795548]"></i>
+    <!-- کارت اطلاعات کاربر -->
+    <div class="card-leather rounded-xl p-6 mb-8">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+                <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037] mb-2">
+                    <i class="fas fa-user-circle gold-accent mr-2"></i> اطلاعات کاربر
+                </h2>
+                <div class="flex flex-wrap gap-4 mt-4">
+                    <div class="flex items-center">
+                        <span class="text-gray-500 ml-2"><i class="fas fa-user"></i></span>
+                        <span class="text-gray-700 font-medium">نام: {{ user.name + ' ' + user.family if user else 'ناشناس' }}</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-gray-500 ml-2"><i class="fas fa-calendar"></i></span>
+                        <span class="text-gray-700 font-medium">تاریخ: {{ today }}</span>
+                    </div>
+                </div>
             </div>
-            <span class="text-gray-700 font-medium">{{ persian_labels_incoming[key] }}</span>
-          </div>
-          <div class="flex items-center space-x-3">
-            <button onclick="updateValue('incoming', '{{ key }}', -1)" class="btn-action bg-rose-100 text-rose-700">
-              <i class="fas fa-minus"></i>
-            </button>
-            <span class="text-lg font-semibold text-gray-800 min-w-[30px] text-center">{{ value }}</span>
-            <button onclick="updateValue('incoming', '{{ key }}', 1)" class="btn-action bg-emerald-100 text-emerald-700">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
 
-    <!-- کارت تماس‌های خروجی -->
-    <div class="card-leather rounded-xl p-6">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037]">
-          <i class="fas fa-phone-volume gold-accent mr-3"></i>تماس‌های خروجی
-        </h2>
-      </div>
-
-      <div class="space-y-4">
-        {% set persian_labels_out = {
-        'internet': 'خروجی پیگیری اینترنتی',
-        'voice_mail': 'صندوق صوتی'
-        } %}
-        {% for key, value in out_data.items() %}
-        <div class="flex items-center justify-between py-3 border-leather">
-          <div class="flex items-center">
-            <div class="w-8 h-8 rounded-full bg-[#EFEBE9] flex items-center justify-center mr-3">
-              <i class="fas fa-phone text-[#795548]"></i>
+            <!-- دکمه ثبت شکایت جدید -->
+            <div class="mt-6 md:mt-0">
+                <button onclick="openNewComplaintModal()"
+                        class="btn-primary font-medium px-6 py-3 rounded-lg flex items-center gap-2">
+                    <i class="fas fa-plus"></i>
+                    شکایت جدید
+                </button>
             </div>
-            <span class="text-gray-700 font-medium">{{ persian_labels_out[key] }}</span>
-          </div>
-          <div class="flex items-center space-x-3">
-            <button onclick="updateValue('out', '{{ key }}', -1)" class="btn-action bg-rose-100 text-rose-700">
-              <i class="fas fa-minus"></i>
-            </button>
-            <span class="text-lg font-semibold text-gray-800 min-w-[30px] text-center">{{ value }}</span>
-            <button onclick="updateValue('out', '{{ key }}', 1)" class="btn-action bg-emerald-100 text-emerald-700">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
         </div>
-        {% endfor %}
-      </div>
     </div>
-  </div>
 
-  <!-- مودال ثبت شکایت جدید (همان‌طور که خواسته بودید) -->
-  <div id="complaintModal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50 p-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- کارت تماس‌های ورودی -->
+        <div class="card-leather rounded-xl p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037]">
+                    <i class="fas fa-phone-alt gold-accent mr-3"></i>تماس‌های ورودی
+                </h2>
+            </div>
 
-  <div class="glass-card w-full max-w-2xl rounded-xl overflow-hidden p-6">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-edit ml-2"></i> ثبت شکایت جدید</h2>
-      <form method="post" action="/complaints/create" id="complaintForm" class="space-y-5">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div><label class="block mb-1 text-sm font-medium">نام کامل مشتری *</label>
-            <input type="text" name="customer_name" required class="w-full p-3 input-field"></div>
-          <div>
-            <label class="block mb-1 text-sm font-medium">شماره همراه *</label>
-            <input
-                    type="tel"
-                    name="customer_phone"
-                    required
-                    class="w-full p-3 input-field"
-            >
-          </div>
+            <div class="space-y-4">
+                {% set persian_labels_incoming = {
+                'posty_code': 'استعلام کد رهگیری',
+                'send_product_deadline': 'مهلت ارسال کالا',
+                'branch_change': 'تعویض و مرجوع شعبه',
+                'online_change': 'تعویض آنلاین',
+                'online_return': 'مرجوع آنلاین',
+                'branch_dissatisfaction': 'نارضایتی از شعبه',
+                'payment_followup': 'پیگیری واریزی',
+                'incomplete_delivery': 'ارسال ناقص',
+                'b2b_sales': 'فروش سازمانی',
+                'waiting_for_payment': 'در انتظار پرداخت',
+                'product_search': 'سرچ کالا',
+                'after_sales_service': 'خدمات پس از فروش',
+                'club': 'باشگاه',
+                'other': 'متفرقه',
+                'branch_info':'اطلاعات شعب',
+                'product_site_info':'اطلاعات سایت و محصول',
+                'snapp_pay':'اسنپ‌ پی',
+                'inner_call':'داخلی',
+                'defective_product':'کالای ایراد دار'
+                } %}
+                {% for key, value in incoming_data.items() %}
+                <div class="flex items-center justify-between py-3 border-leather">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-[#EFEBE9] flex items-center justify-center mr-3">
+                            <i class="fas fa-phone text-[#795548]"></i>
+                        </div>
+                        <span class="text-gray-700 font-medium">{{ persian_labels_incoming[key] }}</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="updateValue('incoming', '{{ key }}', -1)"
+                                class="btn-action bg-rose-100 text-rose-700">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="text-lg font-semibold text-gray-800 min-w-[30px] text-center">{{ value }}</span>
+                        <button onclick="updateValue('incoming', '{{ key }}', 1)"
+                                class="btn-action bg-emerald-100 text-emerald-700">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block mb-1 text-sm font-medium">شعبه</label>
-            <select name="branch_id" id="branchSelect" class="w-full p-3 input-field">
-              <option value="">انتخاب شعبه (اختیاری)</option>
-              {% for branch in branches %}
-              <option value="{{ branch.id }}" data-manager="{{ branch.regional_manager.name if branch.regional_manager else 'نامشخص' }}">{{ branch.name }}</option>
-              {% endfor %}
-            </select>
-            <input id="regionalManager" class="w-full p-3 mt-2 input-field bg-gray-50 text-gray-600 text-sm" readonly placeholder="مدیر منطقه">
-          </div>
-          <div>
-            <label class="block mb-1 text-sm font-medium">واحد مربوطه</label>
-            <select name="unit_id" class="w-full p-3 input-field">
-              <option value="">انتخاب واحد (اختیاری)</option>
-              {% for unit in units %}<option value="{{ unit.id }}">{{ unit.name }}</option>{% endfor %}
-            </select>
-          </div>
+
+        <!-- کارت تماس‌های خروجی -->
+        <div class="card-leather rounded-xl p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037]">
+                    <i class="fas fa-phone-volume gold-accent mr-3"></i>تماس‌های خروجی
+                </h2>
+            </div>
+
+            <div class="space-y-4">
+                {% set persian_labels_out = {
+                'internet': 'خروجی پیگیری اینترنتی',
+                'voice_mail': 'صندوق صوتی'
+                } %}
+                {% for key, value in out_data.items() %}
+                <div class="flex items-center justify-between py-3 border-leather">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-[#EFEBE9] flex items-center justify-center mr-3">
+                            <i class="fas fa-phone text-[#795548]"></i>
+                        </div>
+                        <span class="text-gray-700 font-medium">{{ persian_labels_out[key] }}</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="updateValue('out', '{{ key }}', -1)"
+                                class="btn-action bg-rose-100 text-rose-700">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="text-lg font-semibold text-gray-800 min-w-[30px] text-center">{{ value }}</span>
+                        <button onclick="updateValue('out', '{{ key }}', 1)"
+                                class="btn-action bg-emerald-100 text-emerald-700">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-        <div>
-          <label class="block mb-3 text-sm font-medium">موارد شکایت (حداقل یکی) *</label>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-3 bg-gray-50 rounded-lg">
-            {% for issue in issues %}
-            <label class="flex items-center p-3 bg-white rounded-lg border border-gray-300 hover:border-primary-color cursor-pointer transition">
-              <input type="checkbox" name="issues" value="{{ issue.id }}" class="ml-2 h-4 w-4 text-primary-color">
-              <span class="text-sm">{{ issue.name }}</span>
-            </label>
-            {% endfor %}
-          </div>
-        </div>
-        <div>
-          <label class="block mb-1 text-sm font-medium">توضیحات تکمیلی</label>
-          <textarea name="description" rows="4" class="w-full p-3 input-field text-sm" placeholder="جزئیات بیشتر..."></textarea>
-        </div>
-        <div class="flex gap-3 pt-4">
-          <button type="button" onclick="closeNewComplaintModal()" class="flex-1 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 font-medium transition">انصراف</button>
-          <button type="submit" class="flex-1 py-3 rounded-lg btn-primary font-medium"><i class="fas fa-check ml-2"></i> ثبت شکایت</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <!-- فوتر -->
-  <footer class="mt-12 pt-6 border-t border-[#D7CCC8]">
-    <div class="flex flex-col md:flex-row justify-between items-center">
-      <div class="flex items-center">
-        <div class="w-10 h-10 bg-[#5D4037] rounded-full flex items-center justify-center">
-          <i class="fas fa-warehouse text-amber-200"></i>
-        </div>
-        <div class="mr-3">
-          <h3 class="font-bold text-[#5D4037]">چرم مشهد</h3>
-          <p class="text-sm text-gray-600">مرکز تولید و فروش محصولات چرمی</p>
-        </div>
-      </div>
+    <!-- مودال ثبت شکایت جدید (همان‌طور که خواسته بودید) -->
+    <div id="complaintModal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50 p-4">
 
-      <div class="mt-4 md:mt-0 text-center md:text-right text-gray-600">
-        <p>تمامی حقوق این سامانه متعلق به برند چرم مشهد می‌باشد</p>
-        <p class="text-sm mt-1">نسخه نرم‌افزار: ۲.۴.۱</p>
-      </div>
+        <div
+                class="glass-card
+         w-full
+         max-w-[95vw]
+         sm:max-w-xl
+         md:max-w-2xl
+         lg:max-w-3xl
+         xl:max-w-4xl
+         max-h-[90vh]
+         overflow-y-auto
+         rounded-xl
+         p-4 sm:p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-edit ml-2"></i> ثبت شکایت جدید</h2>
+            <form method="post" action="/complaints/create" id="complaintForm" class="space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block mb-1 text-sm font-medium">نام کامل مشتری *</label>
+                        <input type="text" name="customer_name" required class="w-full p-3 input-field"></div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">شماره همراه *</label>
+                        <input
+                                type="tel"
+                                name="customer_phone"
+                                required
+                                class="w-full p-3 input-field"
+                        >
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">شعبه</label>
+                        <select name="branch_id" id="branchSelect" class="w-full p-3 input-field">
+                            <option value="">انتخاب شعبه (اختیاری)</option>
+                            {% for branch in branches %}
+                            <option value="{{ branch.id }}"
+                                    data-manager="{{ branch.regional_manager.name if branch.regional_manager else 'نامشخص' }}">
+                                {{ branch.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <input id="regionalManager" class="w-full p-3 mt-2 input-field bg-gray-50 text-gray-600 text-sm"
+                               readonly placeholder="مدیر منطقه">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">واحد مربوطه</label>
+                        <select name="unit_id" class="w-full p-3 input-field">
+                            <option value="">انتخاب واحد (اختیاری)</option>
+                            {% for unit in units %}
+                            <option value="{{ unit.id }}">{{ unit.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block mb-3 text-sm font-medium">موارد شکایت (حداقل یکی) *</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-3 bg-gray-50 rounded-lg">
+                        {% for issue in issues %}
+                        <label class="flex items-center p-3 bg-white rounded-lg border border-gray-300 hover:border-primary-color cursor-pointer transition">
+                            <input type="checkbox" name="issues" value="{{ issue.id }}"
+                                   class="ml-2 h-4 w-4 text-primary-color">
+                            <span class="text-sm">{{ issue.name }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium">توضیحات تکمیلی</label>
+                    <textarea name="description" rows="4" class="w-full p-3 input-field text-sm"
+                              placeholder="جزئیات بیشتر..."></textarea>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeNewComplaintModal()"
+                            class="flex-1 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 font-medium transition">
+                        انصراف
+                    </button>
+                    <button type="submit" class="flex-1 py-3 rounded-lg btn-primary font-medium"><i
+                            class="fas fa-check ml-2"></i> ثبت شکایت
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-  </footer>
+
+    <!-- فوتر -->
+    <footer class="mt-12 pt-6 border-t border-[#D7CCC8]">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-[#5D4037] rounded-full flex items-center justify-center">
+                    <i class="fas fa-warehouse text-amber-200"></i>
+                </div>
+                <div class="mr-3">
+                    <h3 class="font-bold text-[#5D4037]">چرم مشهد</h3>
+                    <p class="text-sm text-gray-600">مرکز تولید و فروش محصولات چرمی</p>
+                </div>
+            </div>
+
+            <div class="mt-4 md:mt-0 text-center md:text-right text-gray-600">
+                <p>تمامی حقوق این سامانه متعلق به برند چرم مشهد می‌باشد</p>
+                <p class="text-sm mt-1">نسخه نرم‌افزار: ۲.۴.۱</p>
+            </div>
+        </div>
+    </footer>
 </div>
 
 <script>
-  async function updateValue(type, field, change) {
-    try {
-      const btn = event.currentTarget;
-      btn.classList.add('animate-pulse');
-      setTimeout(() => btn.classList.remove('animate-pulse'), 300);
+    async function updateValue(type, field, change) {
+        try {
+            const btn = event.currentTarget;
+            btn.classList.add('animate-pulse');
+            setTimeout(() => btn.classList.remove('animate-pulse'), 300);
 
-      const response = await fetch('/update_crm_data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: type,
-          field: field,
-          change: change,
-        }),
-      });
+            const response = await fetch('/update_crm_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: type,
+                    field: field,
+                    change: change,
+                }),
+            });
 
-      if (response.ok) {
-        location.reload();
-      } else {
-        alert('خطا در به‌روزرسانی مقدار');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('خطایی رخ داد');
-    }
-  }
-
-  // باز و بسته کردن مودال ثبت شکایت
-  function openNewComplaintModal() {
-    document.getElementById('complaintModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeNewComplaintModal() {
-    document.getElementById('complaintModal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
-  }
-
-  // تبدیل اعداد فارسی به انگلیسی
-  function convertPersianDigitsToEnglish(str) {
-    const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
-    const englishDigits = '0123456789';
-    return str.replace(/[۰-۹]/g, d => englishDigits[persianDigits.indexOf(d)]);
-  }
-
-  // نمایش مدیر منطقه بر اساس شعبه انتخابی
-  document.getElementById('branchSelect').addEventListener('change', function() {
-    const selectedOption = this.options[this.selectedIndex];
-    const managerName = selectedOption.getAttribute('data-manager');
-    document.getElementById('regionalManager').value = managerName || '';
-  });
-
-  // مدیریت ارسال فرم بدون رفرش صفحه
-  document.getElementById('complaintForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const checkboxes = document.querySelectorAll('input[name="issues"]:checked');
-    if (checkboxes.length === 0) {
-      alert('لطفا حداقل یک مورد شکایت را انتخاب کنید');
-      return;
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('خطا در به‌روزرسانی مقدار');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('خطایی رخ داد');
+        }
     }
 
-    const phoneInput = document.querySelector('input[name="customer_phone"]');
-    phoneInput.value = convertPersianDigitsToEnglish(phoneInput.value);
-
-    const formData = new FormData(this);
-
-    try {
-      const response = await fetch(this.action, { method: 'POST', body: formData });
-      if (response.ok) {
-        alert('شکایت با موفقیت ثبت شد');
-        this.reset();
-        closeNewComplaintModal();
-        // می‌توانید اینجا داده‌ها را بدون رفرش صفحه به جدول اضافه کنید
-      } else {
-        alert('خطا در ثبت شکایت');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('خطایی رخ داد');
+    // باز و بسته کردن مودال ثبت شکایت
+    function openNewComplaintModal() {
+        document.getElementById('complaintModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
     }
-  });
 
-  // بستن مودال با ESC
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeNewComplaintModal();
-  });
+    function closeNewComplaintModal() {
+        document.getElementById('complaintModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
 
-  // بستن مودال با کلیک روی overlay
-  document.getElementById('complaintModal').addEventListener('click', function(e) {
-    if (e.target === this) closeNewComplaintModal();
-  });
+    // تبدیل اعداد فارسی به انگلیسی
+    function convertPersianDigitsToEnglish(str) {
+        const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+        const englishDigits = '0123456789';
+        return str.replace(/[۰-۹]/g, d => englishDigits[persianDigits.indexOf(d)]);
+    }
 
-  // اعتبارسنجی فیلد شماره تماس
-  document.querySelector('input[name="customer_phone"]').addEventListener('input', function() {
-    this.value = this.value.replace(/[^۰-۹0-9]/g, '');
-  });
+    // نمایش مدیر منطقه بر اساس شعبه انتخابی
+    document.getElementById('branchSelect').addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const managerName = selectedOption.getAttribute('data-manager');
+        document.getElementById('regionalManager').value = managerName || '';
+    });
+
+    // مدیریت ارسال فرم بدون رفرش صفحه
+    document.getElementById('complaintForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const checkboxes = document.querySelectorAll('input[name="issues"]:checked');
+        if (checkboxes.length === 0) {
+            alert('لطفا حداقل یک مورد شکایت را انتخاب کنید');
+            return;
+        }
+
+        const phoneInput = document.querySelector('input[name="customer_phone"]');
+        phoneInput.value = convertPersianDigitsToEnglish(phoneInput.value);
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch(this.action, {method: 'POST', body: formData});
+            if (response.ok) {
+                alert('شکایت با موفقیت ثبت شد');
+                this.reset();
+                closeNewComplaintModal();
+                // می‌توانید اینجا داده‌ها را بدون رفرش صفحه به جدول اضافه کنید
+            } else {
+                alert('خطا در ثبت شکایت');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('خطایی رخ داد');
+        }
+    });
+
+    // بستن مودال با ESC
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeNewComplaintModal();
+    });
+
+    // بستن مودال با کلیک روی overlay
+    document.getElementById('complaintModal').addEventListener('click', function (e) {
+        if (e.target === this) closeNewComplaintModal();
+    });
+
+    // اعتبارسنجی فیلد شماره تماس
+    document.querySelector('input[name="customer_phone"]').addEventListener('input', function () {
+        this.value = this.value.replace(/[^۰-۹0-9]/g, '');
+    });
 
 </script>
 </body>
