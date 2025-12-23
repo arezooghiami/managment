@@ -31,5 +31,12 @@ class IncomingCall(Base):
     defective_product = Column(Integer, nullable=True, comment="کالای ایراد دار")
 
     datetime = Column(Date)
+
+    events = relationship(
+        "IncomingCallEvent",
+        back_populates="incoming_call",
+        cascade="all, delete-orphan"
+    )
+
     start_datetime = Column(DateTime, comment="اولین زمان تماس در روز")
     end_datetime = Column(DateTime, comment="آخرین زمان تماس در روز")

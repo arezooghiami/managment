@@ -14,10 +14,13 @@ from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse, HTMLResponse, RedirectResponse
 
 from DB.database import get_db
+from models.CallEventStatus import CallEventStatus
 from models.ComplaintIssue import ComplaintIssue
+from models.IncomingCallEvent import IncomingCallEvent
 from models.branch import Branch, Unit
 from models.inCall import IncomingCall
 from models.outCall import OutCall
+# from models.postycode import PostyCodeStatus
 from models.user import User
 
 router_crm = APIRouter(
@@ -92,108 +95,131 @@ def crm_dashboard(request: Request, db: Session = Depends(get_db)):
 
 
     })
-
-
-@router_crm.post("/update_crm_data",
-                 summary="به‌روزرسانی اطلاعات CRM کاربر",
-                 description="""
-این سرویس جهت **ثبت و به‌روزرسانی اطلاعات تماس‌های دریافتی و خروجی کاربران** در ماژول CRM استفاده می‌شود.
-
-### عملکرد سرویس
-- دریافت نوع عملیات (`incoming` یا `out`)
-- افزایش یا کاهش مقدار یک فیلد با `+1` یا `-1`
-- ایجاد رکورد جدید برای کاربر در صورت نبودن رکورد روز جاری
-- ثبت زمان شروع و پایان تماس برای تماس‌های ورودی
-
-### اعتبارسنجی‌ها
-- بررسی لاگین بودن کاربر از طریق سشن
-- بررسی معتبر بودن نوع عملیات
-- بررسی وجود فیلد در مدل دیتابیس
-- جلوگیری از منفی شدن مقادیر
-
-### سناریوهای کاربرد
-- سیستم‌های مانیتورینگ تماس روزانه
-- داشبورد عملکرد کارمندان
-- سیستم ثبت پیگیری‌ها و تماس‌ها
-
-""", )
+@router_crm.post("/update_crm_data", summary="به‌روزرسانی اطلاعات CRM")
 async def update_crm_data(
         request: Request,
         db: Session = Depends(get_db)
 ):
-    data = await request.json()
     user_id = request.session.get("user_id")
-    role = request.session.get("role")
     if not user_id:
-        return RedirectResponse(url="/", status_code=302)
+        return RedirectResponse("/", status_code=302)
 
-    # if not user_id or role != 'user':
-    #     raise HTTPException(status_code=403, detail="Unauthorized")
+    data = await request.json()
 
-    field = data.get("field")
-    type_ = data.get("type")  # "incoming" or "out"
-    change = data.get("change")  # +1 or -1
+    field = data.get("field")                 # send_product_deadline
+    change = data.get("change")               # +1 | -1
+    status = data.get("status")               # 1 | 2 | 3 | None
 
-    if type_ not in ["incoming", "out"] or not field or change not in [-1, 1]:
-        raise HTTPException(status_code=400, detail="Invalid input")
+    if field is None or change not in (-1, 1):
+        raise HTTPException(400, "Invalid data")
 
     today = date.today()
-    now = datetime.now()
+    now = datetime.utcnow()
 
-    if type_ == "incoming":
-        record = (
-            db.query(IncomingCall)
-            .filter(IncomingCall.user_id == user_id, IncomingCall.datetime == today)
-            .first()
+    # =========================
+    # 1. Get or Create IncomingCall (daily)
+    # =========================
+    incoming_call = (
+        db.query(IncomingCall)
+        .filter_by(user_id=user_id, datetime=today)
+        .first()
+    )
+
+    if not incoming_call:
+        incoming_call = IncomingCall(
+            user_id=user_id,
+            datetime=today,
+            start_datetime=now,
+            end_datetime=now,
         )
-        if not record:
-            record = IncomingCall(
-                user_id=user_id,
-                datetime=today,
-                start_datetime=now,
-                end_datetime=now
-            )
-            db.add(record)
-            db.commit()
-            db.refresh(record)
+        db.add(incoming_call)
+        db.flush()
+
+    incoming_call.end_datetime = now
+
+    # =========================
+    # 2. Update Counter
+    # =========================
+    current_value = getattr(incoming_call, field, 0) or 0
+    setattr(incoming_call, field, max(0, current_value + change))
+
+    # =========================
+    # 3. Event logic
+    # =========================
+    if change == 1:
+        # CREATE EVENT
+        event = IncomingCallEvent(
+            incoming_call_id=incoming_call.id,
+            topic=field,
+            user_id=user_id,
+            created_at=now,
+        )
+        db.add(event)
+        db.flush()
+
+        # Always create status for +1 events
+        if status:
+            db.add(CallEventStatus(
+                call_event_id=event.id,
+                status=status
+            ))
         else:
-            # بروزرسانی زمان پایان تماس
-            record.end_datetime = now
-            # اگر اولین تماس نیست، زمان شروع رو تغییر نده
+            # Default status if none provided
+            db.add(CallEventStatus(
+                call_event_id=event.id,
+                status=1  # Default: حل شده
+            ))
 
-        if not hasattr(record, field):
-            raise HTTPException(status_code=400, detail="Invalid field name")
-
-        current_value = getattr(record, field) or 0
-        new_value = max(0, current_value + change)
-        setattr(record, field, new_value)
-
-    elif type_ == "out":
-        record = (
-            db.query(OutCall)
-            .filter(OutCall.user_id == user_id, OutCall.datetime == today)
+    else:
+        # DELETE LAST EVENT (rollback)
+        event = (
+            db.query(IncomingCallEvent)
+            .filter_by(
+                incoming_call_id=incoming_call.id,
+                topic=field
+            )
+            .order_by(IncomingCallEvent.created_at.desc())
             .first()
         )
-        if not record:
-            record = OutCall(
-                user_id=user_id,
-                datetime=today,
 
-            )
-            db.add(record)
-            db.commit()
-            db.refresh(record)
-
-        if not hasattr(record, field):
-            raise HTTPException(status_code=400, detail="Invalid field name")
-
-        current_value = getattr(record, field) or 0
-        new_value = max(0, current_value + change)
-        setattr(record, field, new_value)
+        if event:
+            db.delete(event)
 
     db.commit()
-    return JSONResponse(content={"success": True})
 
+    return {"success": True}
+
+
+# این endpoint جدید برای گرفتن وضعیت‌های تماس‌ها
+@router_crm.get("/get_call_statuses")
+def get_call_statuses(request: Request, db: Session = Depends(get_db)):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return RedirectResponse("/", status_code=302)
+
+    today = date.today()
+
+    incoming_call = (
+        db.query(IncomingCall)
+        .filter_by(user_id=user_id, datetime=today)
+        .first()
+    )
+
+    statuses = {}
+    if incoming_call:
+        # گرفتن آخرین وضعیت هر تماس
+        events = (
+            db.query(IncomingCallEvent, CallEventStatus)
+            .join(CallEventStatus, IncomingCallEvent.id == CallEventStatus.call_event_id)
+            .filter(IncomingCallEvent.incoming_call_id == incoming_call.id)
+            .order_by(IncomingCallEvent.created_at.desc())
+            .all()
+        )
+
+        for event, status in events:
+            statuses[event.topic] = status.status
+
+    return statuses
 
 def convert_persian_to_english_numbers(s):
     persian_nums = "۰۱۲۳۴۵۶۷۸۹"
