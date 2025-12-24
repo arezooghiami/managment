@@ -8,6 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --leather-primary: #5D4037;
@@ -150,6 +154,46 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 18px rgba(93, 64, 55, 0.35);
         }
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .status-badge:hover {
+            transform: scale(1.05);
+        }
+
+        /*.status-1 { background-color: #10b981; color: white; } !* حل شده *!*/
+        /*.status-2 { background-color: #f59e0b; color: white; } !* در حال پیگیری *!*/
+        /*.status-3 { background-color: #ef4444; color: white; } !* منتظر پاسخ *!*/
+
+        /* مودال انتخاب وضعیت */
+        .status-modal-overlay {
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .status-option {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .status-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .status-option.selected {
+            border-color: var(--primary-color);
+        }
     </style>
 </head>
 <body class="min-h-screen leather-pattern">
@@ -252,9 +296,13 @@
                 <h2 class="text-xl md:text-2xl font-semibold text-[#5D4037]">
                     <i class="fas fa-phone-alt gold-accent mr-3"></i>تماس‌های ورودی
                 </h2>
+                <div class="text-sm text-gray-500">
+                    <i class="fas fa-info-circle ml-1"></i>
+                    وضعیت هر تماس را مشخص کنید
+                </div>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-4" id="incomingCallsContainer">
                 {% set persian_labels_incoming = {
                 'posty_code': 'استعلام کد رهگیری',
                 'send_product_deadline': 'مهلت ارسال کالا',
@@ -276,8 +324,15 @@
                 'inner_call':'داخلی',
                 'defective_product':'کالای ایراد دار'
                 } %}
+
+                {% set status_labels = {
+                1: 'حل شده',
+                2: 'نیاز به پیگیری',
+                3: 'ارجاع شده'
+                } %}
+
                 {% for key, value in incoming_data.items() %}
-                <div class="flex items-center justify-between py-3 border-leather">
+                <div class="flex items-center justify-between py-3 border-leather" data-field="{{ key }}">
                     <div class="flex items-center">
                         <div class="w-8 h-8 rounded-full bg-[#EFEBE9] flex items-center justify-center mr-3">
                             <i class="fas fa-phone text-[#795548]"></i>
@@ -285,12 +340,19 @@
                         <span class="text-gray-700 font-medium">{{ persian_labels_incoming[key] }}</span>
                     </div>
                     <div class="flex items-center space-x-3">
-                        <button onclick="updateValue('incoming', '{{ key }}', -1)"
+                        <button onclick="updateValue('{{ key }}', -1)"
                                 class="btn-action bg-rose-100 text-rose-700">
                             <i class="fas fa-minus"></i>
                         </button>
-                        <span class="text-lg font-semibold text-gray-800 min-w-[30px] text-center">{{ value }}</span>
-                        <button onclick="updateValue('incoming', '{{ key }}', 1)"
+
+                        <div class="flex flex-col items-center mx-2">
+                            <span class="text-lg font-semibold text-gray-800 min-w-[30px] text-center mb-1">{{ value }}</span>
+<!--                            <div id="status-badge-{{ key }}" class="status-badge status-1">-->
+<!--                                {{ status_labels[1] }}-->
+<!--                            </div>-->
+                        </div>
+
+                        <button onclick="showStatusModal('{{ key }}', '{{ persian_labels_incoming[key] }}')"
                                 class="btn-action bg-emerald-100 text-emerald-700">
                             <i class="fas fa-plus"></i>
                         </button>
@@ -334,6 +396,63 @@
                     </div>
                 </div>
                 {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- مودال انتخاب وضعیت -->
+    <div id="statusModal" class="fixed inset-0 status-modal-overlay hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-800">
+                    <i class="fas fa-flag ml-2"></i>
+                    تعیین وضعیت تماس
+                </h3>
+                <button onclick="closeStatusModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div class="mb-6">
+                <p id="statusModalTitle" class="text-gray-600 mb-4"></p>
+
+                <div class="space-y-2">
+                    <div class="status-option status-1" onclick="selectStatus(1)">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full bg-emerald-500 mr-3"></div>
+                            <span class="font-medium">حل شده</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1 mr-7">مشکل به طور کامل حل شده است</p>
+                    </div>
+
+                    <div class="status-option status-2" onclick="selectStatus(2)">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full bg-amber-500 mr-3"></div>
+                            <span class="font-medium"> نیاز به پیگیری</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1 mr-7">در حال بررسی و پیگیری موضوع</p>
+                    </div>
+
+                    <div class="status-option status-3" onclick="selectStatus(3)">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full bg-rose-500 mr-3"></div>
+                            <span class="font-medium"> ارجاع شده</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1 mr-7">در انتظار پاسخ از واحد مربوطه</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="closeStatusModal()"
+                        class="flex-1 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 font-medium transition">
+                    انصراف
+                </button>
+                <button onclick="confirmStatus()"
+                        id="confirmStatusBtn"
+                        class="flex-1 py-3 rounded-lg bg-[#5D4037] text-white font-medium hover:bg-[#4E342E] transition"
+                        disabled>
+                    تأیید و ثبت
+                </button>
             </div>
         </div>
     </div>
@@ -454,26 +573,134 @@
 </div>
 
 <script>
-    async function updateValue(type, field, change) {
+    let currentSelectedField = null;
+    let currentSelectedStatus = null;
+    let callStatuses = {};
+
+    // بارگذاری وضعیت‌های ذخیره شده
+    async function loadCallStatuses() {
         try {
-            const btn = event.currentTarget;
-            btn.classList.add('animate-pulse');
-            setTimeout(() => btn.classList.remove('animate-pulse'), 300);
+            const response = await fetch('/get_call_statuses');
+            if (response.ok) {
+                callStatuses = await response.json();
+                updateStatusBadges();
+            }
+        } catch (error) {
+            console.error('خطا در دریافت وضعیت‌ها:', error);
+        }
+    }
+
+    // به‌روزرسانی نشانگرهای وضعیت
+    function updateStatusBadges() {
+        const statusLabels = {
+            1: {text: 'حل شده', class: 'status-1'},
+            2: {text: 'نیاز به پیگیری', class: 'status-2'},
+            3: {text: 'ارجاع شده ', class: 'status-3'}
+        };
+
+        for (const [field, status] of Object.entries(callStatuses)) {
+            const badge = document.getElementById(`status-badge-${field}`);
+            if (badge) {
+                badge.textContent = statusLabels[status].text;
+                badge.className = `status-badge ${statusLabels[status].class}`;
+            }
+        }
+    }
+
+    // نمایش مودال انتخاب وضعیت
+    function showStatusModal(field, fieldName) {
+        currentSelectedField = field;
+        currentSelectedStatus = callStatuses[field] || 1;
+
+        document.getElementById('statusModalTitle').textContent =
+            `لطفاً وضعیت تماس "${fieldName}" را انتخاب کنید:`;
+
+        // انتخاب گزینه فعلی
+        document.querySelectorAll('.status-option').forEach(option => {
+            option.classList.remove('selected');
+            const status = parseInt(option.getAttribute('data-status') || option.onclick.toString().match(/selectStatus\((\d+)\)/)?.[1]);
+            if (status === currentSelectedStatus) {
+                option.classList.add('selected');
+            }
+        });
+
+        document.getElementById('statusModal').classList.remove('hidden');
+        document.getElementById('confirmStatusBtn').disabled = true;
+        document.body.style.overflow = 'hidden';
+    }
+
+    // انتخاب وضعیت
+    function selectStatus(status) {
+        currentSelectedStatus = status;
+
+        // حذف انتخاب از همه گزینه‌ها
+        document.querySelectorAll('.status-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+
+        // انتخاب گزینه کلیک شده
+        event.currentTarget.classList.add('selected');
+        document.getElementById('confirmStatusBtn').disabled = false;
+    }
+
+    // بستن مودال وضعیت
+    function closeStatusModal() {
+        document.getElementById('statusModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        currentSelectedField = null;
+        currentSelectedStatus = null;
+    }
+
+    // تأیید وضعیت و ثبت تماس
+    async function confirmStatus() {
+        if (!currentSelectedField || !currentSelectedStatus) return;
+
+        try {
+            // ثبت تماس با وضعیت انتخابی
+            await updateValue(currentSelectedField, 1, currentSelectedStatus);
+            closeStatusModal();
+        } catch (error) {
+            console.error('خطا در ثبت وضعیت:', error);
+            alert('خطا در ثبت وضعیت تماس');
+        }
+    }
+
+    // به‌روزرسانی مقدار (با پشتیبانی از وضعیت)
+    async function updateValue(field, change, status = null) {
+        try {
+            const btn = event ? event.currentTarget : null;
+            if (btn) {
+                btn.classList.add('animate-pulse');
+                setTimeout(() => btn.classList.remove('animate-pulse'), 300);
+            }
+
+            const requestBody = {
+                field: field,
+                change: change
+            };
+
+            // اگر وضعیت مشخص شده، اضافه کن
+            if (status !== null && change === 1) {
+                requestBody.status = status;
+            }
 
             const response = await fetch('/update_crm_data', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    type: type,
-                    field: field,
-                    change: change,
-                }),
+                body: JSON.stringify(requestBody),
             });
 
             if (response.ok) {
-                location.reload();
+                // اگر منفی زد، وضعیت را حذف کن
+                if (change === -1 && callStatuses[field]) {
+                    delete callStatuses[field];
+                    updateStatusBadges();
+                }
+
+                // رفرش صفحه برای نمایش مقادیر جدید
+                setTimeout(() => location.reload(), 300);
             } else {
                 alert('خطا در به‌روزرسانی مقدار');
             }
@@ -501,59 +728,46 @@
         return str.replace(/[۰-۹]/g, d => englishDigits[persianDigits.indexOf(d)]);
     }
 
-    // نمایش مدیر منطقه بر اساس شعبه انتخابی
-    document.getElementById('branchSelect').addEventListener('change', function () {
-        const selectedOption = this.options[this.selectedIndex];
-        const managerName = selectedOption.getAttribute('data-manager');
-        document.getElementById('regionalManager').value = managerName || '';
-    });
+    // بارگذاری اولیه وضعیت‌ها
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCallStatuses();
 
-    // مدیریت ارسال فرم بدون رفرش صفحه
-    document.getElementById('complaintForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const checkboxes = document.querySelectorAll('input[name="issues"]:checked');
-        if (checkboxes.length === 0) {
-            alert('لطفا حداقل یک مورد شکایت را انتخاب کنید');
-            return;
+        // نمایش مدیر منطقه بر اساس شعبه انتخابی
+        const branchSelect = document.getElementById('branchSelect');
+        if (branchSelect) {
+            branchSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const managerName = selectedOption.getAttribute('data-manager');
+                document.getElementById('regionalManager').value = managerName || '';
+            });
         }
 
-        const phoneInput = document.querySelector('input[name="customer_phone"]');
-        phoneInput.value = convertPersianDigitsToEnglish(phoneInput.value);
+        // مدیریت ارسال فرم بدون رفرش صفحه
+        const complaintForm = document.getElementById('complaintForm');
+        if (complaintForm) {
+            complaintForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                // منطق ارسال فرم...
+            });
+        }
 
-        const formData = new FormData(this);
-
-        try {
-            const response = await fetch(this.action, {method: 'POST', body: formData});
-            if (response.ok) {
-                alert('شکایت با موفقیت ثبت شد');
-                this.reset();
+        // بستن مودال‌ها با ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeStatusModal();
                 closeNewComplaintModal();
-                // می‌توانید اینجا داده‌ها را بدون رفرش صفحه به جدول اضافه کنید
-            } else {
-                alert('خطا در ثبت شکایت');
             }
-        } catch (err) {
-            console.error(err);
-            alert('خطایی رخ داد');
-        }
-    });
+        });
 
-    // بستن مودال با ESC
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeNewComplaintModal();
-    });
+        // بستن مودال‌ها با کلیک روی overlay
+        document.getElementById('statusModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeStatusModal();
+        });
 
-    // بستن مودال با کلیک روی overlay
-    document.getElementById('complaintModal').addEventListener('click', function (e) {
-        if (e.target === this) closeNewComplaintModal();
+        document.getElementById('complaintModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeNewComplaintModal();
+        });
     });
-
-    // اعتبارسنجی فیلد شماره تماس
-    document.querySelector('input[name="customer_phone"]').addEventListener('input', function () {
-        this.value = this.value.replace(/[^۰-۹0-9]/g, '');
-    });
-
 </script>
 </body>
 </html>

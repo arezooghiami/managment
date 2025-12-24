@@ -18,6 +18,7 @@ from routers.Athentication.api import login
 from routers.CRM import crm
 from routers.CRM.complaint.complaint import router_complaint
 from routers.CRM.complaint.import_data import router_branch, router_issues, router_managers, router_unit
+from routers.CRM.repstatus import router_crm_rep
 from routers.admin import admin_dashboard, lunch, excel, meeting_room, report, user_managment, offices, room_lock
 from routers.user import user_dashboard, user_lunch, user_meetingroom, user_notification, user_changepass
 
@@ -69,6 +70,7 @@ app.include_router(router_issues)
 app.include_router(router_managers)
 app.include_router(router_complaint)
 app.include_router(router_unit)
+app.include_router(router_crm_rep)
 
 
 def initialize_database():

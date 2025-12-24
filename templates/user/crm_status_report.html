@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>گزارش وضعیت تماس‌ها</title>
+  <!-- Google Font - Vazirmatn (مناسب فارسی و مینیمال) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+  <!-- Persian Datepicker -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@latest/dist/css/persian-datepicker.min.css">
+
+  <style>
+    :root {
+      --primary-brown: #8B4513;      /* قهوه‌ای گرم - رنگ اصلی چرم مشهد */
+      --accent-gold: #D4AF37;        /* طلایی شیک */
+      --light-brown: #D2B48C;        /* قهوه‌ای روشن برای پس‌زمینه */
+      --bg-gray: #F8F5F2;            /* پس‌زمینه خیلی روشن و گرم */
+      --card-bg: #FFFFFF;
+      --text-dark: #3D2B1F;
+      --border-color: #E8E0D8;
+      --success-green: #2E8B57;
+      --danger-red: #DC143C;
+    }
+
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: var(--bg-gray);
+      color: var(--text-dark);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(139, 69, 19, 0.08);
+      padding: 32px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    h2 {
+      color: var(--primary-brown);
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h2::before {
+      content: "📊";
+      font-size: 32px;
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .today-date {
+      background: var(--light-brown);
+      color: var(--primary-brown);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary-brown);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #6D360F;
+    }
+
+    .btn-secondary {
+      background: var(--light-brown);
+      color: var(--primary-brown);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: #C9A87A;
+    }
+
+    .btn-print {
+      background: var(--success-green);
+      color: white;
+    }
+
+    .btn-print:hover {
+      background: #247A48;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .date-input-group {
+      position: relative;
+    }
+
+    .calendar-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--primary-brown);
+    }
+
+    label {
+      font-size: 14px;
+      color: var(--primary-brown);
+      margin-bottom: 8px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    input[type="text"],
+    select {
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: #fff;
+      font-size: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      width: 100%;
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+    }
+
+    .date-input {
+      padding-right: 40px !important;
+      cursor: pointer;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      gap: 16px;
+    }
+
+    .submit-btn {
+      padding: 14px 28px;
+      background: var(--primary-brown);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .submit-btn:hover {
+      background: #6D360F;
+    }
+
+    .reset-btn {
+      padding: 14px 28px;
+      background: var(--light-brown);
+      color: var(--primary-brown);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .reset-btn:hover {
+      background: #C9A87A;
+    }
+
+    @media (min-width: 768px) {
+      .form-actions {
+        justify-content: flex-start;
+        gap: 16px;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 24px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    th {
+      background: var(--light-brown);
+      color: var(--primary-brown);
+      padding: 16px;
+      font-weight: 600;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    td {
+      padding: 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) {
+      background-color: #FFF8F2;
+    }
+
+    tr:hover {
+      background-color: rgba(212, 175, 55, 0.08);
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+      font-size: 18px;
+    }
+
+    @media print {
+      .header-controls,
+      .filters,
+      .form-actions,
+      .btn-print {
+        display: none !important;
+      }
+
+      .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+      }
+
+      table {
+        box-shadow: none;
+      }
+
+      th {
+        background: #f2f2f2 !important;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+      }
+
+      body {
+        background: white;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="card">
+    <!-- بخش هدر با دکمه‌های کنترلی -->
+    <div class="header-section">
+      <h2>گزارش وضعیت تماس‌ها</h2>
+
+      <div class="header-controls">
+        <div class="today-date">
+          <span>📅</span>
+          <span id="todayDate">امروز: ۱۴۰۳/۰۱/۰۱</span>
+        </div>
+
+        <button class="btn btn-primary" onclick="window.history.back()">
+          <span>↶</span>
+          بازگشت
+        </button>
+
+        <button class="btn btn-print" onclick="window.print()">
+          <span>🖨️</span>
+          چاپ گزارش
+        </button>
+
+
+      </div>
+    </div>
+
+    <!-- فرم فیلترها -->
+    <form id="reportForm" class="filters">
+      <div class="filter-group">
+        <label>📅 از تاریخ</label>
+        <div class="date-input-group">
+          <input type="text" name="start_date" id="start_date" class="date-input" placeholder="۱۴۰۳/۰۱/۰۱" required>
+          <span class="calendar-icon" onclick="openDatepicker('start_date')">📅</span>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>📅 تا تاریخ</label>
+        <div class="date-input-group">
+          <input type="text" name="end_date" id="end_date" class="date-input" placeholder="۱۴۰۳/۰۱/۳۰" required>
+          <span class="calendar-icon" onclick="openDatepicker('end_date')">📅</span>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>🔍 وضعیت</label>
+        <select name="status">
+          <option value="">همه وضعیت‌ها</option>
+          <option value="1">حل شده</option>
+          <option value="2">نیاز به پیگیری</option>
+          <option value="3">ارجاع شده</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>📋 موضوع</label>
+        <select name="topic">
+          <option value="">همه موضوعات</option>
+          <option value="posty_code">استعلام کد رهگیری</option>
+          <option value="send_product_deadline">مهلت ارسال کالا</option>
+          <option value="branch_change">تعویض و مرجوع شعبه</option>
+          <option value="online_change">تعویض آنلاین</option>
+          <option value="online_return">مرجوع آنلاین</option>
+          <option value="branch_dissatisfaction">نارضایتی از شعبه</option>
+          <option value="payment_followup">پیگیری واریزی</option>
+          <option value="incomplete_delivery">ارسال ناقص</option>
+          <option value="b2b_sales">فروش سازمانی</option>
+          <option value="waiting_for_payment">در انتظار پرداخت</option>
+          <option value="product_search">سرچ کالا</option>
+          <option value="after_sales_service">خدمات پس از فروش</option>
+          <option value="club">باشگاه</option>
+          <option value="other">متفرقه</option>
+          <option value="branch_info">اطلاعات شعب</option>
+          <option value="product_site_info">اطلاعات سایت و محصول</option>
+          <option value="snapp_pay">اسنپ‌پی</option>
+          <option value="inner_call">داخلی</option>
+          <option value="defective_product">کالای ایراد دار</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>👤 اپراتور</label>
+        <select name="user_id">
+          <option value="">همه اپراتورها</option>
+          {% for user in users %}
+          <option value="{{ user.id }}">{{ user.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="submit-btn">
+          <span>📈</span>
+          دریافت گزارش
+        </button>
+        <button type="button" class="reset-btn" onclick="resetForm()">
+          <span>🔄</span>
+          بازنشانی فیلترها
+        </button>
+      </div>
+    </form>
+
+    <!-- جدول نتایج -->
+    <table id="resultTable">
+      <thead>
+      <tr>
+        <th>موضوع</th>
+        <th>وضعیت</th>
+
+        <th>تعداد</th>
+        <th>درصد</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- داده‌ها با جاوااسکریپت پر می‌شوند -->
+      </tbody>
+    </table>
+
+    <div id="noData" class="no-data" style="display: none;">داده‌ای برای نمایش وجود ندارد.</div>
+  </div>
+</div>
+
+<!-- Persian Datepicker -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-date@latest/dist/persian-date.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker@latest/dist/js/persian-datepicker.min.js"></script>
+
+<script>
+  // تنظیم تاریخ امروز
+  document.addEventListener('DOMContentLoaded', function() {
+    const today = new persianDate().toLocale('fa').format('YYYY/MM/DD');
+    document.getElementById('todayDate').textContent = `امروز: ${today}`;
+
+    // تنظیم تاریخ پیش‌فرض (ماه جاری)
+    const startOfMonth = new persianDate().startOf('month').toLocale('fa').format('YYYY/MM/DD');
+    const endOfMonth = new persianDate().endOf('month').toLocale('fa').format('YYYY/MM/DD');
+
+    document.getElementById('start_date').value = startOfMonth;
+    document.getElementById('end_date').value = endOfMonth;
+
+    // مقداردهی اولیه datepicker
+    $(".date-input").persianDatepicker({
+      format: 'YYYY/MM/DD',
+      autoClose: true,
+      initialValue: false,
+      observer: true,
+      position: "auto",
+    });
+  });
+
+  // تابع باز کردن datepicker
+  function openDatepicker(inputId) {
+    $(`#${inputId}`).focus();
+  }
+
+  // تابع بازنشانی فرم
+  function resetForm() {
+    document.getElementById('reportForm').reset();
+    const startOfMonth = new persianDate().startOf('month').toLocale('fa').format('YYYY/MM/DD');
+    const endOfMonth = new persianDate().endOf('month').toLocale('fa').format('YYYY/MM/DD');
+
+    document.getElementById('start_date').value = startOfMonth;
+    document.getElementById('end_date').value = endOfMonth;
+  }
+
+  // ارسال فرم و دریافت داده‌ها
+  document.getElementById("reportForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const params = new URLSearchParams();
+    for (const [key, value] of new FormData(this)) {
+      if (value !== "") {
+        params.append(key, value);
+      }
+    }
+
+    try {
+      const res = await fetch("/reports/calls?" + params.toString());
+      const data = await res.json();
+
+      const tbody = document.querySelector("#resultTable tbody");
+      const noDataMsg = document.getElementById("noData");
+
+      tbody.innerHTML = "";
+
+      if (data.length === 0) {
+        noDataMsg.style.display = "block";
+        document.querySelector("#resultTable").style.display = "none";
+      } else {
+        noDataMsg.style.display = "none";
+        document.querySelector("#resultTable").style.display = "table";
+
+        // تبدیل کد وضعیت به متن
+        const statusMap = {
+          "1": "حل شده",
+          "2": "نیاز به پیگیری",
+          "3": "ارجاع شده"
+        };
+
+        // تبدیل کد موضوع به متن فارسی
+        const topicMap = {
+          "posty_code": "استعلام کد رهگیری",
+          "send_product_deadline": "مهلت ارسال کالا",
+          "branch_change": "تعویض و مرجوع شعبه",
+          "online_change": "تعویض آنلاین",
+          "online_return": "مرجوع آنلاین",
+          "branch_dissatisfaction": "نارضایتی از شعبه",
+          "payment_followup": "پیگیری واریزی",
+          "incomplete_delivery": "ارسال ناقص",
+          "b2b_sales": "فروش سازمانی",
+          "waiting_for_payment": "در انتظار پرداخت",
+          "product_search": "سرچ کالا",
+          "after_sales_service": "خدمات پس از فروش",
+          "club": "باشگاه",
+          "other": "متفرقه",
+          "branch_info": "اطلاعات شعب",
+          "product_site_info": "اطلاعات سایت و محصول",
+          "snapp_pay": "اسنپ‌پی",
+          "inner_call": "داخلی",
+          "defective_product": "کالای ایراد دار"
+        };
+
+        // محاسبه کل تماس‌ها برای درصد
+        let totalCalls = 0;
+        data.forEach(row => {
+          totalCalls += parseInt(row.count);
+        });
+
+        // نمایش داده‌ها در جدول
+        data.forEach(row => {
+          const topicText = topicMap[row.topic] || row.topic;
+          const statusText = statusMap[row.status] || row.status;
+          const percentage = totalCalls > 0 ? ((row.count / totalCalls) * 100).toFixed(1) : 0;
+
+          tbody.innerHTML += `
+            <tr>
+              <td>${topicText}</td>
+              <td>${statusText}</td>
+
+              <td>${parseInt(row.count).toLocaleString()}</td>
+              <td>${percentage}%</td>
+            </tr>
+          `;
+        });
+      }
+    } catch (err) {
+      alert("خطا در دریافت داده‌ها. لطفاً دوباره تلاش کنید.");
+      console.error(err);
+    }
+  });
+
+  // تابع چاپ گزارش
+  window.addEventListener('beforeprint', function() {
+    // اضافه کردن اطلاعات اضافی برای چاپ
+    const printHeader = `
+      <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #8B4513; padding-bottom: 10px;">
+        <h1 style="color: #8B4513; margin: 0;">گزارش وضعیت تماس‌ها</h1>
+        <p style="color: #666;">تاریخ تهیه گزارش: ${new persianDate().toLocale('fa').format('YYYY/MM/DD HH:mm')}</p>
+        <p style="color: #666;">بازه زمانی: ${document.getElementById('start_date').value} تا ${document.getElementById('end_date').value}</p>
+      </div>
+    `;
+
+    document.querySelector('.card').insertAdjacentHTML('afterbegin', printHeader);
+  });
+
+  window.addEventListener('afterprint', function() {
+    // حذف هدر چاپ بعد از اتمام چاپ
+    const printHeader = document.querySelector('.card > div:first-child');
+    if (printHeader && printHeader.querySelector('h1')) {
+      printHeader.remove();
+    }
+  });
+</script>
+
+</body>
+</html>
