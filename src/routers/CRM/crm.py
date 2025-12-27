@@ -95,6 +95,8 @@ def crm_dashboard(request: Request, db: Session = Depends(get_db)):
 
 
     })
+
+
 @router_crm.post("/update_crm_data", summary="به‌روزرسانی اطلاعات CRM")
 async def update_crm_data(
         request: Request,
@@ -104,91 +106,132 @@ async def update_crm_data(
     if not user_id:
         return RedirectResponse("/", status_code=302)
 
-    data = await request.json()
+    try:
+        data = await request.json()
+    except:
+        raise HTTPException(400, "Invalid JSON data")
 
-    field = data.get("field")                 # send_product_deadline
-    change = data.get("change")               # +1 | -1
-    status = data.get("status")               # 1 | 2 | 3 | None
+    type_ = data.get("type")      # incoming | out
+    field = data.get("field")
+    change = data.get("change")
+    status = data.get("status")  # only for incoming calls
 
-    if field is None or change not in (-1, 1):
-        raise HTTPException(400, "Invalid data")
+    if change not in (-1, 1):
+        raise HTTPException(400, "Invalid change value. Must be -1 or 1")
 
     today = date.today()
     now = datetime.utcnow()
 
-    # =========================
-    # 1. Get or Create IncomingCall (daily)
-    # =========================
-    incoming_call = (
-        db.query(IncomingCall)
-        .filter_by(user_id=user_id, datetime=today)
-        .first()
-    )
+    # ==================================================
+    # ================= INCOMING =======================
+    # ==================================================
+    if type_ == "incoming":
+        if not field:
+            raise HTTPException(400, "Invalid field")
 
-    if not incoming_call:
-        incoming_call = IncomingCall(
-            user_id=user_id,
-            datetime=today,
-            start_datetime=now,
-            end_datetime=now,
-        )
-        db.add(incoming_call)
-        db.flush()
-
-    incoming_call.end_datetime = now
-
-    # =========================
-    # 2. Update Counter
-    # =========================
-    current_value = getattr(incoming_call, field, 0) or 0
-    setattr(incoming_call, field, max(0, current_value + change))
-
-    # =========================
-    # 3. Event logic
-    # =========================
-    if change == 1:
-        # CREATE EVENT
-        event = IncomingCallEvent(
-            incoming_call_id=incoming_call.id,
-            topic=field,
-            user_id=user_id,
-            created_at=now,
-        )
-        db.add(event)
-        db.flush()
-
-        # Always create status for +1 events
-        if status:
-            db.add(CallEventStatus(
-                call_event_id=event.id,
-                status=status
-            ))
-        else:
-            # Default status if none provided
-            db.add(CallEventStatus(
-                call_event_id=event.id,
-                status=1  # Default: حل شده
-            ))
-
-    else:
-        # DELETE LAST EVENT (rollback)
-        event = (
-            db.query(IncomingCallEvent)
-            .filter_by(
-                incoming_call_id=incoming_call.id,
-                topic=field
-            )
-            .order_by(IncomingCallEvent.created_at.desc())
+        # Get or create incoming call record
+        incoming_call = (
+            db.query(IncomingCall)
+            .filter_by(user_id=user_id, datetime=today)
             .first()
         )
 
-        if event:
-            db.delete(event)
+        if not incoming_call:
+            # ایجاد رکورد جدید با مقادیر پیش‌فرض
+            incoming_call = IncomingCall(
+                user_id=user_id,
+                datetime=today,
+                start_datetime=now,
+                end_datetime=now,
+            )
+            db.add(incoming_call)
+            db.flush()
 
-    db.commit()
+        incoming_call.end_datetime = now
 
-    return {"success": True}
+        # Update the field value
+        current_value = getattr(incoming_call, field, 0) or 0
+        new_value = max(0, current_value + change)
+        setattr(incoming_call, field, new_value)
 
+        # Create event record for the change
+        if change == 1:
+            # Create new event for +1
+            event = IncomingCallEvent(
+                incoming_call_id=incoming_call.id,
+                topic=field,
+                user_id=user_id,  # فقط برای IncomingCallEvent
+                created_at=now
+            )
+            db.add(event)
+            db.flush()  # Flush to get event.id
+
+            # Add status for the event
+            # فقط فیلدهایی که در مدل CallEventStatus وجود دارند
+            call_event_status = CallEventStatus(
+                call_event_id=event.id,
+                status=status if status else 1  # Default: حل شده
+                # user_id را حذف کردیم چون در مدل وجود ندارد
+            )
+            db.add(call_event_status)
+
+        else:
+            # For -1 (rollback), delete the last event
+            event = (
+                db.query(IncomingCallEvent)
+                .filter_by(
+                    incoming_call_id=incoming_call.id,
+                    topic=field,
+                    user_id=user_id  # شرط user_id برای امنیت
+                )
+                .order_by(IncomingCallEvent.created_at.desc())
+                .first()
+            )
+
+            if event:
+                # Also delete associated status
+                db.query(CallEventStatus).filter_by(call_event_id=event.id).delete()
+                db.delete(event)
+
+    # ==================================================
+    # ================= OUTGOING =======================
+    # ==================================================
+    elif type_ == "out":
+        ALLOWED_FIELDS = {"internet", "voice_mail"}
+        if field not in ALLOWED_FIELDS:
+            raise HTTPException(400, "Invalid out field")
+
+        # Get or create out call record
+        out_call = (
+            db.query(OutCall)
+            .filter_by(user_id=user_id, datetime=today)
+            .first()
+        )
+
+        if not out_call:
+            out_call = OutCall(
+                user_id=user_id,
+                datetime=today,
+                internet=0,
+                voice_mail=0,
+            )
+            db.add(out_call)
+            db.flush()
+
+        # Update the field value
+        current_value = getattr(out_call, field) or 0
+        new_value = max(0, current_value + change)
+        setattr(out_call, field, new_value)
+
+    else:
+        raise HTTPException(400, "Invalid type. Must be 'incoming' or 'out'")
+
+    try:
+        db.commit()
+        return {"success": True}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(500, f"Database error: {str(e)}")
 
 # این endpoint جدید برای گرفتن وضعیت‌های تماس‌ها
 @router_crm.get("/get_call_statuses")

@@ -340,19 +340,21 @@
                         <span class="text-gray-700 font-medium">{{ persian_labels_incoming[key] }}</span>
                     </div>
                     <div class="flex items-center space-x-3">
-                        <button onclick="updateValue('{{ key }}', -1)"
+                        <button onclick="updateValue('incoming','{{ key }}', -1)"
                                 class="btn-action bg-rose-100 text-rose-700">
                             <i class="fas fa-minus"></i>
                         </button>
 
                         <div class="flex flex-col items-center mx-2">
                             <span class="text-lg font-semibold text-gray-800 min-w-[30px] text-center mb-1">{{ value }}</span>
-<!--                            <div id="status-badge-{{ key }}" class="status-badge status-1">-->
-<!--                                {{ status_labels[1] }}-->
+                            <!-- نمایش وضعیت فعلی -->
+<!--                            <div id="status-badge-{{ key }}"-->
+<!--                                 class="status-badge status-{{ call_statuses.get(key, 1) if call_statuses else 1 }}">-->
+<!--                                {{ status_labels.get(call_statuses.get(key, 1) if call_statuses else 1, 'حل شده') }}-->
 <!--                            </div>-->
                         </div>
 
-                        <button onclick="showStatusModal('{{ key }}', '{{ persian_labels_incoming[key] }}')"
+                        <button onclick="showStatusModal('incoming','{{ key }}', '{{ persian_labels_incoming[key] }}')"
                                 class="btn-action bg-emerald-100 text-emerald-700">
                             <i class="fas fa-plus"></i>
                         </button>
@@ -376,7 +378,7 @@
                 'voice_mail': 'صندوق صوتی'
                 } %}
                 {% for key, value in out_data.items() %}
-                <div class="flex items-center justify-between py-3 border-leather">
+                <div class="flex items-center justify-between py-3 border-leather" data-field="{{ key }}">
                     <div class="flex items-center">
                         <div class="w-8 h-8 rounded-full bg-[#EFEBE9] flex items-center justify-center mr-3">
                             <i class="fas fa-phone text-[#795548]"></i>
@@ -396,6 +398,7 @@
                     </div>
                 </div>
                 {% endfor %}
+
             </div>
         </div>
     </div>
@@ -416,7 +419,7 @@
                 <p id="statusModalTitle" class="text-gray-600 mb-4"></p>
 
                 <div class="space-y-2">
-                    <div class="status-option status-1" onclick="selectStatus(1)">
+                    <div class="status-option status-1" data-status="1" onclick="selectStatus(1)">
                         <div class="flex items-center">
                             <div class="w-4 h-4 rounded-full bg-emerald-500 mr-3"></div>
                             <span class="font-medium">حل شده</span>
@@ -424,7 +427,7 @@
                         <p class="text-sm text-gray-500 mt-1 mr-7">مشکل به طور کامل حل شده است</p>
                     </div>
 
-                    <div class="status-option status-2" onclick="selectStatus(2)">
+                    <div class="status-option status-2" data-status="2" onclick="selectStatus(2)">
                         <div class="flex items-center">
                             <div class="w-4 h-4 rounded-full bg-amber-500 mr-3"></div>
                             <span class="font-medium"> نیاز به پیگیری</span>
@@ -432,7 +435,7 @@
                         <p class="text-sm text-gray-500 mt-1 mr-7">در حال بررسی و پیگیری موضوع</p>
                     </div>
 
-                    <div class="status-option status-3" onclick="selectStatus(3)">
+                    <div class="status-option status-3" data-status="3" onclick="selectStatus(3)">
                         <div class="flex items-center">
                             <div class="w-4 h-4 rounded-full bg-rose-500 mr-3"></div>
                             <span class="font-medium"> ارجاع شده</span>
@@ -595,20 +598,21 @@
         const statusLabels = {
             1: {text: 'حل شده', class: 'status-1'},
             2: {text: 'نیاز به پیگیری', class: 'status-2'},
-            3: {text: 'ارجاع شده ', class: 'status-3'}
+            3: {text: 'ارجاع شده', class: 'status-3'}
         };
 
         for (const [field, status] of Object.entries(callStatuses)) {
             const badge = document.getElementById(`status-badge-${field}`);
             if (badge) {
-                badge.textContent = statusLabels[status].text;
-                badge.className = `status-badge ${statusLabels[status].class}`;
+                const statusInfo = statusLabels[status] || statusLabels[1];
+                badge.textContent = statusInfo.text;
+                badge.className = `status-badge ${statusInfo.class}`;
             }
         }
     }
 
     // نمایش مودال انتخاب وضعیت
-    function showStatusModal(field, fieldName) {
+    function showStatusModal(type, field, fieldName) {
         currentSelectedField = field;
         currentSelectedStatus = callStatuses[field] || 1;
 
@@ -618,8 +622,7 @@
         // انتخاب گزینه فعلی
         document.querySelectorAll('.status-option').forEach(option => {
             option.classList.remove('selected');
-            const status = parseInt(option.getAttribute('data-status') || option.onclick.toString().match(/selectStatus\((\d+)\)/)?.[1]);
-            if (status === currentSelectedStatus) {
+            if (parseInt(option.dataset.status) === currentSelectedStatus) {
                 option.classList.add('selected');
             }
         });
@@ -628,19 +631,16 @@
         document.getElementById('confirmStatusBtn').disabled = true;
         document.body.style.overflow = 'hidden';
     }
-
     // انتخاب وضعیت
     function selectStatus(status) {
         currentSelectedStatus = status;
+        document.getElementById('confirmStatusBtn').disabled = false;
 
-        // حذف انتخاب از همه گزینه‌ها
+        // بروزرسانی ظاهر انتخاب
         document.querySelectorAll('.status-option').forEach(option => {
             option.classList.remove('selected');
         });
-
-        // انتخاب گزینه کلیک شده
-        event.currentTarget.classList.add('selected');
-        document.getElementById('confirmStatusBtn').disabled = false;
+        document.querySelector(`.status-option[data-status="${status}"]`).classList.add('selected');
     }
 
     // بستن مودال وضعیت
@@ -656,8 +656,10 @@
         if (!currentSelectedField || !currentSelectedStatus) return;
 
         try {
-            // ثبت تماس با وضعیت انتخابی
-            await updateValue(currentSelectedField, 1, currentSelectedStatus);
+            // ارسال درخواست با وضعیت انتخاب شده
+            await updateValue('incoming', currentSelectedField, 1, currentSelectedStatus);
+            callStatuses[currentSelectedField] = currentSelectedStatus;
+            updateStatusBadges();
             closeStatusModal();
         } catch (error) {
             console.error('خطا در ثبت وضعیت:', error);
@@ -665,50 +667,89 @@
         }
     }
 
+
     // به‌روزرسانی مقدار (با پشتیبانی از وضعیت)
-    async function updateValue(field, change, status = null) {
+    // به‌روزرسانی مقدار (با پشتیبانی از وضعیت) - اصلاح شده
+    async function updateValue(type, field, change, status = null) {
+        const requestBody = {
+            type: type,
+            field: field,
+            change: change
+        };
+
+        // فقط برای تماس‌های ورودی و افزایش مقدار، وضعیت را ارسال کن
+        if (type === 'incoming' && change === 1 && status !== null) {
+            requestBody.status = status;
+        }
+
         try {
-            const btn = event ? event.currentTarget : null;
-            if (btn) {
-                btn.classList.add('animate-pulse');
-                setTimeout(() => btn.classList.remove('animate-pulse'), 300);
-            }
-
-            const requestBody = {
-                field: field,
-                change: change
-            };
-
-            // اگر وضعیت مشخص شده، اضافه کن
-            if (status !== null && change === 1) {
-                requestBody.status = status;
-            }
-
             const response = await fetch('/update_crm_data', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
             });
 
             if (response.ok) {
-                // اگر منفی زد، وضعیت را حذف کن
-                if (change === -1 && callStatuses[field]) {
-                    delete callStatuses[field];
-                    updateStatusBadges();
-                }
+                const result = await response.json();
+                if (result.success) {
+                    // به‌روزرسانی صفحه بدون رفرش کامل
+                    const counter = document.querySelector(`[data-field="${field}"] .text-lg`);
+                    if (counter) {
+                        const currentValue = parseInt(counter.textContent);
+                        counter.textContent = Math.max(0, currentValue + change);
+                    }
 
-                // رفرش صفحه برای نمایش مقادیر جدید
-                setTimeout(() => location.reload(), 300);
+                    // به‌روزرسانی وضعیت
+                    if (status !== null) {
+                        const badge = document.getElementById(`status-badge-${field}`);
+                        if (badge) {
+                            const statusLabels = {
+                                1: {text: 'حل شده', class: 'status-1'},
+                                2: {text: 'نیاز به پیگیری', class: 'status-2'},
+                                3: {text: 'ارجاع شده', class: 'status-3'}
+                            };
+                            const statusInfo = statusLabels[status] || statusLabels[1];
+                            badge.textContent = statusInfo.text;
+                            badge.className = `status-badge ${statusInfo.class}`;
+                        }
+                    }
+
+                    // نمایش پیام موفقیت
+                    showToast('عملیات با موفقیت انجام شد', 'success');
+                }
             } else {
-                alert('خطا در به‌روزرسانی مقدار');
+                const error = await response.json();
+                throw new Error(error.detail || 'خطا در به‌روزرسانی');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('خطایی رخ داد');
+            showToast(error.message || 'خطا در به‌روزرسانی', 'error');
         }
     }
+
+    // نمایش نوتیفیکیشن
+    function showToast(message, type = 'info') {
+        // ایجاد عنصر toast
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-white ${
+            type === 'success' ? 'bg-green-500' :
+                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        }`;
+        toast.textContent = message;
+
+        document.body.appendChild(toast);
+
+        // حذف خودکار بعد از 3 ثانیه
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
+    // بارگذاری وضعیت‌ها هنگام لود صفحه
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCallStatuses();
+    });
+
 
     // باز و بسته کردن مودال ثبت شکایت
     function openNewComplaintModal() {
@@ -728,46 +769,64 @@
         return str.replace(/[۰-۹]/g, d => englishDigits[persianDigits.indexOf(d)]);
     }
 
-    // بارگذاری اولیه وضعیت‌ها
-    document.addEventListener('DOMContentLoaded', function() {
-        loadCallStatuses();
 
-        // نمایش مدیر منطقه بر اساس شعبه انتخابی
-        const branchSelect = document.getElementById('branchSelect');
-        if (branchSelect) {
-            branchSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const managerName = selectedOption.getAttribute('data-manager');
-                document.getElementById('regionalManager').value = managerName || '';
-            });
-        }
-
-        // مدیریت ارسال فرم بدون رفرش صفحه
-        const complaintForm = document.getElementById('complaintForm');
-        if (complaintForm) {
-            complaintForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                // منطق ارسال فرم...
-            });
-        }
-
-        // بستن مودال‌ها با ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeStatusModal();
-                closeNewComplaintModal();
-            }
-        });
-
-        // بستن مودال‌ها با کلیک روی overlay
-        document.getElementById('statusModal')?.addEventListener('click', function(e) {
-            if (e.target === this) closeStatusModal();
-        });
-
-        document.getElementById('complaintModal')?.addEventListener('click', function(e) {
-            if (e.target === this) closeNewComplaintModal();
-        });
+    // نمایش مدیر منطقه بر اساس شعبه انتخابی
+    document.getElementById('branchSelect').addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        const managerName = selectedOption.getAttribute('data-manager');
+        document.getElementById('regionalManager').value = managerName || '';
     });
+
+    // مدیریت ارسال فرم بدون رفرش صفحه
+    document.getElementById('complaintForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const checkboxes = document.querySelectorAll('input[name="issues"]:checked');
+        if (checkboxes.length === 0) {
+            alert('لطفا حداقل یک مورد شکایت را انتخاب کنید');
+            return;
+        }
+
+        const phoneInput = document.querySelector('input[name="customer_phone"]');
+        phoneInput.value = convertPersianDigitsToEnglish(phoneInput.value);
+
+        const formData = new FormData(this);
+
+
+
+
+
+        try {
+            const response = await fetch(this.action, {method: 'POST', body: formData});
+            if (response.ok) {
+                alert('شکایت با موفقیت ثبت شد');
+                this.reset();
+                closeNewComplaintModal();
+                // می‌توانید اینجا داده‌ها را بدون رفرش صفحه به جدول اضافه کنید
+            } else {
+                alert('خطا در ثبت شکایت');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('خطایی رخ داد');
+        }
+    });
+
+    // بستن مودال با ESC
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeNewComplaintModal();
+    });
+
+    // بستن مودال با کلیک روی overlay
+    document.getElementById('complaintModal').addEventListener('click', function (e) {
+        if (e.target === this) closeNewComplaintModal();
+    });
+
+    // اعتبارسنجی فیلد شماره تماس
+    document.querySelector('input[name="customer_phone"]').addEventListener('input', function () {
+        this.value = this.value.replace(/[^۰-۹0-9]/g, '');
+    });
+
 </script>
 </body>
 </html>
