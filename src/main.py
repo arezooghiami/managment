@@ -32,7 +32,19 @@ from routers.user import (
 
 # فقط یک بار ایجاد اپلیکیشن
 app = FastAPI()
+data_dir = ".data"
+logs_dir = os.path.join(data_dir, "logs")
 
+os.makedirs(logs_dir, exist_ok=True)  # اگر وجود نداشت، بساز
+
+# حالا می‌توانیم لاگر را بسازیم
+file_handler = TimedRotatingFileHandler(
+    os.path.join(logs_dir, "user_actions.log"),
+    when="D",
+    interval=1,
+    backupCount=30,
+    encoding="utf-8"
+)
 # تنظیم لاگر (فقط یک بار)
 user_logger = logging.getLogger("user_actions")
 user_logger.setLevel(logging.INFO)
